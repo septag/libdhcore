@@ -6,7 +6,9 @@ Version 0.5.0-dev
 
 ### Description
 *libdhcore* is a lightweight and cross-platform C (C99) library, mainly targeted to game developers. It is used in *darkHAMMER* game engine, I don't know how mature it is, but it is being used and tested for 2 years in various projects.  
-It can be built with GCC, MSVC and Clang compilers, on x86, x86-64 and ARM platforms, including windows, linux, MacOS and RaspberryPI 
+It can be built with GCC, MSVC and Clang compilers, on x86, x86-64 and ARM platforms, including windows, linux, MacOS and RaspberryPI.  
+Source code License is BSD.  
+
 Here's a list of library modules and their descriptions:  
 
 - **Memory manager**: Automatic leak detection, Memory ID tracing and stats (allocate by userId), with allocator and alignment support.
