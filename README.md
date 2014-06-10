@@ -107,7 +107,7 @@ int main(int argc, char** argv)
 ```
 
 ### Documentation
-For API documentation (which is at it's early stage), check out this link  
+For API documentation (which is at it's early stage), check out this [API Documentation](http://www.hmrengine.com/docs/core/html)
 You can also build the documentation by installing **doxygen** and go to `/path/to/libdhcore/doc` directory and run:  
 
 ```
