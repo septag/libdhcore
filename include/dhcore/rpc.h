@@ -40,6 +40,7 @@
  * // define input parameters
  * const struct rpc_value params[] = {
  *     {"A", RPC_VALUE_INT, RPC_OFFSET_AUTO, sizeof(int), 1, FALSE},
+ *     {"B", RPC_VALUE_INT, RPC_OFFSET_AUTO, sizeof(int), 1, FALSE}
  * };
  * const struct rpc_value result[] = {
  *     {"C", RPC_VALUE_INT, RPC_OFFSET_AUTO, sizeof(int), 1, FALSE}
