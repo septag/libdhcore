@@ -125,7 +125,7 @@ def compiler_setup(conf):
     if sys.platform == 'win32':
         conf.env.append_unique('DEFINES', ['WIN32', '_WIN_'])
         conf.env.append_unique('CXXFLAGS', cxxflags)
-    elif sys.platform == 'linux':
+    elif sys.platform.startswith('linux'):
         conf.env.append_unique('DEFINES', '_LINUX_')
     elif sys.platform == 'darwin':
         conf.env.append_unique('DEFINES', '_OSX_')

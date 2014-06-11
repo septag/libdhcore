@@ -18,7 +18,7 @@ def build(bld):
     # platform dependent files
     if sys.platform == 'win32':
         files.extend(bld.path.ant_glob('platform/win/*.c*'))
-    elif sys.platform == 'linux':
+    elif sys.platform.startswith('linux'):
         files.extend(bld.path.ant_glob('platform/posix/*.c'))
         files.extend(bld.path.ant_glob('platform/linux/*.c'))
     elif sys.platform == 'darwin':
@@ -29,7 +29,7 @@ def build(bld):
     libs = []
     linkflags = []
     frameworks = []
-    if sys.platform == 'linux':
+    if sys.platform.startswith('linux'):
         libs.extend(['rt', 'm'])
     elif sys.platform == 'darwin':
         frameworks.extend(['Cocoa','CoreFoundation'])
@@ -46,7 +46,7 @@ def build(bld):
         defines.append('_FILEMON_')
 
     vnum = ''
-    if sys.platform == 'linux':
+    if sys.platform.startswith('linux'):
         vnum = bld.env.VERSION
         
     if sys.platform != 'win32':

@@ -1,26 +1,20 @@
 /***********************************************************************************
- * Copyright (c) 2014, Sepehr Taghdisian
+ * Copyright (c) 2014, Tochal Co. (wwww.tochalco.com)
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * - Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
+ * Author: Sepehr Taghdisian
  *
  ***********************************************************************************/
 
 #include <stdarg.h>
 
-#include "core.h"
-#include "stack-alloc.h"
-#include "array.h"
-#include "json.h"
+#include "dhcore/core.h"
+#include "dhcore/stack-alloc.h"
+#include "dhcore/array.h"
+#include "dhcore/json.h"
 
 #include "rpc.h"
+#include "mem-ids.h"
 
 #define MAX_COMMAND_LIST    128
 
@@ -52,7 +46,7 @@ INLINE struct rpc_cmd* rpc_cmd_get(uint id)
     return &ARR_ITEM(g_rpc->cmds, struct rpc_cmd, id-1);
 }
 
-static uint rpc_cmd_find(const char* name)
+uint rpc_cmd_find(const char* name)
 {
     struct hashtable_item* item = hashtable_open_find(&g_rpc->cmd_tbl, hash_str(name));
     if (item != NULL)
@@ -175,24 +169,24 @@ struct rpc_vblock* rpc_vblock_create(const struct rpc_value* values, uint value_
     struct allocator stack_alloc;
     result_t r;
 
-    r = mem_stack_create(alloc, &stack_mem, total_sz, 0);
+    r = mem_stack_create(alloc, &stack_mem, total_sz, MID_RPC);
     if (IS_FAIL(r)) 
         return NULL;
     mem_stack_bindalloc(&stack_mem, &stack_alloc);
 
     struct rpc_vblock* vb = (struct rpc_vblock*)A_ALLOC(&stack_alloc, sizeof(struct rpc_vblock), 
-        0);
+        MID_RPC);
     vb->alloc = alloc;
     vb->values = (struct rpc_value*)A_ALLOC(&stack_alloc, sizeof(struct rpc_value)*value_cnt, 
-        0);
+        MID_RPC);
     memcpy(vb->values, values, sizeof(struct rpc_value)*value_cnt);
     vb->value_cnt = value_cnt;
 
-    hashtable_fixed_create(&stack_alloc, &vb->vtbl, value_cnt, 0);
+    hashtable_fixed_create(&stack_alloc, &vb->vtbl, value_cnt, MID_RPC);
     for (uint i = 0; i < value_cnt; i++)
         hashtable_fixed_add(&vb->vtbl, hash_str(values[i].name), i);
 
-    vb->buff = (uint8*)A_ALLOC(&stack_alloc, buff_sz, 0);
+    vb->buff = (uint8*)A_ALLOC(&stack_alloc, buff_sz, MID_RPC);
     memset(vb->buff, 0x00, buff_sz);
 
     return vb;
@@ -438,7 +432,7 @@ result_t rpc_init()
     log_print(LOG_TEXT, "init json-rpc ...");
 
     result_t r;
-    g_rpc = (struct rpc_mgr*)ALLOC(sizeof(struct rpc_mgr), 0);
+    g_rpc = (struct rpc_mgr*)ALLOC(sizeof(struct rpc_mgr), MID_RPC);
     if (g_rpc == NULL)
         return err_printn(__FILE__, __LINE__, RET_OUTOFMEMORY);
     memset(g_rpc, 0x00, sizeof(struct rpc_mgr));
@@ -724,7 +718,7 @@ struct rpc_result* rpc_make_result(struct rpc_vblock* ret, int id, struct rpc_er
         json_additem_toobj(jroot, "error", json_create_null());
     }   else if (err != NULL)   {
         json_additem_toobj(jroot, "result", json_create_null());
-        json_t jerr = json_create_obj(jroot);
+        json_t jerr = json_create_obj();
         json_additem_toobj(jerr, "code", json_create_num((fl64)err->code));
         json_additem_toobj(jerr, "description", json_create_str(err->desc));
         json_additem_toobj(jroot, "error", jerr);
@@ -732,27 +726,53 @@ struct rpc_result* rpc_make_result(struct rpc_vblock* ret, int id, struct rpc_er
         json_destroy(jroot);
         ASSERT(0);
     }
-    struct rpc_result* r = (struct rpc_result*)ALLOC(sizeof(struct rpc_result), 0);
+    struct rpc_result* r = (struct rpc_result*)ALLOC(sizeof(struct rpc_result), MID_RPC);
 
     if (r != NULL)  {
-        r->json_sz = 0;
+        r->type = RPC_RESULT_JSONRPC;
+        r->data.json.json_sz = 0;
 #if _DEBUG_
         int trim = FALSE;
 #else
         int trim = TRUE;
 #endif
-        r->json = json_savetobuffer(jroot, &r->json_sz, trim);
+        r->data.json.json = json_savetobuffer(jroot, &r->data.json.json_sz, trim);
+    }
+    json_destroy(jroot);
 
+    return r;
+}
+
+struct rpc_result* rpc_make_result_bin(const void* data, size_t data_sz)
+{
+    if (data_sz == 0)
+        return NULL;
+
+    struct rpc_result* r = (struct rpc_result*)ALLOC(sizeof(struct rpc_result), MID_RPC);
+
+    if (r != NULL)  {
+        r->type = RPC_RESULT_BINARY;
+
+        r->data.bin.bin_sz = data_sz;
+        r->data.bin.bin = ALLOC(data_sz, MID_RPC);
+        memcpy(r->data.bin.bin, data, data_sz);
     }
 
-    json_destroy(jroot);
     return r;
 }
 
 void rpc_freeresult(struct rpc_result* r)
 {
-    if (r->json != NULL)
-        json_deletebuffer(r->json);
+    switch (r->type)    {
+        case RPC_RESULT_JSONRPC:
+        if (r->data.json.json != NULL)
+            json_deletebuffer(r->data.json.json);
+        break;
+        case RPC_RESULT_BINARY:
+        if (r->data.bin.bin != NULL)
+            FREE(r->data.bin.bin);
+        break;
+    }
     FREE(r);
 }
 
@@ -774,14 +794,14 @@ result_t rpc_registercmd(const char* name, pfn_rpc_cmd run_fn, const struct rpc_
     uint id = g_rpc->cmds.item_cnt;
 
     if (param_cnt > 0)  {
-        cmd->params = (struct rpc_value*)ALLOC(sizeof(struct rpc_value)*param_cnt, 0);
+        cmd->params = (struct rpc_value*)ALLOC(sizeof(struct rpc_value)*param_cnt, MID_RPC);
         ASSERT(cmd->params);
         memcpy(cmd->params, params, param_cnt*sizeof(struct rpc_value));
         cmd->param_cnt = param_cnt;
     }
 
     if (result_cnt > 0) {
-        cmd->results = (struct rpc_value*)ALLOC(sizeof(struct rpc_value)*result_cnt, 0);
+        cmd->results = (struct rpc_value*)ALLOC(sizeof(struct rpc_value)*result_cnt, MID_RPC);
         ASSERT(cmd->results);
         memcpy(cmd->results, results, result_cnt*sizeof(struct rpc_value));
         cmd->result_cnt = result_cnt;

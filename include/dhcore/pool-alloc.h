@@ -24,7 +24,7 @@
 #include "mt.h"
 
 /**
- * pool allocator: fixed-size pool allocation\n
+ * Pool allocator: fixed-size pool allocation\n
  * it is pretty fast and can dynamically grow itself on demand. but limited to fixed sized blocks\n
  * if number of allocations go beyond 'block_size' another block will be created
  * @see mem_pool_create
@@ -41,7 +41,7 @@ struct pool_alloc
 };
 
 /**
- * creates a fixed item size pool and it's buffer
+ * Creates a fixed item size pool and it's buffer
  * @param item_size size of each item (bytes) in the pool
  * @param block_size number of items in each pool block
  * @ingroup alloc
@@ -51,44 +51,44 @@ CORE_API result_t mem_pool_create(struct allocator* alloc,
                                   uint item_size, uint block_size, uint mem_id);
 
 /**
- * destroys pool allocator
+ * Destroys pool allocator
  * @ingroup alloc
  */
 CORE_API void mem_pool_destroy(struct pool_alloc* pool);
 
-/* pool allocation/free
- **
- * allocate an item (fixed-size) from the pool
+/**
+ * Allocate an item (fixed-size) from the pool
  * @ingroup alloc
  */
 CORE_API void* mem_pool_alloc(struct pool_alloc* pool);
+
 /**
- * free an item from the pool
+ * Free an item from the pool
  * @ingroup alloc
  */
 CORE_API void mem_pool_free(struct pool_alloc* pool, void* ptr);
+
 /**
- * get memory pool leaks
+ * Get memory pool leaks
  * @return number of leaks
  * @ingroup alloc
  */
 CORE_API uint mem_pool_getleaks(struct pool_alloc* pool);
 
 /**
- * clear memory pool
+ * Clear memory pool
  * @ingroup alloc
  */
 CORE_API void mem_pool_clear(struct pool_alloc* pool);
 
 /**
- * pool binding to generic allocator
+ * Pool binding to generic allocator
  * @ingroup alloc
  */
 CORE_API void mem_pool_bindalloc(struct pool_alloc* pool, struct allocator* alloc);
 
-/*************************************************************************************************/
 /**
- * pool allocator: fixed-size pool allocation (thread-safe)\n
+ * Pool allocator: fixed-size pool allocation (thread-safe)\n
  * it is pretty fast and can dynamically grow itself on demand. but limited to fixed sized blocks\n
  * if number of allocations go beyond 'block_size' another block will be created
  * @see mem_pool_create
@@ -101,7 +101,7 @@ struct pool_alloc_ts
 };
 
 /**
- * creates a fixed item size pool and it's buffer (thread-safe)
+ * Creates a fixed item size pool and it's buffer (thread-safe)
  * @param item_size size of each item (bytes) in the pool
  * @param block_size number of items in each pool block
  * @ingroup alloc
@@ -110,38 +110,38 @@ CORE_API result_t mem_pool_create_ts(struct allocator* alloc, struct pool_alloc_
                                      uint item_size, uint block_size, uint mem_id);
 
 /**
- * destroys pool allocator (thread-safe)
+ * Destroys pool allocator (thread-safe)
  * @ingroup alloc
  */
 CORE_API void mem_pool_destroy_ts(struct pool_alloc_ts* pool);
 
 /**
- * allocate an item (fixed-size) from the pool (thread-safe)
+ * Allocate an item (fixed-size) from the pool (thread-safe)
  * @ingroup alloc
  */
 CORE_API void* mem_pool_alloc_ts(struct pool_alloc_ts* pool);
 
 /**
- * free an item from the pool (thread-safe)
+ * Free an item from the pool (thread-safe)
  * @ingroup alloc
  */
 CORE_API void mem_pool_free_ts(struct pool_alloc_ts* pool, void* ptr);
 
 /**
- * get memory pool leaks (thread-safe)
+ * Get memory pool leaks (thread-safe)
  * @return number of leaks
  * @ingroup alloc
  */
 CORE_API uint mem_pool_getleaks_ts(struct pool_alloc_ts* pool);
 
 /**
- * clear memory pool (thread-safe)
+ * Clear memory pool (thread-safe)
  * @ingroup alloc
  */
 CORE_API void mem_pool_clear_ts(struct pool_alloc_ts* pool);
 
 /**
- * pool binding to generic allocator (thread-safe)
+ * Pool binding to generic allocator (thread-safe)
  * @ingroup alloc
  */
 CORE_API void mem_pool_bindalloc_ts(struct pool_alloc_ts* pool, struct allocator* alloc);

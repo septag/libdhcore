@@ -55,7 +55,7 @@ CORE_API int mem_isinit();
 CORE_API void mem_getstats(struct mem_stats* stats);
 
 /**
- * Print memory leaks to the logger
+ * Print memory leaks to console terminal
  * @ingroup mem
  */
 CORE_API void mem_reportleaks();

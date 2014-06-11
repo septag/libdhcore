@@ -41,6 +41,7 @@ enum compress_mode
  * and allocated compressed buffer size with this function, then pass it to @e zip_compress
  * @param src_size Size (bytes) of uncompressed buffer
  * @return Estimated size of compressed target buffer
+ * @see zip_compress
  * @ingroup zip
  */
 CORE_API size_t zip_compressedsize(size_t src_size);
@@ -50,6 +51,7 @@ CORE_API size_t zip_compressedsize(size_t src_size);
  * @param dest_buffer Destination buffer that will be filled with compressed data
  * @param dest_size Maximum size of destiniation buffer, usually fetched by @e zip_compressedsize
  * @return actual Size of compressed buffer, returns 0 if 
+ * @see zip_compressedsize
  * @ingroup zip
  */
 CORE_API size_t zip_compress(void* dest_buffer, size_t dest_size, const void* buffer, size_t size, 

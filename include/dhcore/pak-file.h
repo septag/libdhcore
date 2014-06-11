@@ -51,48 +51,50 @@ struct pak_file
 };
 
 /**
- * create pak file on disk and get it ready for putting files in it
+ * Create pak file on disk and get it ready for putting files in it
  * @param alloc memory allocator for internal pak_file data
  * @param pakfilepath pak file which will be created on disk (absolute path)
  * @param mode zip compression mode
  * @see zip
  * @ingroup pak
  */
-CORE_API result_t pak_create(struct pak_file* pak, struct allocator* alloc,
-                             const char* pakfilepath, enum compress_mode mode,
-                             uint mem_id);
+CORE_API result_t pak_create(struct pak_file* pak, struct allocator* alloc, const char* pakfilepath, 
+    enum compress_mode mode, uint mem_id);
 
 /**
- * open pak file from disk, get it ready to fetch files from it
+ * Open pak file from disk, get it ready to fetch files from it
  * @param pakfilepath file path of the pak file on disk (absolute path)
  * @param alloc allocator for internal pak_file data
  * @ingroup pak
  */
-CORE_API result_t pak_open(struct pak_file* pak, struct allocator* alloc,
-                           const char* pakfilepath, uint mem_id);
+CORE_API result_t pak_open(struct pak_file* pak, struct allocator* alloc, const char* pakfilepath, 
+    uint mem_id);
+
 /**
- * closes pak file and release internal data
+ * Closes pak file and release internal data
  * @ingroup pak
  */
 CORE_API void pak_close(struct pak_file* pak);
+
 /**
- * checks if pak file is opened
+ * Checks if pak file is opened
  * @ingroup pak
  */
 CORE_API int pak_isopen(struct pak_file* pak);
 
 /**
- * compress and put an opened file into pak
+ * Compress and put an opened file into pak
  * @param alloc temp-allocator for decompressing buffers inside the routine
  * @param src_file source file which must be already opened
- * @param dest_path destination filepath (alias) which will be saved in pak file_id
+ * @param dest_path destination filepath (alias) which will be saved in pak file_id, future fetches 
+ * from PAK, should provide this path value
  * @ingroup pak
  */
-CORE_API result_t pak_putfile(struct pak_file* pak,
-                              struct allocator* tmp_alloc, file_t src_file, const char* dest_path);
+CORE_API result_t pak_putfile(struct pak_file* pak, struct allocator* tmp_alloc, 
+    file_t src_file, const char* dest_path);
 
 /**
- * find a file in pak
+ * Find a file in pak
  * @param filepath filepath (case sensitive) of dest_path provided in 'pak_putfile' when -
  *                  archive was created.
  * @return id of the file. INVALID_INDEX if file is not found.
@@ -101,7 +103,7 @@ CORE_API result_t pak_putfile(struct pak_file* pak,
 CORE_API uint pak_findfile(struct pak_file* pak, const char* filepath);
 
 /**
- * decompress and get a file from pak
+ * Decompress and get a file from pak
  * @param alloc memory allocator for creating memory file
  * @param tmp_alloc temp-allocator for internal memory allocation
  * @param file_id file-id of the file in the pak, must be fetched from 'pak_findfile'
@@ -113,7 +115,7 @@ CORE_API file_t pak_getfile(struct pak_file* pak, struct allocator* alloc,
                             uint file_id, uint mem_id);
 
 /**
- * creates/allocates list of files inside pak-file
+ * Creates/allocates list of files inside pak-file
  * @param alloc memory allocator for the list
  * @param pcnt outputs file count
  * @return array of char* which contains list of files (should be freed if not needed by caller)\n

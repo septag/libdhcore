@@ -16,7 +16,7 @@ Here's a list of library modules and their descriptions:
 - **Color**: RGBA color type with common math functions
 - **Commander**: Command line argument parser and setup
 - **Crash manager**: Multi-platform crash handler and callstack report, with user definable callbacks on application crash
-- **Error manager**: Error handling functions, for keeping Error stack with automatic reports
+- **Error manager**: Error handling functions, for keeping Error stack with reports
 - **File-IO**: File IO abstraction (memory and disk), with Virtual directory support, PAK files and automatic directory monitoring
 - **FreeList allocator**: Fixed size, dynamic malloc, freelist allocator for custom allocations
 - **Pool allocator**: Fast dynamic size, fixed malloc, pool allocator for custom memory allocations
@@ -34,7 +34,7 @@ Here's a list of library modules and their descriptions:
 - **Primitives**: Rectangle, Sphere and AABB types with common mathematic functions
 - **Queue**: Common C-Style queue structure
 - **Stack**: Common C-Style stack structure
-- **JSON-RPC**: Flexible JSON-RPC parsing and responding, automatic argument signature control and help generation
+- **JSON-RPC**: Flexible JSON-RPC parsing and responding, API signature control and help generation
 - **Standard math**: Common helper math functions
 - **Vector math**: Common SIMD optimized Vector math, Vector, Matrix and Quaternions (left-handed system)
 - **String helpers**: *libdhcore* doesn't provide string objects, but provides helper functions for common String and Path manipulations
@@ -53,7 +53,7 @@ Install the packages listed below before proceeding to build and install the lib
 - **waf**: It also can be found in `libdhcore/var/waf` directory
 - **gcc**: Tested on version 4.8 
 
-After successful install of above packages, run this commands, and change `/install/path` to your preferred path on disk (for example: `--prefix=/usr`) :
+After checking for above packages, run these commands, and change `/install/path` to your preferred path on disk (for example: `--prefix=/usr`) :
 
 ```
 git clone git@github.com:septag/libdhcore.git
@@ -63,7 +63,7 @@ waf build
 sudo waf install
 ```
 
-To build debug libraries, which will have `-dbg` prefix after their names, use the commands below instead of last two lines:
+To build debug libraries, which will have `-dbg` suffix after their names, use the commands below instead of last two lines:
 
 ```
 waf build_debug
@@ -89,7 +89,8 @@ The code was also built on MacOS (Clang/GCC) last year, but unfortunately I don'
 
 
 ### Usage
-Make sure the you have setup *include* and *library* paths of *libdhcore* in your compiler. Then include any header file from `dhcore` directory into your source. And link your program to `dhcore`.    
+Make sure the you have setup *include* and *library* paths of *libdhcore* in your compiler. Then include any header file from `dhcore` directory into your source. And link your program to `dhcore`.  
+
 Main include file is `dhcore/core.h`, and before everything else you must *Initialize* core lib at the beginning of your program and *Release* it after everything else is done:  
 
 ```
@@ -105,12 +106,13 @@ int main(int argc, char** argv)
     puts("Hello world");
 
     core_release(TRUE); // pass TRUE for leak report
+    return 0;
 }
 ```
 
 ### Documentation
-For API documentation (which is at it's early stage), check out this [API Documentation](http://www.hmrengine.com/docs/core/html)
-You can also build the documentation by installing **doxygen** and go to `/path/to/libdhcore/doc` directory and run:  
+For API documentation (which is at it's early stage), check out this [API Documentation](http://www.hmrengine.com/docs/core/html).  
+You can also build the documentation by installing **doxygen** and *cd* to `/path/to/libdhcore/doc` directory and run:  
 
 ```
 doxygen doxygen-core.conf
