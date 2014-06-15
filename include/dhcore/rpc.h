@@ -66,6 +66,7 @@
 #include "dhcore/allocator.h"
 #include "dhcore/hash-table.h"
 #include "dhcore/vec-math.h"
+#include "core-api.h"
 
 /**
  * Macro to reference RPC parameter names, insert name without double quotes. Example: RPC_VALUE(myval)
@@ -206,48 +207,48 @@ typedef struct rpc_result* (*pfn_rpc_cmd)(struct rpc_vblock* results, struct rpc
     int id, void* user_param);
 
 /* vblock: collection of values */
-struct rpc_vblock* rpc_vblock_create(const struct rpc_value* values, uint value_cnt, 
+CORE_API struct rpc_vblock* rpc_vblock_create(const struct rpc_value* values, uint value_cnt, 
     struct allocator* alloc);
-void rpc_vblock_destroy(struct rpc_vblock* vb);
+CORE_API void rpc_vblock_destroy(struct rpc_vblock* vb);
 
-enum rpc_value_type rpc_vblock_gettype(struct rpc_vblock* vb, uint name_hash);
+CORE_API enum rpc_value_type rpc_vblock_gettype(struct rpc_vblock* vb, uint name_hash);
 
-float rpc_vblock_getf(struct rpc_vblock* vb, uint name_hash);
-int rpc_vblock_geti(struct rpc_vblock* vb, uint name_hash);
-int rpc_vblock_geti_idx(struct rpc_vblock* vb, uint name_hash, int idx);
-struct vec2i rpc_vblock_get2i(struct rpc_vblock* vb, uint name_hash);
-int rpc_vblock_getb(struct rpc_vblock* vb, uint name_hash);
-struct vec2f rpc_vblock_get2f(struct rpc_vblock* vb, uint name_hash);
-struct vec3f rpc_vblock_get3f(struct rpc_vblock* vb, uint name_hash);
-struct vec4f rpc_vblock_get4f(struct rpc_vblock* vb, uint name_hash);
-const char* rpc_vblock_gets(struct rpc_vblock* vb, uint name_hash);
-const char* rpc_vblock_gets_idx(struct rpc_vblock* vb, uint name_hash, int idx);
-int rpc_vblock_get_arrcnt(struct rpc_vblock* vb, uint name_hash);
+CORE_API float rpc_vblock_getf(struct rpc_vblock* vb, uint name_hash);
+CORE_API int rpc_vblock_geti(struct rpc_vblock* vb, uint name_hash);
+CORE_API int rpc_vblock_geti_idx(struct rpc_vblock* vb, uint name_hash, int idx);
+CORE_API struct vec2i rpc_vblock_get2i(struct rpc_vblock* vb, uint name_hash);
+CORE_API int rpc_vblock_getb(struct rpc_vblock* vb, uint name_hash);
+CORE_API struct vec2f rpc_vblock_get2f(struct rpc_vblock* vb, uint name_hash);
+CORE_API struct vec3f rpc_vblock_get3f(struct rpc_vblock* vb, uint name_hash);
+CORE_API struct vec4f rpc_vblock_get4f(struct rpc_vblock* vb, uint name_hash);
+CORE_API const char* rpc_vblock_gets(struct rpc_vblock* vb, uint name_hash);
+CORE_API const char* rpc_vblock_gets_idx(struct rpc_vblock* vb, uint name_hash, int idx);
+CORE_API int rpc_vblock_get_arrcnt(struct rpc_vblock* vb, uint name_hash);
 
-void rpc_vblock_setf(struct rpc_vblock* vb, uint name_hash, float val);
-void rpc_vblock_seti(struct rpc_vblock* vb, uint name_hash, int val);
-void rpc_vblock_seti_idx(struct rpc_vblock* vb, uint name_hash, int idx, int val);
-void rpc_vblock_set2i(struct rpc_vblock* vb, uint name_hash, const struct vec2i* val);
-void rpc_vblock_set2f(struct rpc_vblock* vb, uint name_hash, const struct vec2f* val);
-void rpc_vblock_set3f(struct rpc_vblock* vb, uint name_hash, const struct vec3f* val);
-void rpc_vblock_set4f(struct rpc_vblock* vb, uint name_hash, const struct vec4f* val);
-void rpc_vblock_setb(struct rpc_vblock* vb, uint name_hash, int val);
-void rpc_vblock_sets(struct rpc_vblock* vb, uint name_hash, const char* val);
-void rpc_vblock_sets_idx(struct rpc_vblock* vb, uint name_hash, int idx, const char* val);
-void rpc_vblock_set_arrcnt(struct rpc_vblock* vb, uint name_hash, int cnt);
+CORE_API void rpc_vblock_setf(struct rpc_vblock* vb, uint name_hash, float val);
+CORE_API void rpc_vblock_seti(struct rpc_vblock* vb, uint name_hash, int val);
+CORE_API void rpc_vblock_seti_idx(struct rpc_vblock* vb, uint name_hash, int idx, int val);
+CORE_API void rpc_vblock_set2i(struct rpc_vblock* vb, uint name_hash, const struct vec2i* val);
+CORE_API void rpc_vblock_set2f(struct rpc_vblock* vb, uint name_hash, const struct vec2f* val);
+CORE_API void rpc_vblock_set3f(struct rpc_vblock* vb, uint name_hash, const struct vec3f* val);
+CORE_API void rpc_vblock_set4f(struct rpc_vblock* vb, uint name_hash, const struct vec4f* val);
+CORE_API void rpc_vblock_setb(struct rpc_vblock* vb, uint name_hash, int val);
+CORE_API void rpc_vblock_sets(struct rpc_vblock* vb, uint name_hash, const char* val);
+CORE_API void rpc_vblock_sets_idx(struct rpc_vblock* vb, uint name_hash, int idx, const char* val);
+CORE_API void rpc_vblock_set_arrcnt(struct rpc_vblock* vb, uint name_hash, int cnt);
 
 /* */
-result_t rpc_init();
-void rpc_release();
+CORE_API result_t rpc_init();
+CORE_API void rpc_release();
 
-struct rpc_result* rpc_make_result(struct rpc_vblock* ret, int id, struct rpc_error* err);
-struct rpc_result* rpc_return_error(int id, enum rpc_error_code code, const char* descfmt, ...);
-struct rpc_result* rpc_make_result_bin(const void* data, size_t data_sz);
+CORE_API struct rpc_result* rpc_make_result(struct rpc_vblock* ret, int id, struct rpc_error* err);
+CORE_API struct rpc_result* rpc_return_error(int id, enum rpc_error_code code, const char* descfmt, ...);
+CORE_API struct rpc_result* rpc_make_result_bin(const void* data, size_t data_sz);
 
-struct rpc_result* rpc_process(const char* json_rpc);
-void rpc_freeresult(struct rpc_result* r);
+CORE_API struct rpc_result* rpc_process(const char* json_rpc);
+CORE_API void rpc_freeresult(struct rpc_result* r);
 
-result_t rpc_registercmd(const char* name, pfn_rpc_cmd run_fn, const struct rpc_value* params, 
+CORE_API result_t rpc_registercmd(const char* name, pfn_rpc_cmd run_fn, const struct rpc_value* params, 
     uint param_cnt, const struct rpc_value* results, uint result_cnt, const char* desc, 
     void* user_param);
    

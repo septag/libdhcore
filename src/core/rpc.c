@@ -14,7 +14,6 @@
 #include "dhcore/json.h"
 
 #include "rpc.h"
-#include "mem-ids.h"
 
 #define MAX_COMMAND_LIST    128
 
@@ -169,24 +168,24 @@ struct rpc_vblock* rpc_vblock_create(const struct rpc_value* values, uint value_
     struct allocator stack_alloc;
     result_t r;
 
-    r = mem_stack_create(alloc, &stack_mem, total_sz, MID_RPC);
+    r = mem_stack_create(alloc, &stack_mem, total_sz, 0);
     if (IS_FAIL(r)) 
         return NULL;
     mem_stack_bindalloc(&stack_mem, &stack_alloc);
 
     struct rpc_vblock* vb = (struct rpc_vblock*)A_ALLOC(&stack_alloc, sizeof(struct rpc_vblock), 
-        MID_RPC);
+        0);
     vb->alloc = alloc;
     vb->values = (struct rpc_value*)A_ALLOC(&stack_alloc, sizeof(struct rpc_value)*value_cnt, 
-        MID_RPC);
+        0);
     memcpy(vb->values, values, sizeof(struct rpc_value)*value_cnt);
     vb->value_cnt = value_cnt;
 
-    hashtable_fixed_create(&stack_alloc, &vb->vtbl, value_cnt, MID_RPC);
+    hashtable_fixed_create(&stack_alloc, &vb->vtbl, value_cnt, 0);
     for (uint i = 0; i < value_cnt; i++)
         hashtable_fixed_add(&vb->vtbl, hash_str(values[i].name), i);
 
-    vb->buff = (uint8*)A_ALLOC(&stack_alloc, buff_sz, MID_RPC);
+    vb->buff = (uint8*)A_ALLOC(&stack_alloc, buff_sz, 0);
     memset(vb->buff, 0x00, buff_sz);
 
     return vb;
@@ -432,7 +431,7 @@ result_t rpc_init()
     log_print(LOG_TEXT, "init json-rpc ...");
 
     result_t r;
-    g_rpc = (struct rpc_mgr*)ALLOC(sizeof(struct rpc_mgr), MID_RPC);
+    g_rpc = (struct rpc_mgr*)ALLOC(sizeof(struct rpc_mgr), 0);
     if (g_rpc == NULL)
         return err_printn(__FILE__, __LINE__, RET_OUTOFMEMORY);
     memset(g_rpc, 0x00, sizeof(struct rpc_mgr));
@@ -726,7 +725,7 @@ struct rpc_result* rpc_make_result(struct rpc_vblock* ret, int id, struct rpc_er
         json_destroy(jroot);
         ASSERT(0);
     }
-    struct rpc_result* r = (struct rpc_result*)ALLOC(sizeof(struct rpc_result), MID_RPC);
+    struct rpc_result* r = (struct rpc_result*)ALLOC(sizeof(struct rpc_result), 0);
 
     if (r != NULL)  {
         r->type = RPC_RESULT_JSONRPC;
@@ -748,13 +747,13 @@ struct rpc_result* rpc_make_result_bin(const void* data, size_t data_sz)
     if (data_sz == 0)
         return NULL;
 
-    struct rpc_result* r = (struct rpc_result*)ALLOC(sizeof(struct rpc_result), MID_RPC);
+    struct rpc_result* r = (struct rpc_result*)ALLOC(sizeof(struct rpc_result), 0);
 
     if (r != NULL)  {
         r->type = RPC_RESULT_BINARY;
 
         r->data.bin.bin_sz = data_sz;
-        r->data.bin.bin = ALLOC(data_sz, MID_RPC);
+        r->data.bin.bin = ALLOC(data_sz, 0);
         memcpy(r->data.bin.bin, data, data_sz);
     }
 
@@ -794,14 +793,14 @@ result_t rpc_registercmd(const char* name, pfn_rpc_cmd run_fn, const struct rpc_
     uint id = g_rpc->cmds.item_cnt;
 
     if (param_cnt > 0)  {
-        cmd->params = (struct rpc_value*)ALLOC(sizeof(struct rpc_value)*param_cnt, MID_RPC);
+        cmd->params = (struct rpc_value*)ALLOC(sizeof(struct rpc_value)*param_cnt, 0);
         ASSERT(cmd->params);
         memcpy(cmd->params, params, param_cnt*sizeof(struct rpc_value));
         cmd->param_cnt = param_cnt;
     }
 
     if (result_cnt > 0) {
-        cmd->results = (struct rpc_value*)ALLOC(sizeof(struct rpc_value)*result_cnt, MID_RPC);
+        cmd->results = (struct rpc_value*)ALLOC(sizeof(struct rpc_value)*result_cnt, 0);
         ASSERT(cmd->results);
         memcpy(cmd->results, results, result_cnt*sizeof(struct rpc_value));
         cmd->result_cnt = result_cnt;
