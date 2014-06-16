@@ -676,7 +676,7 @@ struct rpc_result* rpc_make_result(struct rpc_vblock* ret, int id, struct rpc_er
                 ASSERT(0);
                 case RPC_VALUE_FLOAT:
                 json_additem_toobj(jresult, value->name, 
-                    json_create_num(rpc_vblock_geti(ret, hash_str(value->name))));
+                    json_create_num(rpc_vblock_getf(ret, hash_str(value->name))));
                 break;
                 case RPC_VALUE_FLOAT2:
                 json_additem_toobj(jresult, value->name, 
