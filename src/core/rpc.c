@@ -450,9 +450,9 @@ result_t rpc_init()
     };
     const struct rpc_value help_res[] = {
         {"Method", RPC_VALUE_STRING, 0, 32, 1, FALSE},
-        {"Description", RPC_VALUE_STRING, 32, 128, 1, FALSE},
-        {"Params", RPC_VALUE_STRING, 160, 512, 1, FALSE},
-        {"Result", RPC_VALUE_STRING, 672, 512, 1, FALSE}
+        {"Description", RPC_VALUE_STRING, RPC_OFFSET_AUTO, 256, 1, FALSE},
+        {"Params", RPC_VALUE_STRING, RPC_OFFSET_AUTO, 512, 1, FALSE},
+        {"Result", RPC_VALUE_STRING, RPC_OFFSET_AUTO, 512, 1, FALSE}
     };
 
     rpc_registercmd("Help", rpc_method_help, help_params,

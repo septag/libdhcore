@@ -237,17 +237,72 @@ CORE_API void rpc_vblock_sets(struct rpc_vblock* vb, uint name_hash, const char*
 CORE_API void rpc_vblock_sets_idx(struct rpc_vblock* vb, uint name_hash, int idx, const char* val);
 CORE_API void rpc_vblock_set_arrcnt(struct rpc_vblock* vb, uint name_hash, int cnt);
 
-/* */
+/**
+ * Initialize RPC manager, run before issueing any RPC calls
+ * @ingroup rpc
+ */
 CORE_API result_t rpc_init();
+
+/**
+ * Release RPC manager
+ * @ingroup rpc
+ */
 CORE_API void rpc_release();
 
+/**
+ * Makes RPC result from a parameter block, or make error result
+ * @param ret Parameter block, likely the @e result parameter that is passed to command callback
+ * @param id Id of the RPC command, this value is likely the @e id value that is passed to callback
+ * @param err Error structure instead of a valid result, can pass NULL if no error occured
+ * @ingroup rpc
+ */
 CORE_API struct rpc_result* rpc_make_result(struct rpc_vblock* ret, int id, struct rpc_error* err);
+
+/**
+ * Makes formatted RPC error result
+ * @param id Id of the RPC command, this value is likely the @e id value that is passed to callback
+ * @param code Error code
+ * @param descfmt Formatted (printf style) description message
+ * @ingroup rpc
+ */
 CORE_API struct rpc_result* rpc_return_error(int id, enum rpc_error_code code, const char* descfmt, ...);
+
+/**
+ * Makes a binary result, useful if you want to send binary or file blobs back to client
+ * @param data Binary data pointer
+ * @param data_sz Data size in bytes
+ * @ingroup rpc
+ */
 CORE_API struct rpc_result* rpc_make_result_bin(const void* data, size_t data_sz);
 
+/**
+ * Process JSON-RPC string, run registered command callback, and make final result
+ * @params json_rpc Valid JSON-RPC null-terminated string, normally fetched from webserver
+ * @see rpc_result
+ * @ingroup rpc
+ */
 CORE_API struct rpc_result* rpc_process(const char* json_rpc);
+
+/**
+ * After a successful call to @e rpc_process, user must call this function to free the result
+ * @see rpc_process
+ * @ingroup rpc
+ */
 CORE_API void rpc_freeresult(struct rpc_result* r);
 
+/**
+ * Register an RPC command
+ * @param name Command name (method:[name] in JSON-RPC)
+ * @param run_fn Callback function for command execution
+ * @param params An array of @e rpc_values that defines input parameters for command
+ * @param param_cnt Input parameters count (size of @e params array)
+ * @param results An array of @e rpc_values that defines output parameters for command
+ * @param result_cnt Output parameters count (size of @e results array)
+ * @param desc Command description shown in help
+ * @param user_param User defined pointer that will be passed to the callback
+ * @see pfn_rpc_cmd
+ * @ingroup rpc
+ */
 CORE_API result_t rpc_registercmd(const char* name, pfn_rpc_cmd run_fn, const struct rpc_value* params, 
     uint param_cnt, const struct rpc_value* results, uint result_cnt, const char* desc, 
     void* user_param);
