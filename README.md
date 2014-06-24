@@ -1,6 +1,6 @@
 ## libdhcore: darkHAMMER Core 'C' library
 
-Version 0.5.0-dev  
+Version 0.5.1-dev  
 [http://www.hmrengine.com](http://www.hmrengine.com)  
 [https://github.com/septag/libdhcore](https://github.com/septag/libdhcore)  
 
