@@ -242,8 +242,10 @@ int fio_addvdir(const char* directory, int monitor)
     if (monitor)
         return fio_vdir_initmon(vd);
 #else
-    if (monitor)
-        log_print(LOG_WARNING, "File monitoring not implemented to this build");
+    if (monitor) {
+        log_print(LOG_WARNING, "File monitoring not enabled in this build, use --file-mon flag "
+            "in configure options to enable this feature");
+    }
 #endif
 
     log_printf(LOG_INFO, "added virtual directory '%s' with file monitoring %s", dir,

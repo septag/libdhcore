@@ -2,7 +2,7 @@
 import os, sys, platform, inspect, glob
 
 # main global variables
-VERSION = "0.5.0"
+VERSION = "0.5.1"
 PROJNAME = "libdhcore"
 
 ROOTDIR = os.path.dirname(inspect.getfile(inspect.currentframe()))
