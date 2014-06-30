@@ -117,12 +117,13 @@ int util_copyfile(const char* dest, const char* src)
         close(input);
         return FALSE;
     }
-    #ifdef _LINUX_
+
+#ifdef _LINUX_
     int result = sendfile(output, input, NULL, 0) != -1;
-    #else // __APPLE__
+#else // __APPLE__
     off_t bytesCopied;
     int result = sendfile(output, input, 0, &bytesCopied, 0, 0) != -1;
-    #endif
+#endif
     close(input);
     close(output);
     return result;
