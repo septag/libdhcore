@@ -40,7 +40,8 @@
  *   command_free(&cmd);
  *   return 0;
  * }
- * @encode
+ * @endcode
+ * @ingroup cmd
  */
 
 #include "core-api.h"
