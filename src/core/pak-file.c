@@ -141,7 +141,7 @@ result_t pak_open(struct pak_file* pak, struct allocator* alloc,
         hashtable_open_add(&pak->table, hash_str(item->filepath), i);
     }
 
-    pak->compress_mode = header.compress_mode;
+    pak->compress_mode = (enum compress_mode)header.compress_mode;
 
     return RET_OK;
 }

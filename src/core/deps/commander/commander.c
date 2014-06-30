@@ -11,7 +11,7 @@
 #include <assert.h>
 #include "commander.h"
 
-#if defined(_MSVC_)
+#if defined(_MSC_VER)
 #define snprintf _snprintf
 #endif
 
@@ -180,7 +180,7 @@ normalize_args(int *argc, char **argv) {
     // short flag
     if (len > 2 && '-' == arg[0] && !strchr(arg + 1, '-')) {
       alloc += len - 2;
-      nargv = realloc(nargv, alloc * sizeof(char *));
+      nargv = (char**)realloc(nargv, alloc * sizeof(char *));
       for (size_t j = 1; j < len; ++j) {
         nargv[size] = (char*)malloc(3);
         sprintf(nargv[size], "-%c", arg[j]);

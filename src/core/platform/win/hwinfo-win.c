@@ -17,8 +17,8 @@
 
 #if defined(_WIN_)
 
-#include "dhcore/core.h"
-#include "dhcore/win.h"
+#include "core.h"
+#include "win.h"
 #include <intrin.h>
 
 void query_meminfo(struct hwinfo* info)

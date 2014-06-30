@@ -47,7 +47,7 @@
  * @ingroup mt
  */
  
-#if defined(_X86) || defined(_ARM_)
+#if defined(_X86_) || defined(_ARM_)
 typedef long volatile atom_t;
 #elif defined(_X64_)
 typedef int64 volatile atom_t;

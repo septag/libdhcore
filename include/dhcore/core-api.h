@@ -19,19 +19,23 @@
 
 #include "types.h"
 
-#if defined(_CORE_EXPORT_)
+#ifndef _CORE_STATICLIB_
+  #if defined(_CORE_EXPORT_)
     #if defined(_MSVC_)
-    	#define CORE_API _EXTERN_EXPORT_ __declspec(dllexport)
+      #define CORE_API _EXTERN_EXPORT_ __declspec(dllexport)
     #elif defined(_GNUC_)
-    	#define CORE_API _EXTERN_EXPORT_ __attribute__((visibility("protected")))
+      #define CORE_API _EXTERN_EXPORT_ __attribute__((visibility("protected")))
     #endif
+  #else
+    #if defined(_MSVC_)
+   	  #define CORE_API _EXTERN_EXPORT_ __declspec(dllimport)
+    #elif defined(_GNUC_)
+      #define CORE_API _EXTERN_EXPORT_ __attribute__((visibility("default")))
+    #endif
+  #endif /* defined(_CORE_EXPORT) */
 #else
-    #if defined(_MSVC_)
-    	#define CORE_API _EXTERN_EXPORT_ __declspec(dllimport)
-    #elif defined(_GNUC_)
-    	#define CORE_API _EXTERN_EXPORT_ __attribute__((visibility("default")))
-    #endif
-#endif /* defined(_CORE_EXPORT) */
+  #define CORE_API _EXTERN_EXPORT_
+#endif
 
 #if defined(SWIG)
 #define CORE_API
