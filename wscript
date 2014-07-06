@@ -117,6 +117,7 @@ def compiler_setup(conf):
 
     if not compiler_is_arm(conf):
         conf.env.append_unique('DEFINES', '_SIMD_SSE_')
+    conf.env.append_unique('DEFINES', 'HAVE_CONFIG_H')
 
     if conf.options.DASSERT: conf.env.append_unique('DEFINES', '_ENABLEASSERT_')
     if conf.options.DRETAIL: conf.env.append_unique('DEFINES', '_RETAIL_')

@@ -67,6 +67,8 @@ enum tsk_run_context
     TSK_CONTEXT_FREE_NO_MAIN /* assign task to free threads, except the main one */
 };
 
+#define TSK_THREADS_ALL INT32_MAX
+
 /**
  * Callback for task run, each callback is called within a thread, so it will give you the thread_id, 
  * running @e job_id, which is the Id that is created on @e tsk_dispath. And @e worker_idx which is a 
