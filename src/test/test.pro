@@ -15,7 +15,6 @@ linux-g++|linux-clang   {
         -ffast-math
 
     LIBS *= -lpthread -lm
-
 }
 
 SOURCES += \
@@ -33,5 +32,7 @@ HEADERS += \
 # dhcore lib
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../core/release/ -ldhcore
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../core/debug/ -ldhcore
-else:unix: LIBS += -L$$OUT_PWD/../core/ -ldhcore
+else:unix:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../core/ -ldhcore
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../core/ -ldhcore-dbg
+
 DEPENDPATH += $$PWD/../core

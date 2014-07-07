@@ -5,13 +5,15 @@ CONFIG -= qt
 CONFIG += warn_off
 VERSION = "0.5.1"
 
+DEFINES += _VERSION_=\\\"$$VERSION\\\"
+
 CONFIG(release, debug|release) {
     TARGET = dhcore
 }
 
 CONFIG(debug, debug|release) {
-    TARGET = dbcore-dbg
-    DEFINES += _ENABLEASSERT_
+    TARGET = dhcore-dbg
+    DEFINES += _ENABLEASSERT_ _DEBUG_
 }
 
 INCLUDEPATH = \

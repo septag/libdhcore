@@ -94,8 +94,6 @@ int parse_cmd(const char* arg)
     return -1;
 }
 
-
-
 int main(int argc, char** argv)
 {
     command_t cmd;

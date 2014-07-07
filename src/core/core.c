@@ -20,6 +20,10 @@
 #include "crash.h" 
 #include "net-socket.h"
 
+#ifdef _DEBUG_
+  #include <stdio.h>
+#endif
+
 result_t core_init(uint flags)
 {
     if (BIT_CHECK(flags, CORE_INIT_CRASHDUMP))  {
@@ -59,6 +63,10 @@ result_t core_init(uint flags)
         if (IS_FAIL(sock_init()))
             return RET_FAIL;
     }
+
+#ifdef _DEBUG_
+    printf("dhcore library %s initialized\n", _VERSION_);
+#endif
 
     return RET_OK;
 }
