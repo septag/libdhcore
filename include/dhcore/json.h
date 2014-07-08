@@ -49,8 +49,7 @@ enum json_type
  * @ingroup JSON
  */
 struct cJSON;
-typedef struct cJSON cJSON;
-typedef cJSON* json_t;
+typedef struct cJSON* json_t;
 
 /**
  * Initialize JSON parser with custom (and fast) memory management

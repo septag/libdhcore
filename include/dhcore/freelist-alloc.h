@@ -165,4 +165,62 @@ CORE_API uint mem_freelist_getleaks_ts(struct freelist_alloc_ts* freelist, void*
  */
 CORE_API size_t mem_freelist_getsize_ts(struct freelist_alloc_ts* freelist, void* ptr);
 
+#ifdef __cplusplus
+
+#include "mem-mgr.h"
+
+class dhFreelistAlloc
+{
+private:
+    freelist_alloc m_fl;
+
+public:
+    dhFreelistAlloc()
+    {
+        memset(&m_fl, 0x00, sizeof(m_fl));
+    }
+
+    result_t create(size_t size, allocator *alloc = mem_heap(), uint mem_id = 0)
+    {
+        return mem_freelist_create(alloc, &m_fl, size, mem_id);
+    }
+
+    void destroy()
+    {
+        mem_freelist_destroy(&m_fl);
+    }
+
+    void* alloc(size_t size, uint mem_id = 0)
+    {
+        mem_freelist_alloc(&m_fl, size, mem_id);
+    }
+
+    void free(void *ptr)
+    {
+        mem_freelist_free(&m_fl, ptr);
+    }
+
+    void* alloc_aligned(size_t size, uint8 align = 16, uint mem_id = 0)
+    {
+        mem_freelist_alignedalloc(&m_fl, size, align, mem_id);
+    }
+
+    void free_aligned(void *ptr)
+    {
+        mem_freelist_alignedfree(&m_fl, ptr);
+    }
+
+    void bindto(allocator *alloc)
+    {
+        mem_freelist_bindalloc(&m_fl, alloc);
+    }
+
+    uint leaks(void **pptrs = NULL)
+    {
+        return mem_freelist_getleaks(&m_fl, pptrs);
+    }
+
+};
+#endif
+
 #endif

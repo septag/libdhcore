@@ -36,7 +36,8 @@ static const struct unit_test_desc g_tests[] = {
     {test_json, "json", "JSON parser"},
     {test_mempool, "pool", "Pool allocator"},
     {test_thread, "thread", "Basic threads"},
-    {test_taskmgr, "taskmgr", "Task manager"}
+    {test_taskmgr, "taskmgr", "Task manager"},
+    {test_hashtable, "hashtable", "Hash tables"}
     /*, {test_efsw, "watcher", "filesystem monitoring"}*/
 };
 
@@ -57,6 +58,8 @@ void cmd_gettest(command_t* cmd, void* param)
         g_testidx = 4;
     }   else if (str_isequal_nocase(cmd->arg, "taskmgr"))  {
         g_testidx = 5;
+    }   else if (str_isequal_nocase(cmd->arg, "hashtable")) {
+        g_testidx = 6;
     }
 }
 

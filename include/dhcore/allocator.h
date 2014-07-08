@@ -121,4 +121,25 @@ struct allocator
  */
 #define A_LOAD(alloc)   if ((alloc)->load_fn != NULL)   (alloc)->load_fn((alloc)->param);
 
+#define A_PUSH A_SAVE
+#define A_POP A_LOAD
+
+#ifdef __cplusplus
+template <typename T>
+T* mem_new_alloc(allocator *alloc, uint mem_id = 0)
+{
+    void *ptr = A_ALIGNED_ALLOC(alloc, sizeof(T), mem_id);
+    if (ptr != NULL)
+        return new(ptr) T();
+    return NULL;
+}
+
+template <typename T>
+void mem_delete_alloc(allocator *alloc, T *t)
+{
+    t->~T();
+    A_ALIGNED_FREE(alloc, t);
+}
+#endif
+
 #endif /*__ALLOCATOR_H__*/

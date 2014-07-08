@@ -2,7 +2,7 @@ TEMPLATE = lib
 CONFIG += shared
 CONFIG -= app_bundle
 CONFIG -= qt
-CONFIG += warn_off
+CONFIG -= warn_on
 VERSION = "0.5.1"
 
 DEFINES += _VERSION_=\\\"$$VERSION\\\"

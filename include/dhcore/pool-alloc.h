@@ -33,11 +33,11 @@
 struct pool_alloc
 {
     struct linked_list* blocks;     /* first node of blocks */
-    uint              blocks_cnt; /* count of memory pool blocks */
-    struct allocator*   alloc;      /* allocator for further block allocations */
-    uint              mem_id;     /* memory id of the pool */
-    uint              items_max;  /* maximum number of items allowed (per block) */
-    uint              item_sz;    /* size of the item in bytes */
+    uint blocks_cnt; /* count of memory pool blocks */
+    struct allocator* alloc;      /* allocator for further block allocations */
+    uint mem_id;     /* memory id of the pool */
+    uint items_max;  /* maximum number of items allowed (per block) */
+    uint item_sz;    /* size of the item in bytes */
 };
 
 /**
@@ -145,5 +145,57 @@ CORE_API void mem_pool_clear_ts(struct pool_alloc_ts* pool);
  * @ingroup alloc
  */
 CORE_API void mem_pool_bindalloc_ts(struct pool_alloc_ts* pool, struct allocator* alloc);
+
+#ifdef __cplusplus
+#include "mem-mgr.h"
+
+template <typename T>
+class dhPoolAlloc
+{
+private:
+    mem_pool_alloc m_pool;
+
+public:
+    dhPoolAlloc()
+    {
+        memset(&m_pool, 0x00, sizeof(m_pool));
+    }
+
+    result_t create(uint block_sz, allocator *alloc = mem_heap(), uint mem_id = 0)
+    {
+        mem_pool_create(alloc, &m_pool, sizeof(T), block_sz, mem_id);
+    }
+
+    void destroy()
+    {
+        mem_pool_destroy(&m_pool);
+    }
+
+    T* alloc()
+    {
+        return static_cast<T*>(mem_pool_alloc(&m_pool));
+    }
+
+    void free(T *ptr)
+    {
+        mem_pool_free(&m_pool, ptr);
+    }
+
+    void clear()
+    {
+        mem_pool_clear(&m_pool);
+    }
+
+    void bindto(allocator *alloc)
+    {
+        mem_pool_bindalloc(&m_pool, alloc);
+    }
+
+    uint leaks()
+    {
+        return mem_pool_getleaks(&m_pool);
+    }
+};
+#endif
 
 #endif /* __POOLALLOC_H__ */

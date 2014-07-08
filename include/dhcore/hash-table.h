@@ -246,4 +246,222 @@ CORE_API struct hashtable_item* hashtable_open_find(const struct hashtable_open*
  */
 CORE_API void hashtable_open_clear(struct hashtable_open* table);
 
+#ifdef __cplusplus
+/* HashTableFixed */
+template <typename T, uptr_t Invalid = 0>
+class dhHashTableFixed
+{
+private:
+    hashtable_fixed m_table;
+
+public:
+    dhHashTableFixed()
+    {
+        memset(&m_table, 0x00, sizeof(m_table));
+    }
+
+    result_t create(uint slot_cnt, allocator *alloc = mem_heap(), uint mem_id = 0)
+    {
+        return hashtable_fixed_create(alloc, &m_table, slot_cnt, mem_id);
+    }
+
+    void destroy()
+    {
+        hashtable_fixed_destroy(&m_table);
+    }
+
+    void add(const char *key, T value)
+    {
+        add(hash_str(key), value);
+    }
+
+    void add(uint key, T value)
+    {
+        hashtable_fixed_add(&m_table, key, static_cast<uptr_t>(value));
+    }
+
+    T value(const char *key)
+    {
+        return value(hash_str(key));
+    }
+
+    T value(uint key)
+    {
+        hashtable_item *item = hashtable_fixed_find(&m_table, key);
+        if (item != NULL)
+            return static_cast<T>(item->value);
+        else
+            return static_cast<T>(Invalid);
+    }
+
+    void remove(const char *key)
+    {
+        remove(hash_str(key));
+    }
+
+    void remove(uint key)
+    {
+        hashtable_item *item = hashtable_fixed_find(&m_table, key);
+        if (item != NULL)
+            hashtable_fixed_remove(&m_table, item);
+    }
+
+    void clear()
+    {
+        hashtable_fixed_clear(&m_table);
+    }
+
+    static size_t estimate_size(uint slot_cnt)
+    {
+        hashtable_fixed_estimate_size(slot_cnt);
+    }
+
+    bool empty() const
+    {
+        return hashtable_fixed_isempty(&m_table);
+    }
+};
+
+/* HashTableOpen */
+template <typename T, uptr_t Invalid = 0>
+class dhHashTableOpen
+{
+private:
+    hashtable_open m_table;
+
+public:
+    dhHashTableOpen()
+    {
+        memset(&m_table, 0x00, sizeof(m_table));
+    }
+
+    result_t create(uint slot_cnt, allocator *alloc = mem_heap(), uint mem_id = 0)
+    {
+        return hashtable_open_create(alloc, &m_table, slot_cnt, slot_cnt, mem_id);
+    }
+
+    void destroy()
+    {
+        hashtable_open_destroy(&m_table);
+    }
+
+    void add(const char *key, T value)
+    {
+        add(hash_str(key), value);
+    }
+
+    void add(uint key, T value)
+    {
+        hashtable_open_add(&m_table, key, static_cast<uptr_t>(value));
+    }
+
+    T value(const char *key)
+    {
+        return value(hash_str(key));
+    }
+
+    T value(uint key)
+    {
+        hashtable_item *item = hashtable_open_find(&m_table, key);
+        if (item != NULL)
+            return static_cast<T>(item->value);
+        else
+            return static_cast<T>(Invalid);
+    }
+
+    void remove(const char *key)
+    {
+        remove(hash_str(key));
+    }
+
+    void remove(uint key)
+    {
+        hashtable_item *item = hashtable_open_find(&m_table, key);
+        if (item != NULL)
+            hashtable_open_remove(&m_table, item);
+    }
+
+    void clear()
+    {
+        hashtable_open_clear(&m_table);
+    }
+
+    bool empty() const
+    {
+        return hashtable_open_isempty(&m_table);
+    }
+};
+
+/* HashTableChained */
+template <typename T, uptr_t Invalid = 0>
+class dhHashTableChained
+{
+private:
+    hashtable_chained m_table;
+
+public:
+    dhHashTableChained()
+    {
+        memset(&m_table, 0x00, sizeof(m_table));
+    }
+
+    result_t create(uint slot_cnt, allocator *alloc = mem_heap(), allocator *item_alloc = mem_heap(),
+                    uint mem_id = 0)
+    {
+        return hashtable_chained_create(alloc, item_alloc, &m_table, slot_cnt, mem_id);
+    }
+
+    void destroy()
+    {
+        hashtable_chained_destroy(&m_table);
+    }
+
+    void clear()
+    {
+        hashtable_chained_clear(&m_table);
+    }
+
+    bool empty() const
+    {
+        return hashtable_chained_isempty(&m_table);
+    }
+
+    void add(const char *key, T value)
+    {
+        add(hash_str(key), value);
+    }
+
+    void add(uint key, T value)
+    {
+        hashtable_chained_add(&m_table, key, static_cast<T>(value));
+    }
+
+    void remove(const char *key)
+    {
+        remove(hash_str(key));
+    }
+
+    void remove(uint key)
+    {
+        hashtable_item_chained *item = hashtable_chained_find(&m_table, key);
+        if (item != NULL)
+            hashtable_chained_remove(&m_table, item);
+    }
+
+    T value(const char *key)
+    {
+        return value(hash_str(key));
+    }
+
+    T value(uint key)
+    {
+        hashtable_item_chained *item = hashtable_chained_find(&m_table, key);
+        if (item != NULL)
+            return static_cast<T>(item->value);
+        else
+            return static_cast<T>(Invalid);
+    }
+};
+#endif
+
 #endif /* __HASHTABLE_H__ */

@@ -24,7 +24,8 @@ SOURCES += \
     test-json.c \
     test-pool.c \
     test-taskmgr.c \
-    test-thread.c
+    test-thread.c \
+    test-hashtable.cpp
 
 HEADERS += \
     dhcore-test.h

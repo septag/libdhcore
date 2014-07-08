@@ -13,30 +13,19 @@
  *
  ***********************************************************************************/
 
-#ifndef __DHCORE_TEST_H__
-#define __DHCORE_TEST_H__
+#include "dhcore-test.h"
+#include "dhcore/core.h"
+#include "dhcore/hash-table.h"
+#include "dhcore/color.h"
 
-#include "dhcore/numeric.h"
-#include <stdio.h>
-
-void test_json();
-void test_heap();
-void test_freelist();
-void test_mempool();
-void test_thread();
-void test_efsw();
-void test_taskmgr();
-_EXTERN_ void test_hashtable();
-
-INLINE void fill_buffer(void* buffer, size_t size)
+void test_hashtable()
 {
-    uint int_cnt = (uint)(size/sizeof(int));
-    int* ibuf = (int*)buffer;
+    dhColor *test = mem_new<dhColor>();
+    mem_delete<dhColor>(test);
 
-    for (uint i = 0; i < int_cnt; i++)    {
-        ibuf[i] = rand_geti(1, 100);
-    }
+    dhHashTableFixed<int, 666> htable;
+    htable.create(10);
+    htable.add(1, 1);
+    int r = htable.value(23);
+    htable.destroy();
 }
-
-
-#endif /* __DHCORE_TEST_H__ */

@@ -138,4 +138,71 @@ INLINE void arr_clear(struct array* arr)
     arr->item_cnt = 0;
 }
 
+#ifdef __cplusplus
+#include "err.h"
+#include "mem-mgr.h"
+
+template <typename T>
+class dhArray
+{
+private:
+    array m_arr;
+
+public:
+    dhArray()
+    {
+        memset(&m_arr, 0x00, sizeof(m_arr));
+    }
+
+    result_t create(uint item_cnt, uint expand_cnt, allocator *alloc = mem_heap(), uint mem_id = 0)
+    {
+        return arr_create(alloc, &m_arr, sizeof(T), item_cnt, expand_cnt, mem_id);
+    }
+
+    void destroy()
+    {
+        arr_destroy(&m_arr);
+    }
+
+    T* add()
+    {
+        return static_cast<T*>(arr_add(&m_arr));
+    }
+
+    bool empty() const
+    {
+        return arr_isempty(&m_arr);
+    }
+
+    void clear()
+    {
+        arr_clear(&m_arr);
+    }
+
+    uint count() const
+    {
+        return ARR_COUNT(m_arr);
+    }
+
+    T* item(uint idx)
+    {
+        ASSERT(idx < ARR_COUNT(m_arr));
+        return ARR_ITEM(m_arr, T, idx);
+    }
+
+    T& operator[](uint idx)
+    {
+        ASSERT(idx < ARR_COUNT(m_arr));
+        return ARR_ITEM(m_arr, T, idx);
+    }
+
+    const T& operator[](uint idx) const
+    {
+        ASSERT(idx < ARR_COUNT(m_arr));
+        return ARR_ITEM(m_arr, T, idx);
+    }
+
+};
+#endif
+
 #endif /*__ARRAY_H__*/

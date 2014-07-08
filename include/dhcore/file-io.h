@@ -260,4 +260,116 @@ CORE_API void fio_mon_update();
  */
 CORE_API int fio_mon_avail();
 
+#ifdef __cplusplus
+#include "err.h"
+
+class dhFile
+{
+private:
+    file_t m_file;
+
+public:
+    struct mem_data
+    {
+        void *buff;
+        size_t size;
+        allocator *alloc;
+    };
+
+public:
+    dhFile() : m_file(NULL) {}
+    dhFile(file_t f) : m_file(f) {}
+
+    virtual ~dhFile()
+    {
+        if (m_file != NULL)
+            fio_close(m_file);
+    }
+
+    static dhFile create_mem(const char* alias, allocator *alloc = mem_heap(), uint mem_id = 0)
+    {
+        return dhFile(fio_createmem(alloc, alias, mem_id));
+    }
+
+    static dhFile create_disk(const char *filepath)
+    {
+        return dhFile(fio_createdisk(filepath));
+    }
+
+    static dhFile open_mem(const char *filepath, allocator *alloc = mem_heap(), uint mem_id = 0,
+                           bool ignore_vfs = false)
+    {
+        return dhFile(fio_openmem(alloc, filepath, ignore_vfs, mem_id));
+    }
+
+    static dhFile open_disk(const char *filepath, bool ignore_vfs = false)
+    {
+        return dhFile(fio_opendisk(filepath, ignore_vfs));
+    }
+
+    static dhFile attach_mem(void *buff, size_t size, const char *alias,
+                             allocator *alloc = mem_heap(), uint mem_id = 0)
+    {
+        return dhFile(fio_attachmem(alloc, buff, size, alias, mem_id));
+    }
+
+    void seek(int offset, seek_mode smode = SEEK_MODE_START)
+    {
+        ASSERT(m_file);
+        fio_seek(m_file, smod, offset);
+    }
+
+    void read(void *buff, size_t item_sz, size_t item_cnt)
+    {
+        ASSERT(m_file);
+        fio_read(m_file, buff, item_sz, item_cnt);
+    }
+
+    void write(const void *buff, size_t item_sz, size_t item_cnt)
+    {
+        ASSERT(m_file);
+        fio_write(m_file, buff, item_sz, item_cnt);
+    }
+
+    mem_data detach_mem()
+    {
+        mem_data fm;
+        fm.buff = fio_detachmem(m_file, &fm.size, &fm.alloc);
+        return fm;
+    }
+
+    file_mode mode() const
+    {
+        ASSERT(m_file);
+        return m_file != fio_getmode(m_file);
+    }
+
+    size_t size() const
+    {
+        ASSERT(m_file);
+        return fio_getsize(m_file);
+    }
+
+    file_type type() const
+    {
+        ASSERT(m_file);
+        return fio_gettype(m_file);
+    }
+
+    void close()
+    {
+        if (m_file != NULL) {
+            fio_close(m_file);
+            m_file = NULL;
+        }
+    }
+
+    bool is_open() const
+    {
+        return m_file != NULL;
+    }
+};
+
+#endif
+
 #endif /* __FILEIO_H__*/

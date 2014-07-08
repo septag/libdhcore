@@ -168,4 +168,24 @@ CORE_API void mem_heap_bindalloc(struct allocator* alloc);
 #define ALIGN16        __declspec(align(16))
 #endif
 
+#ifdef __cplusplus
+#include <new>
+
+template <typename T>
+T* mem_new(uint mem_id = 0)
+{
+    void *ptr = ALIGNED_ALLOC(sizeof(T), mem_id);
+    if (ptr != NULL)
+        return new(ptr) T();
+    return NULL;
+}
+
+template <typename T>
+void mem_delete(T *t)
+{
+    t->~T();
+    ALIGNED_FREE(t);
+}
+#endif
+
 #endif /* __MEMMGR_H__ */

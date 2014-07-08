@@ -205,5 +205,66 @@ void mem_stack_free_ts(struct stack_alloc_ts* stack, void* ptr);
  */
 CORE_API void mem_stack_bindalloc_ts(struct stack_alloc_ts* stack, struct allocator* alloc);
 
+#ifdef __cplusplus
+
+#include "mem-mgr.h"
+
+class dhStackAlloc
+{
+private:
+    stack_alloc m_stack;
+
+public:
+    dhStackAlloc()
+    {
+        memset(&m_stack, 0x00, sizeof(m_stack));
+    }
+
+    result_t create(size_t size, allocator *alloc = mem_heap(), uint mem_id = 0)
+    {
+        return mem_stack_create(alloc, &m_stack, size, mem_id);
+    }
+
+    void destroy()
+    {
+        mem_stack_destroy(&m_stack);
+    }
+
+    void push()
+    {
+        mem_stack_save(&m_stack);
+    }
+
+    void pop()
+    {
+        mem_stack_load(&m_stack);
+    }
+
+    void* alloc(size_t size, uint mem_id = 0)
+    {
+        return mem_stack_alloc(&m_stack, size, mem_id);
+    }
+
+    void* alloc_aligned(size_t size, uint8 align = 16, uint mem_id = 0)
+    {
+        return mem_stack_alignedalloc(&m_stack, size, align, mem_id);
+    }
+
+    void free(void *ptr)
+    {
+        mem_stack_free(&m_stack, ptr);
+    }
+
+    void free_aligned(void *ptr)
+    {
+        mem_stack_alignedfree(&m_stack, ptr);
+    }
+
+    void bindto(allocator *alloc)
+    {
+        mem_stack_bindalloc(&m_stack, alloc);
+    }
+};
+#endif
 
 #endif /*__STACKALLOC_H__*/
