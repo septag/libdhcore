@@ -1196,4 +1196,120 @@ INLINE struct vec4i* vec4i_or(struct vec4i* r, const struct vec4i* a, const stru
     return r;
 }
 
+#ifdef __cplusplus
+
+class ALIGN16 dhVec3
+{
+private:
+    vec3f m_vec;
+
+public:
+    dhVec3();
+    dhVec3(float x, float y, float z);
+
+    float x() const;
+    float y() const;
+    float z() const;
+    void set(float x, float y, float z);
+
+    bool operator==(const dhVec3& v) const;
+
+    dhVec3 operator*(float k) const;
+    dhVec3& operator*=(float k);
+
+    dhVec3 operator/(float k) const;
+    dhVec3& operator/=(float k);
+
+    dhVec3 operator+(const dhVec3& v) const;
+    dhVec3& operator+=(const dhVec3& v);
+
+    dhVec3 operator-(const dhVec3& v) const;
+    dhVec3& operator-=(const dhVec3& v);
+
+    static float dot(const dhVec3& v0, const dhVec3& v1);
+    static dhVec3 cross(const dhVec3& v0, const dhVec3& v1);
+    static float angle(const dhVec3& v0, const dhVec3& v1);
+    static dhVec3 lerp(const dhVec3& v0, const dhVec3& v1, float t);
+    static dhVec3 cubic(const dhVec3& v0, const dhVec3& v1, const dhVec3& v2, const dhVec3& v3,
+                        float t);
+    void normalize();
+    float length() const;
+
+    operator vec3f*();
+    operator const vec3f*() const;
+};
+
+class ALIGN16 dhQuat
+{
+private:
+    quat4f m_quat;
+
+public:
+    dhQuat();
+    dhQuat(float x, float y, float z, float w);
+
+    dhQuat operator*(const dhQuat& q) const;
+    dhQuat& operator*=(const dhQuat& q);
+
+    bool operator==(const dhQuat& q) const;
+
+    static dhQuat slerp(const dhQuat& q0, const dhQuat& q1, float t);
+
+    float rotation_angle() const;
+    dhVec3 rotation_axis() const;
+    dhVec3 rotation_euler() const;
+
+    void from_euler(float pitch, float yaw, float roll);
+    void from_axis(const dhVec3& axis, float angle);
+    void set_identity();
+
+    operator quat4f*();
+    operator const quat4f*() const;
+};
+
+class ALIGN16 dhMat3
+{
+private:
+    mat3f m_mat;
+
+public:
+    dhMat3();
+    dhMat3(float m11, float m12, float m13,
+           float m21, float m22, float m23,
+           float m31, float m32, float m33,
+           float m41, float m42, float m43);
+
+    void set(float m11, float m12, float m13,
+             float m21, float m22, float m23,
+             float m31, float m32, float m33,
+             float m41, float m42, float m43);
+
+    dhMat3 operator+(const dhMat3& m) const;
+    dhMat3& operator+=(const dhMat3& m);
+
+    dhMat3 operator*(float k) const;
+    dhMat3& operator*=(float k);
+
+    dhMat3 rotation() const;
+    dhQuat rotation_quat() const;
+    dhVec3 rotation_euler() const;
+    dhVec3 translation() const;
+
+    void set_identity();
+    void set_rotation_euler(float pitch, float yaw, float roll);
+    void set_rotation_quat(const dhQuat& quat);
+    void set_rotation_axis(const dhVec3& axis, float angle);
+    void set_translation(const dhVec3 t);
+    void set_translation(float x, float y, float z);
+    void set_projection(const dhVec3& norm);
+    void set_reflection(const dhVec3& refl);
+
+    operator mat3f*();
+    operator const mat3f*() const;
+};
+
+
+
+#endif
+
 #endif /* __VECMATH_H__ */

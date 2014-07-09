@@ -315,6 +315,16 @@ public:
         color_lerp(&r.m_clr, &c0.m_clr, &c1.m_clr, t);
         return r;
     }
+
+    operator color*()
+    {
+        return &m_clr;
+    }
+
+    operator const color*() const
+    {
+        return &m_clr;
+    }
 };
 #endif
 

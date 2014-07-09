@@ -20,8 +20,9 @@
 
 void test_hashtable()
 {
-    dhColor *test = mem_new<dhColor>();
-    mem_delete<dhColor>(test);
+    dhColor test(1.0f, 2.0f, 3.0f);
+    const color* c = test;
+
 
     dhHashTableFixed<int, 666> htable;
     htable.create(10);

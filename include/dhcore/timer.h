@@ -109,5 +109,89 @@ CORE_API void timer_pauseall();
  */
 CORE_API void timer_resumeall();
 
+#ifdef __cplusplus
+
+#include "err.h"
+
+class dhTimer
+{
+private:
+    timer *m_tm;
+
+public:
+    dhTimer() : m_tm(NULL) {}
+
+    result_t create(bool start = false)
+    {
+        m_tm = timer_createinstance(start);
+        return m_tm != NULL ? RET_OUTOFMEMORY : RET_OK;
+    }
+
+    void destroy()
+    {
+        ASSERT(m_tm);
+        timer_destroyinstance(m_tm);
+    }
+
+    void start()
+    {
+        ASSERT(m_tm);
+        TIMER_START(m_tm);
+    }
+
+    void pause()
+    {
+        ASSERT(m_tm);
+        TIMER_PAUSE(m_tm);
+    }
+
+    void stop()
+    {
+        ASSERT(m_tm);
+        TIMER_STOP(m_tm);
+    }
+
+    float delta() const
+    {
+        return m_tm->dt;
+    }
+
+    float t() const
+    {
+        return m_tm->t;
+    }
+
+    float rate() const
+    {
+        return m_tm->rate;
+    }
+
+    void set_rate(float rate)
+    {
+        m_tm->rate = rate;
+    }
+};
+
+class dhProfileTimer
+{
+private:
+    uint64 m_t0;
+
+public:
+    dhProfileTimer() : m_t0(0) {}
+
+    void begin()
+    {
+        m_t0 = timer_querytick();
+    }
+
+    double end()
+    {
+        return timer_calctm(m_t0, timer_querytick());
+    }
+};
+
+#endif
+
 #endif /*__TIMER_H__*/
     

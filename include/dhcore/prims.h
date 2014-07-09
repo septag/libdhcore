@@ -366,4 +366,40 @@ CORE_API int sphere_intersects(const struct sphere* s1, const struct sphere* s2)
  */
 CORE_API float ray_intersect_plane(const struct ray* r, const struct plane* p);
 
+#ifdef __cplusplus
+
+class dhAABB
+{
+private:
+    aabb m_aabb;
+};
+
+class dhSphere
+{
+private:
+    sphere m_sphere;
+
+public:
+    dhSphere()
+    {
+    }
+
+    dhSphere(float x, float y, float z, float r)
+    {
+        sphere_setf(&m_sphere, x, y, z, r);
+    }
+
+    void from_aabb(const dhAABB& box)
+    {
+        sphere_from_aabb(&m_sphere, &box.m_aabb);
+    }
+
+    bool point_in()
+    {
+        sphere_ptinv();
+    }
+
+}
+#endif
+
 #endif /* PRIMS_H */
