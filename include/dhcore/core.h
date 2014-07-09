@@ -46,6 +46,7 @@
 #include "core-api.h"
 #include "numeric.h"
 #include "str.h"
+#include "path.h"
 #include "allocator.h"
 #include "util.h"
 

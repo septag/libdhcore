@@ -465,7 +465,7 @@ public:
     }
 };
 
-}
+} /* dh */
 #endif
 
 #endif /* __HASHTABLE_H__ */

@@ -12,6 +12,9 @@
  *   and/or other materials provided with the distribution.
  *
  ***********************************************************************************/
+#include "crash.h"
+
+#ifdef _WIN_
 
 #include <stdio.h>
 #include <signal.h>
@@ -21,7 +24,6 @@
 #include <stdlib.h>
 
 #include "win.h"
-#include "crash.h"
 #include "log.h"
 
 /**********************************************************************
@@ -967,7 +969,7 @@ private:
     pGMI = (tGMI) GetProcAddress( hPsapi, "GetModuleInformation" );
     if ( (pEPM == NULL) || (pGMFNE == NULL) || (pGMBN == NULL) || (pGMI == NULL) )
     {
-      // we couldn´t find all functions
+      // we couldnÂ´t find all functions
       FreeLibrary(hPsapi);
       return FALSE;
     }
@@ -1661,3 +1663,5 @@ void StackWalker::OnOutput(LPCSTR buffer)
 {
   OutputDebugStringA(buffer);
 }
+
+#endif /* _WIN_ */

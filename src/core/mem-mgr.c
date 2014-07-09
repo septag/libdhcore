@@ -27,6 +27,7 @@
 #include "str.h"
 #include "err.h"
 #include "mt.h"
+#include "path.h"
 
 /* global heap allocator */
 static struct allocator g_memheap;

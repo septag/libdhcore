@@ -61,7 +61,8 @@ SOURCES += \
     zip.c \
     deps/cJSON/cJSON.c \
     deps/commander/commander.c \
-    deps/miniz/miniz.c
+    deps/miniz/miniz.c \
+    path.c
 
 unix    {
     SOURCES += \
@@ -137,5 +138,6 @@ HEADERS = \
     ../../include/dhcore/variant.h \
     ../../include/dhcore/vec-math.h \
     ../../include/dhcore/win.h \
-    ../../include/dhcore/zip.h
+    ../../include/dhcore/zip.h \
+    ../../include/dhcore/path.h
 

@@ -1200,6 +1200,7 @@ INLINE struct vec4i* vec4i_or(struct vec4i* r, const struct vec4i* a, const stru
 
 namespace dh {
 
+/* Vec3 */
 class ALIGN16 Vec3
 {
 private:
@@ -1347,6 +1348,7 @@ public:
     operator const float*() const {   return m_vec.f; }
 };
 
+/* Vec4 */
 class ALIGN16 Vec4 : public Vec3
 {
 public:
@@ -1419,6 +1421,7 @@ public:
     }
 };
 
+/* Quat */
 class ALIGN16 Quat
 {
 private:
@@ -1510,6 +1513,7 @@ public:
     operator const float*() const { return m_quat.f;  }
 };
 
+/* Mat3 */
 class ALIGN16 Mat3
 {
 private:
@@ -1726,6 +1730,7 @@ public:
     operator const float*() const {   return m_mat.f; }
 };
 
+/* Mat4 */
 class ALIGN16 Mat4
 {
 private:
@@ -1835,7 +1840,7 @@ public:
     operator const float*() const {   return m_mat.f; }
 };
 
-
+/* Vec2 */
 class Vec2
 {
 private:
@@ -1926,6 +1931,7 @@ public:
     float operator[](int idx) const {   return m_vec.f[idx];    }
 };
 
+/* Vec2i */
 class Vec2i
 {
 private:

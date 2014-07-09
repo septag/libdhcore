@@ -377,7 +377,7 @@ public:
     }
 };
 
-}
+} /* dh */
 #endif
 
 #endif /* __FILEIO_H__*/

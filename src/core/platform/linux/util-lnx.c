@@ -25,7 +25,7 @@
 #include <sys/sendfile.h>
 #include <stdio.h>
 
-#include "str.h"
+#include "path.h"
 
 char* util_getexedir(char* outpath)
 {

@@ -129,7 +129,7 @@ CORE_API char* str_utf8_encode(const char* instr, uint instr_len, uint* out_len)
  * decode utf-8 string into single-byte
  * @ingroup str
  */
-CORE_API char* str_utf8_decode(const char* instr, uint instr_len, uint* out_len);
+CORE_API char* str_utf8_decode(const char* instr, uint instr_len);
 
 /**
  * free allocated utf-8 string using either @see str_utf8_encode or @see str_utf8_decode
@@ -142,58 +142,5 @@ CORE_API void str_utf8_free(char* s);
  * @ingroup str
  */
 CORE_API void* str_toptr(const char* s);
-
-/**
- * convert windows-style path ("\\t\\win\\path") to unix-style path ("/t/win/path")
- * @ingroup str
- */
-CORE_API char* path_tounix(char* outpath, const char* inpath);
-/**
- * convert unix-style path ("/t/unix/path") to windows-style path ("\\t\\unix\\path")
- * @ingroup str
- */
-CORE_API char* path_towin(char* outpath, const char* inpath);
-/**
- * convert path to platform specific format
- * @ingroup str
- */
-CORE_API char* path_norm(char* outpath, const char* inpath);
-/**
- * extract directory from the path
- * @ingroup str
- */
-CORE_API char* path_getdir(char* outpath, const char* inpath);
-/**
- * extract filename from the path, without any extensions
- * @ingroup str
- */
-CORE_API char* path_getfilename(char* outpath, const char* inpath);
-/**
- * extract file extension from the path
- * @ingroup str
- */
-CORE_API char* path_getfileext(char* outpath, const char* inpath);
-/**
- * extract full filename (with extension) from path
- * @ingroup str
- */
-CORE_API char* path_getfullfilename(char* outpath, const char* inpath);
-/**
- * go up one directory in path string
- * @ingroup str
- */
-CORE_API char* path_goup(char* outpath, const char* inpath);
-/**
- * check if file is valid (exists)
- * @ingroup str
- */
-CORE_API int path_isfilevalid(const char* inpath);
-
-/**
- * join multiple paths (or filenames) into one \n
- * Last argument should always be NULL to indicate that join arguments are finished
- * @ingroup str
- */
-CORE_API char* path_join(char* outpath, const char* join0, const char* join1, ...);
 
 #endif /*__STR_H__*/

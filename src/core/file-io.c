@@ -24,6 +24,7 @@
 #include "hash-table.h"
 #include "mt.h"
 #include "util.h"
+#include "path.h"
 
 #if defined(_FILEMON_)
 /* You'll need 3rdparty EFSW library (forked): https://bitbucket.org/sepul/efsw */

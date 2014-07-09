@@ -34,12 +34,6 @@
 #define ENCODE_ASCII(c) (c)
 #define DECODE_ASCII(u16) (char)((u16) > 0x7f ? '?' : c)
 
-#if defined(_WIN_)
-#define SEP_CHAR '\\'
-#else
-#define SEP_CHAR '/'
-#endif
-
 /*************************************************************************************************/
 INLINE char* str_realloc(char* s, uint newsz)
 {
@@ -234,10 +228,10 @@ char* str_utf8_encode(const char* instr, uint instr_len, uint* out_len)
     return newbuf;
 }
 
-char* str_utf8_decode(const char* instr, uint instr_len, uint* out_len)
+char* str_utf8_decode(const char* instr, uint instr_len)
 {
-    uint pos = instr_len;
-    uint len = 0;
+    int pos = (int)instr_len;
+    int len = 0;
     char* newbuf = (char*)ALLOC(instr_len + 1, 0);
 
     while (pos > 0) {
@@ -296,176 +290,3 @@ void* str_toptr(const char* s)
     return (void*)p;
 }
 
-/*************************************************************************************************/
-/* path/filename helper functions */
-char* path_norm(char* outpath, const char* inpath)
-{
-    if (inpath[0] == 0) {
-        outpath[0] = 0;
-        return outpath;
-    }
-
-#if defined(_WIN_)
-    char tmp[DH_PATH_MAX];
-    GetFullPathName(inpath, DH_PATH_MAX, tmp, NULL);
-    path_towin(outpath, tmp);
-    size_t sz = strlen(outpath);
-    if (outpath[sz-1] == '\\')
-        outpath[sz-1] = 0;
-    return outpath;
-#else
-    char* tmp = realpath(inpath, NULL);
-    if (tmp != NULL)    {
-        path_tounix(outpath, tmp);
-        free(tmp);
-    }   else    {
-        strcpy(outpath, inpath);
-    }
-    
-    size_t sz = strlen(outpath);
-    if (outpath[sz-1] == '/')
-        outpath[sz-1] = 0;
-    return outpath;
-#endif
-}
-
-char* path_tounix(char* outpath, const char* inpath)
-{
-    char tmp[DH_PATH_MAX];
-    strcpy(tmp, inpath);
-    str_replace(tmp, '\\', '/');
-    strcpy(outpath, tmp);
-    return outpath;
-}
-
-char* path_towin(char* outpath, const char* inpath)
-{
-    char tmp[DH_PATH_MAX];
-    strcpy(tmp, inpath);
-    str_replace(tmp, '/', '\\');
-    strcpy(outpath, tmp);
-    return outpath;
-}
-
-char* path_getdir(char* outpath, const char* inpath)
-{
-    /* to prevent aliasing */
-    char tmp[DH_PATH_MAX];
-    strcpy(tmp, inpath);
-
-    /* Path with '/' or '\\' at the End */
-    char* r = strrchr(tmp, '/');
-    if (r == NULL)     r = strrchr(tmp, '\\');
-    if (r != NULL)     {    strncpy(tmp, inpath, (r - tmp)); tmp[r - tmp] = 0;    }
-    else               tmp[0] = 0;
-
-    strcpy(outpath, tmp);
-    return outpath;
-}
-
-char* path_getfilename(char* outpath, const char* inpath)
-{
-    char* r;
-    char tmp[DH_PATH_MAX];
-    strcpy(tmp, inpath);
-
-    r = strrchr(tmp, '/');
-    if (r == NULL)     r = strrchr(tmp, '\\');
-    if (r != NULL)     strcpy(tmp, r + 1);
-
-    /* Name only */
-    r = strrchr(tmp, '.');
-    if (r != NULL)     *r = 0;
-
-    strcpy(outpath, tmp);
-    return outpath;
-}
-
-char* path_getfileext(char* outpath, const char* inpath)
-{
-    char tmp[DH_PATH_MAX];     /* Prevent Aliasing */
-
-    strcpy(tmp, inpath);
-    char* r = strrchr(tmp, '.');
-    if (r != NULL)     strcpy(tmp, r + 1);
-    else               tmp[0] = 0;
-
-    r = strchr(tmp, '/');
-
-    strcpy(outpath, (r != NULL) ? (r + 1) : tmp);
-    return outpath;
-}
-
-char* path_getfullfilename(char* outpath, const char* inpath)
-{
-    const char* r;
-    char tmp[DH_PATH_MAX];     /* Prevent Aliasing */
-    strcpy(tmp, inpath);
-    r = strrchr(inpath, '/');
-    if (r == NULL)     r = strrchr(inpath, '\\');
-    if (r != NULL)     strcpy(tmp, r + 1);
-    else               strcpy(tmp, inpath);
-
-    strcpy(outpath, tmp);
-    return outpath;
-}
-
-char* path_goup(char* outpath, const char* inpath)
-{
-    char tmp[DH_PATH_MAX];
-    strcpy(tmp, inpath);
-    size_t s = strlen(tmp);
-
-    if (tmp[s-1] == '/' || tmp[s-1] == '\\')
-        tmp[s-1] = 0;
-
-    /* handle case when the path is like 'my/path/./' */
-    if (s>3 && tmp[s-2] == '.' && (tmp[s-3] == '/' || tmp[s-3] == '\\'))
-        tmp[s-3] = 0;
-    /* handle case when the path is like 'my/path/.' */
-    if (s>2 && tmp[s-1] == '.' && (tmp[s-2] == '/' || tmp[s-2] == '\\'))
-        tmp[s-2] = 0;
-
-    char* up = strrchr(tmp, '/');
-    if (up == NULL)
-        up = strrchr(tmp, '\\');
-
-    if (up != NULL)
-        *up = 0;
-
-    strcpy(outpath, tmp);
-    return outpath;
-}
-
-int path_isfilevalid(const char* inpath)
-{
-    FILE* f = fopen(inpath, "rb");
-    if (f != NULL)
-        fclose(f);
-    return (f != NULL);
-}
-
-char* path_join(char* outpath, const char* join0, const char* join1, ...)
-{
-    char tmp[DH_PATH_MAX];
-    char sep[] = {SEP_CHAR, 0};
-
-    if (join0[0] != 0)   {
-        strcpy(tmp, join0);
-        strcat(tmp, sep);
-        strcat(tmp, join1);
-    }   else    {
-        strcpy(tmp, join1);
-    }
-
-    va_list args;
-    va_start(args, join1);
-    const char* join2;
-    while ((join2 = va_arg(args, const char*)) != NULL) {
-        strcat(tmp, sep);
-        strcat(tmp, join2);
-    }
-    va_end(args);
-
-    return strcpy(outpath, tmp);
-}
