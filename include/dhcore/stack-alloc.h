@@ -209,13 +209,15 @@ CORE_API void mem_stack_bindalloc_ts(struct stack_alloc_ts* stack, struct alloca
 
 #include "mem-mgr.h"
 
-class dhStackAlloc
+namespace dh {
+
+class StackAlloc
 {
 private:
     stack_alloc m_stack;
 
 public:
-    dhStackAlloc()
+    StackAlloc()
     {
         memset(&m_stack, 0x00, sizeof(m_stack));
     }
@@ -265,6 +267,8 @@ public:
         mem_stack_bindalloc(&m_stack, alloc);
     }
 };
+
+}
 #endif
 
 #endif /*__STACKALLOC_H__*/

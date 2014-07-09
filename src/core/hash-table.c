@@ -81,8 +81,8 @@ static const uint g_primes[] = {
 
 
 /* fwd */
-static uint probe_linear(uint idx, uint hash, uint slot_cnt, const struct hashtable_item* slots);
-static void hashtable_open_reorder(struct hashtable_open* table, struct hashtable_item* slots, uint cnt);
+static uint probe_linear(uint idx, uint hash, uint slot_cnt, const struct hashtable_item* items);
+static void hashtable_open_reorder(struct hashtable_open* table, struct hashtable_item* items, uint cnt);
 static uint hashtable_get_prime(uint n);
 
 /*************************************************************************************************/
@@ -189,11 +189,11 @@ result_t hashtable_fixed_create(struct allocator* alloc,
     table->alloc = alloc;
     /* we allocate 1.5x capacity for less collisions */
     table->slots_cnt = hashtable_get_prime(slots_cnt + (slots_cnt/2));
-    table->slots = (struct hashtable_item*)A_ALLOC(alloc,
+    table->items = (struct hashtable_item*)A_ALLOC(alloc,
         sizeof(struct hashtable_item)*table->slots_cnt, mem_id);
-    if (table->slots == NULL)
+    if (table->items == NULL)
         return RET_OUTOFMEMORY;
-    memset(table->slots, 0x00, sizeof(struct hashtable_item)*table->slots_cnt);
+    memset(table->items, 0x00, sizeof(struct hashtable_item)*table->slots_cnt);
 
     return RET_OK;
 }
@@ -206,8 +206,8 @@ size_t hashtable_fixed_estimate_size(uint slots_cnt)
 
 void hashtable_fixed_destroy(struct hashtable_fixed* table)
 {
-    if (table->slots != NULL)
-        A_FREE(table->alloc, table->slots);
+    if (table->items != NULL)
+        A_FREE(table->alloc, table->items);
 }
 
 int hashtable_fixed_isempty(struct hashtable_fixed* table)
@@ -226,11 +226,11 @@ result_t hashtable_fixed_add(struct hashtable_fixed* table, uint hash_key, uptr_
 {
     uint idx = hash_key % table->slots_cnt;
     /* if slot is not empty, probe linear and find a free slot */
-    if (table->slots[idx].hash != 0)
-        idx = probe_linear(idx, 0, table->slots_cnt, table->slots);
+    if (table->items[idx].hash != 0)
+        idx = probe_linear(idx, 0, table->slots_cnt, table->items);
     ASSERT(idx != INVALID_INDEX);   /* maybe too much values are added ? */
-    table->slots[idx].hash = hash_key;
-    table->slots[idx].value = value;
+    table->items[idx].hash = hash_key;
+    table->items[idx].value = value;
     table->items_cnt ++;
     return RET_OK;
 }
@@ -241,19 +241,19 @@ struct hashtable_item* hashtable_fixed_find(const struct hashtable_fixed* table,
 		return NULL;
 
     uint idx = hash_key % table->slots_cnt;
-    if (table->slots[idx].hash == hash_key)
-        return &table->slots[idx];
+    if (table->items[idx].hash == hash_key)
+        return &table->items[idx];
 
-    idx = probe_linear(idx, hash_key, table->slots_cnt, table->slots);
+    idx = probe_linear(idx, hash_key, table->slots_cnt, table->items);
     if (idx != INVALID_INDEX)
-        return &table->slots[idx];
+        return &table->items[idx];
     else
         return NULL;
 }
 
 void hashtable_fixed_clear(struct hashtable_fixed* table)
 {
-    memset(table->slots, 0x00, sizeof(struct hashtable_item)*table->slots_cnt);
+    memset(table->items, 0x00, sizeof(struct hashtable_item)*table->slots_cnt);
     table->items_cnt = 0;
 }
 
@@ -271,19 +271,19 @@ result_t hashtable_open_create(struct allocator* alloc, struct hashtable_open* t
     table->slots_grow = grow_cnt;
     table->mem_id = mem_id;
 
-    table->slots = (struct hashtable_item*)A_ALLOC(alloc, sizeof(struct hashtable_item)*slots_cnt,
+    table->items = (struct hashtable_item*)A_ALLOC(alloc, sizeof(struct hashtable_item)*slots_cnt,
         mem_id);
-    if (table->slots == NULL)
+    if (table->items == NULL)
         return RET_OUTOFMEMORY;
-    memset(table->slots, 0x00, sizeof(struct hashtable_item)*slots_cnt);
+    memset(table->items, 0x00, sizeof(struct hashtable_item)*slots_cnt);
 
     return RET_OK;
 }
 
 void hashtable_open_destroy(struct hashtable_open* table)
 {
-    if (table->slots != NULL)
-        A_FREE(table->alloc, table->slots);
+    if (table->items != NULL)
+        A_FREE(table->alloc, table->items);
 }
 
 int hashtable_open_isempty(struct hashtable_open* table)
@@ -304,42 +304,42 @@ result_t hashtable_open_add(struct hashtable_open* table,
 
         hashtable_open_reorder(table, (struct hashtable_item*)tmp, new_cnt);
 
-        A_FREE(table->alloc, table->slots);
-        table->slots = (struct hashtable_item*)tmp;
+        A_FREE(table->alloc, table->items);
+        table->items = (struct hashtable_item*)tmp;
         table->slots_cnt = new_cnt;
         table->slots_grow <<= 1; /* exponentially increase the grow value */
     }
 
     uint idx = hash_key % table->slots_cnt;
     /* if slot is not empty, probe linear and find a free slot */
-    if (table->slots[idx].hash != 0)
-        idx = probe_linear(idx, 0, table->slots_cnt, table->slots);
+    if (table->items[idx].hash != 0)
+        idx = probe_linear(idx, 0, table->slots_cnt, table->items);
 
     ASSERT(idx != INVALID_INDEX);   /* maybe too much values are added ? */
 
-    table->slots[idx].hash = hash_key;
-    table->slots[idx].value = value;
+    table->items[idx].hash = hash_key;
+    table->items[idx].value = value;
     table->items_cnt ++;
     return RET_OK;
 }
 
 /* reorder hash table by pushing hashes into new buffer,
- * slots: new slots that are consturcted from 'table' hash-table (should be memzero'd) */
-static void hashtable_open_reorder(struct hashtable_open* table, struct hashtable_item* slots, 
+ * items: new items that are consturcted from 'table' hash-table (should be memzero'd) */
+static void hashtable_open_reorder(struct hashtable_open* table, struct hashtable_item* items,
     uint cnt)
 {
     for (uint i = 0, prev_cnt = table->slots_cnt; i < prev_cnt; i++)  {
-        uint key = table->slots[i].hash;
-        uptr_t value = table->slots[i].value;
+        uint key = table->items[i].hash;
+        uptr_t value = table->items[i].value;
 
         /* look for hash = 0 */
         uint idx = key % cnt;
-        if (slots[idx].hash != 0)
-            idx = probe_linear(idx, 0, cnt, slots);
+        if (items[idx].hash != 0)
+            idx = probe_linear(idx, 0, cnt, items);
         ASSERT(idx != INVALID_INDEX);
 
-        slots[idx].hash = key;
-        slots[idx].value = value;
+        items[idx].hash = key;
+        items[idx].value = value;
     }
 }
 
@@ -355,12 +355,12 @@ struct hashtable_item* hashtable_open_find(const struct hashtable_open* table, u
         return NULL;
 
     uint idx = hash_key % table->slots_cnt;
-    if (table->slots[idx].hash == hash_key)
-        return &table->slots[idx];
+    if (table->items[idx].hash == hash_key)
+        return &table->items[idx];
 
-    idx = probe_linear(idx, hash_key, table->slots_cnt, table->slots);
+    idx = probe_linear(idx, hash_key, table->slots_cnt, table->items);
     if (idx != INVALID_INDEX)
-        return &table->slots[idx];
+        return &table->items[idx];
     else
         return NULL;
 }
@@ -368,16 +368,16 @@ struct hashtable_item* hashtable_open_find(const struct hashtable_open* table, u
 
 void hashtable_open_clear(struct hashtable_open* table)
 {
-    memset(table->slots, 0x00, sizeof(struct hashtable_item)*table->slots_cnt);
+    memset(table->items, 0x00, sizeof(struct hashtable_item)*table->slots_cnt);
     table->items_cnt = 0;
 }
 
 /*************************************************************************************************/
-static uint probe_linear(uint idx, uint hash, uint slot_cnt, const struct hashtable_item* slots)
+static uint probe_linear(uint idx, uint hash, uint slot_cnt, const struct hashtable_item* items)
 {
     for (uint i = 1; i < slot_cnt; i++)  {
         uint r = (idx + i) % slot_cnt;
-        if (slots[r].hash == hash)
+        if (items[r].hash == hash)
             return r;
     }
     return INVALID_INDEX;

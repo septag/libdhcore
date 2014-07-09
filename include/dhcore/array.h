@@ -142,14 +142,16 @@ INLINE void arr_clear(struct array* arr)
 #include "err.h"
 #include "mem-mgr.h"
 
+namespace dh {
+
 template <typename T>
-class dhArray
+class Array
 {
 private:
     array m_arr;
 
 public:
-    dhArray()
+    Array()
     {
         memset(&m_arr, 0x00, sizeof(m_arr));
     }
@@ -202,7 +204,11 @@ public:
         return ARR_ITEM(m_arr, T, idx);
     }
 
+    operator const array*() const  {    return &m_arr;  }
+    operator array*()   {   return &m_arr;  }
 };
+
+}   /* dh */
 #endif
 
 #endif /*__ARRAY_H__*/

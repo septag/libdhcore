@@ -169,13 +169,15 @@ CORE_API size_t mem_freelist_getsize_ts(struct freelist_alloc_ts* freelist, void
 
 #include "mem-mgr.h"
 
-class dhFreelistAlloc
+namespace dh {
+
+class FreelistAlloc
 {
 private:
     freelist_alloc m_fl;
 
 public:
-    dhFreelistAlloc()
+    FreelistAlloc()
     {
         memset(&m_fl, 0x00, sizeof(m_fl));
     }
@@ -219,8 +221,9 @@ public:
     {
         return mem_freelist_getleaks(&m_fl, pptrs);
     }
-
 };
+
+} /* dh */
 #endif
 
 #endif

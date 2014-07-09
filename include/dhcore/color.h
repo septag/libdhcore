@@ -179,34 +179,31 @@ INLINE struct color* color_lerp(struct color* r, const struct color* c1, const s
 #ifdef __cplusplus
 #include "err.h"
 
-class dhColor
+namespace dh {
+
+class ALIGN16 Color
 {
 private:
     color m_clr;
 
 public:
-    dhColor()
+    Color()
     {
     }
 
-    dhColor(float r, float g, float b, float a = 1.0f)
+    Color(float r, float g, float b, float a = 1.0f)
     {
         color_setf(&m_clr, r, g, b, a);
     }
 
-    dhColor(uint8 r, uint8 g, uint8 b, uint8 a = 255)
+    Color(uint8 r, uint8 g, uint8 b, uint8 a = 255)
     {
         color_seti(&m_clr, r, g, b, a);
     }
 
-    float operator[](uint idx) const
+    Color(const color c)
     {
-        return m_clr.f[idx];
-    }
-
-    float& operator[](uint idx)
-    {
-        return m_clr.f[idx];
+        m_clr = c;
     }
 
     float r() const
@@ -229,69 +226,77 @@ public:
         return m_clr.a;
     }
 
-    void set(float r, float g, float b, float a = 1.0f)
+    Color& set(float r, float g, float b, float a = 1.0f)
     {
         color_setf(&m_clr, r, g, b, a);
+        return *this;
     }
 
-    void seti(uint8 r, uint8 g, uint8 b, uint8 a = 255)
+    Color& set(uint8 r, uint8 g, uint8 b, uint8 a = 255)
     {
         color_seti(&m_clr, r, g, b, a);
+        return *this;
     }
 
-    bool operator==(const dhColor& c)
+    Color& set(const color c)
+    {
+        m_clr = c;
+        return *this;
+    }
+
+    bool operator==(const Color& c)
     {
         return color_isequal(&m_clr, &c.m_clr);
     }
 
-    dhColor linear() const
+    Color linear() const
     {
-        dhColor c;
+        Color c;
         color_tolinear(&c.m_clr, &m_clr);
         return c;
     }
 
-    dhColor gamma() const
+    Color gamma() const
     {
-        dhColor c;
+        Color c;
         color_togamma(&c.m_clr, &m_clr);
         return c;
     }
 
-    dhColor operator+(const dhColor& c) const
+    Color operator+(const Color& c) const
     {
-        dhColor r;
+        Color r;
         color_add(&r.m_clr, &m_clr, &c.m_clr);
         return r;
     }
 
-    dhColor& operator+=(const dhColor& c)
+    Color& operator+=(const Color& c)
     {
         color_add(&m_clr, &m_clr, &c.m_clr);
         return *this;
     }
 
-    dhColor operator*(const dhColor& c) const
+    Color operator*(const Color& c) const
     {
-        dhColor r;
+        Color r;
         color_mul(&r.m_clr, &m_clr, &c.m_clr);
         return r;
     }
 
-    dhColor& operator*=(const dhColor& c)
+    Color& operator*=(const Color& c)
     {
         color_mul(&m_clr, &m_clr, &c.m_clr);
         return *this;
     }
 
-    dhColor operator*(float k) const
+    Color operator*(float k) const
     {
-        dhColor r;
+        Color r;
         color_muls(&r.m_clr, &m_clr, k);
         return r;
     }
 
-    dhColor& operator*=(float k)
+    Color& operator*=(float k)
     {
         color_muls(&m_clr, &m_clr, k);
         return *this;
@@ -302,30 +307,29 @@ public:
         color_rgba_uint(&m_clr);
     }
 
-    dhColor swizzle() const
+    Color swizzle() const
     {
-        dhColor r;
+        Color r;
         color_swizzle_abgr(&r.m_clr, &m_clr);
         return r;
     }
 
-    static dhColor lerp(const dhColor& c0, const dhColor& c1, float t)
+    static Color lerp(const Color& c0, const Color& c1, float t)
     {
-        dhColor r;
+        Color r;
         color_lerp(&r.m_clr, &c0.m_clr, &c1.m_clr, t);
         return r;
     }
 
-    operator color*()
-    {
-        return &m_clr;
-    }
-
-    operator const color*() const
-    {
-        return &m_clr;
-    }
+    operator color*()   {   return &m_clr;  }
+    operator const color*() const   {   return &m_clr;  }
+    operator float*()   {   return m_clr.f; }
+    operator const float*() const   {   return m_clr.f; }
+    float operator[](uint idx) const    {   return m_clr.f[idx];    }
+    float& operator[](uint idx) {   return m_clr.f[idx];    }
 };
+
+}   /* dh */
 #endif
 
 #endif /* COLOR_H */

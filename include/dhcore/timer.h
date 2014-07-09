@@ -113,13 +113,15 @@ CORE_API void timer_resumeall();
 
 #include "err.h"
 
-class dhTimer
+namespace dh {
+
+class Timer
 {
 private:
     timer *m_tm;
 
 public:
-    dhTimer() : m_tm(NULL) {}
+    Timer() : m_tm(NULL) {}
 
     result_t create(bool start = false)
     {
@@ -172,13 +174,13 @@ public:
     }
 };
 
-class dhProfileTimer
+class ProfileTimer
 {
 private:
     uint64 m_t0;
 
 public:
-    dhProfileTimer() : m_t0(0) {}
+    ProfileTimer() : m_t0(0) {}
 
     void begin()
     {
@@ -191,6 +193,7 @@ public:
     }
 };
 
+}
 #endif
 
 #endif /*__TIMER_H__*/

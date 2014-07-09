@@ -19,13 +19,20 @@
 #include "types.h"
 #include "vec-math.h"
 #include "std-math.h"
+#include "err.h"
 
 struct rect2di
 {
-    int x;
-    int y;
-    int w;
-    int h;
+    union   {
+        struct {
+            int x;
+            int y;
+            int w;
+            int h;
+        };
+
+        float n[4];
+    };
 };
 
 struct rect2df
@@ -151,6 +158,12 @@ INLINE int rect2di_testpt(const struct rect2di* rc, const struct vec2i* pt)
     return (pt->x > rc->x)&(pt->x < (rc->x + rc->w))&(pt->y > rc->y)&(pt->y < (rc->y + rc->h));
 }
 
+INLINE int rect2di_testpti(const struct rect2di* rc, int x, int y)
+{
+    return (x > rc->x)&(x < (rc->x + rc->w))&(y > rc->y)&(y < (rc->y + rc->h));
+}
+
+
 INLINE struct rect2df* rect2df_setf(struct rect2df* rc, float x, float y, float w, float h)
 {
     rc->x = x;
@@ -270,8 +283,9 @@ INLINE int aabb_iszero(const struct aabb* b)
  *   ------------------------------
  *  0                              1
  */
-INLINE struct vec4f* aabb_getpt(struct vec4f* r, const struct aabb* b, uint idx)
+INLINE struct vec4f* aabb_getpt(struct vec4f* r, const struct aabb* b, int idx)
 {
+    ASSERT(idx < 8);
     return vec3_setf(r, (idx&1) ? b->maxpt.x : b->minpt.x,
                         (idx&2) ? b->maxpt.y : b->minpt.y,
                         (idx&4) ? b->maxpt.z : b->minpt.z);
@@ -368,38 +382,411 @@ CORE_API float ray_intersect_plane(const struct ray* r, const struct plane* p);
 
 #ifdef __cplusplus
 
-class dhAABB
+namespace dh {
+
+class Sphere;
+
+class ALIGN16 AABB
 {
 private:
     aabb m_aabb;
+
+public:
+    AABB() {}
+    AABB(const Vec3& minpt, const Vec3& maxpt)
+    {
+        aabb_setv(&m_aabb, minpt, maxpt);
+    }
+    AABB(const aabb box)
+    {
+        m_aabb = box;
+    }
+
+    AABB& set(const Vec3& minpt, const Vec3& maxpt)
+    {
+        aabb_setv(&m_aabb, minpt, maxpt);
+        return *this;
+    }
+
+    AABB& set(const aabb box)
+    {
+        m_aabb = box;
+        return *this;
+    }
+
+    Vec3 min() const
+    {
+        return Vec3(m_aabb.minpt);
+    }
+
+    Vec3 max() const
+    {
+        return Vec3(m_aabb.maxpt);
+    }
+
+    Vec3 corner(int idx) const
+    {
+        Vec3 r;
+        aabb_getpt(r, &m_aabb, idx);
+        return r;
+    }
+
+    Vec3 center() const
+    {
+        return (this->min() + this->max())*0.5f;
+    }
+
+    static AABB transform(const AABB& box, const Mat3& mat)
+    {
+        AABB r;
+        aabb_xform(&r.m_aabb, &box.m_aabb, mat);
+        return r;
+    }
+
+    AABB& set_transform(const Mat3& mat)
+    {
+        aabb_xform(&m_aabb, &m_aabb, mat);
+        return *this;
+    }
+
+    AABB& set_empty()
+    {
+        aabb_setzero(&m_aabb);
+        return *this;
+    }
+
+    bool empty() const
+    {
+        return aabb_iszero(&m_aabb);
+    }
+
+    void add_point(const Vec3& pt)
+    {
+        aabb_pushptv(&m_aabb, pt);
+    }
+
+    void add_point(float x, float y, float z)
+    {
+        aabb_pushptf(&m_aabb, x, y, z);
+    }
+
+    float width() const
+    {
+        return aabb_getwidth(&m_aabb);
+    }
+
+    float height() const
+    {
+        return aabb_getheight(&m_aabb);
+    }
+
+    float depth() const
+    {
+        return aabb_getdepth(&m_aabb);
+    }
+
+    static AABB merge(const AABB& box0, const AABB& box1)
+    {
+        AABB r;
+        aabb_merge(&r.m_aabb, &box0.m_aabb, &box1.m_aabb);
+        return r;
+    }
+
+    AABB& from_sphere(const Sphere& s)
+    {
+        aabb_from_sphere(&m_aabb, s);
+        return *this;
+    }
+
+    AABB operator+(const AABB& box) const
+    {
+        AABB r;
+        aabb_merge(&r.m_aabb, &box0.m_aabb, &box1.m_aabb);
+        return r;
+    }
+
+    AABB& operator+=(const AABB& box) const
+    {
+        aabb_merge(&m_aabb, &m_aabb, &box.m_aabb);
+        return *this;
+    }
+
+    operator aabb*() {  return &m_aabb; }
+    operator const aabb*() const  { return &m_aabb; }
 };
 
-class dhSphere
+class ALIGN16 Sphere
 {
 private:
     sphere m_sphere;
 
 public:
-    dhSphere()
-    {
-    }
+    Sphere()    {}
 
-    dhSphere(float x, float y, float z, float r)
+    Sphere(float x, float y, float z, float r)
     {
         sphere_setf(&m_sphere, x, y, z, r);
     }
 
-    void from_aabb(const dhAABB& box)
+    Sphere(const Vec3& center, float r)
     {
-        sphere_from_aabb(&m_sphere, &box.m_aabb);
+        sphere_setf(&m_sphere, center.x(), center.y(), center.z(), r);
     }
 
-    bool point_in()
+    Sphere(const sphere s)
     {
-        sphere_ptinv();
+        m_sphere = s;
     }
 
-}
+    Sphere& set(float x, float y, float z, float r)
+    {
+        sphere_setf(&m_sphere, x, y, z, r);
+        return *this;
+    }
+
+    Sphere& set(const Vec3& center, float r)
+    {
+        sphere_setf(&m_sphere, center.x(), center.y(), center.z(), r);
+        return *this;
+    }
+
+    Sphere& set(const sphere s)
+    {
+        m_sphere = s;
+        return *this;
+    }
+
+    Sphere& from_aabb(const AABB& box)
+    {
+        sphere_from_aabb(&m_sphere, box);
+        return *this;
+    }
+
+    bool point_in(const Vec3& pt)
+    {
+        sphere_ptinv(&m_sphere, pt);
+    }
+
+    bool point_in(float x, float y, float z)
+    {
+        sphere_ptinf(&m_sphere, x, y, z);
+    }
+
+    static Sphere merge(const Sphere sphere0, const Sphere sphere1)
+    {
+        Sphere r;
+        sphere_merge(&r.m_sphere, sphere0, sphere1);
+        return r;
+    }
+
+    static Sphere circum(const Vec3& p0, const Vec3& p1, const Vec3& p2, const Vec3& p3)
+    {
+        Sphere r;
+        sphere_circum(&r.m_sphere, pt0, pt1, pt2, pt3);
+        return r;
+    }
+
+    static bool intersects(const Sphere& sphere0, const Sphere& sphere1)
+    {
+        return sphere_intersects(&sphere0, &sphere1);
+    }
+
+    Sphere operator+(const Sphere& s) const
+    {
+        Sphere r;
+        sphere_merge(&r.m_sphere, &m_sphere, &s.m_sphere);
+        return r;
+    }
+
+    Sphere& operator+=(const Sphere& s)
+    {
+        sphere_merge(&m_sphere, &m_sphere, &s.m_sphere);
+        return *this;
+    }
+
+    float x() const {   return m_sphere.x; }
+    float y() const {   return m_sphere.y; }
+    float z() const {   return m_sphere.z; }
+    float r() const {   return m_sphere.r; }
+
+    operator sphere*() { return &m_sphere; }
+    operator const sphere*() {  return &m_sphere;   }
+    operator float*() { return m_sphere.f; }
+    operator const float*() { return m_sphere.f; }
+};
+
+class ALIGN16 Plane
+{
+private:
+    plane m_plane;
+
+public:
+    Plane() {}
+    Plane(const Vec3& norm, float d)
+    {
+        plane_setv(&m_plane, norm, d);
+    }
+    Plane(float nx, float ny, float nz, float d)
+    {
+        plane_setf(&m_plane, nx, ny, nz, d);
+    }
+    Plane(const plane pl)
+    {
+        m_plane = pl;
+    }
+
+    Plane& set(const plane pl)
+    {
+        m_plane = pl;
+        return *this;
+    }
+
+    Plane& set(const Vec3& norm, float d)
+    {
+        plane_setv(&m_plane, norm, d);
+        return *this;
+    }
+
+    Plane& set(float nx, float ny, float nz, float d)
+    {
+        plane_setf(&m_plane, nx, ny, nz, d);
+        return *this;
+    }
+
+    Vec3 normal() const
+    {
+        return Vec3(m_plane.nx, m_plane.ny, m_plane.nz);
+    }
+
+    float d() const
+    {
+        return m_plane.d;
+    }
+
+    operator plane*() { return &m_plane; }
+    operator const plane*() const { return &m_plane; }
+};
+
+class ALIGN16 Ray
+{
+private:
+    ray m_ray;
+
+public:
+    Ray() {}
+    Ray(const Vec3& pt, const Vec3& dir)
+    {
+        ray_setv(&m_ray, pt, dir);
+    }
+
+    Ray(const ray r)
+    {
+        m_ray = r;
+    }
+
+    Ray& set(const Vec3& pt, const Vec3& dir)
+    {
+        ray_setv(&m_ray, pt, dir);
+        return *this;
+    }
+
+    Ray& set(const ray r)
+    {
+        m_ray = r;
+        return *this;
+    }
+
+    Vec3 point() const
+    {
+        return Vec3(m_ray.pt);
+    }
+
+    Vec3 direction() const
+    {
+        return Vec3(m_ray.dir);
+    }
+
+    float intersect_plane(const Plane& p)
+    {
+        return ray_intersect_plane(&m_ray, p);
+    }
+
+    operator ray*() { return &m_ray; }
+    operator const ray*() const { return m_ray; }
+};
+
+class ALIGN16 Rect
+{
+private:
+    rect2di m_rc;
+
+public:
+    Rect() {}
+    Rect(int x, int y, int width, int height)
+    {
+        rect2di_seti(&m_rc, x, y, width, height);
+    }
+    Rect(const rect2di rc)
+    {
+        m_rc = rc;
+    }
+
+    Rect& set(int x, int y, int width, int height)
+    {
+        rect2di_seti(&m_rc, x, y, width, height);
+        return *this;
+    }
+
+    Rect& set(const rect2di rc)
+    {
+        m_rc = rc;
+        return *this;
+    }
+
+    Rect& set_region(int left, int top, int right, int bottom)
+    {
+        rect2di_seti(&m_rc, left, top, right-left, bottom-top);
+        return *this;
+    }
+
+    int x() const   { return m_rc.x;    }
+    int y() const   { return m_rc.y;    }
+    int top() const { return m_rc.y;    }
+    int bottom() const { return m_rc.y + m_rc.h; }
+    int left() const { return m_rc.x; }
+    int right() const { return m_rc.x + m_rc.w; }
+    int width() const { return m_rc.w; }
+    int height() const { return m_rc.h; }
+
+    bool point_in(const Vec2i& pt)
+    {
+        return rect2di_testpt(&m_rc, pt);
+    }
+
+    bool point_in(int x, int y)
+    {
+        return rect2di_testpti(&m_rc, x, y);
+    }
+
+    Rect& grow(int value)
+    {
+        rect2di_grow(&m_rc, &m_rc, value);
+        return *this;
+    }
+
+    Rect& shrink(int value)
+    {
+        rect2di_shrink(&m_tc, &m_rc, value);
+        return *this;
+    }
+
+    operator int*() { return m_rc.n; }
+    operator const int*() const { return m_rc.n; }
+    operator rect2di*() { return &m_rc; }
+    operator const rect2di*() const { return &m_rc; }
+};
+
+} /* dh */
 #endif
 
 #endif /* PRIMS_H */

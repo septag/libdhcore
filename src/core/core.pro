@@ -3,7 +3,7 @@ CONFIG += shared
 CONFIG -= app_bundle
 CONFIG -= qt
 CONFIG -= warn_on
-VERSION = "0.5.1"
+VERSION = "0.5.2"
 
 DEFINES += _VERSION_=\\\"$$VERSION\\\"
 
@@ -21,7 +21,7 @@ INCLUDEPATH = \
     ../../include \
     deps
 
-DEFINES += _CORE_EXPORTS_ _SIMD_SSE_
+DEFINES += _CORE_EXPORT_ _SIMD_SSE_
 
 linux-g++|linux-clang   {
     QMAKE_CFLAGS += \

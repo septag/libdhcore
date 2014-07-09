@@ -70,12 +70,12 @@ struct hashtable_chained
  * create: creates hash table data
  * @param alloc allocator for hash table main buffers which is created immediately after call
  * @param item_alloc hash item allocator (hashtable_item_chained), recommended allocator is mem-pool
- * @param slots_cnt number of slots in hash table, bigger number creates faster hash table
+ * @param slots_cnt number of items in hash table, bigger number creates faster hash table
  * @ingroup htable
  */
 CORE_API result_t hashtable_chained_create(struct allocator* alloc, struct allocator* item_alloc,
-                                       struct hashtable_chained* table,
-                                       uint slots_cnt, uint mem_id);
+                                           struct hashtable_chained* table,
+                                           uint slots_cnt, uint mem_id);
 
 /**
  * destroy hash table
@@ -127,7 +127,7 @@ CORE_API void hashtable_chained_clear(struct hashtable_chained* table);
 struct hashtable_fixed
 {
     struct allocator* alloc;
-    struct hashtable_item* slots;
+    struct hashtable_item* items;
     uint slots_cnt;
     uint items_cnt;
 };
@@ -136,7 +136,7 @@ struct hashtable_fixed
  **
  * create: creates hash table data
  * @param alloc allocator for hash table main buffers which is created immediately after call
- * @param slots_cnt number of slots in hash table, prime numbers are pefered for optimized hash-table
+ * @param slots_cnt number of items in hash table, prime numbers are pefered for optimized hash-table
  * @ingroup htable
  */
 CORE_API result_t hashtable_fixed_create(struct allocator* alloc,
@@ -191,7 +191,7 @@ CORE_API size_t hashtable_fixed_estimate_size(uint slots_cnt);
 struct hashtable_open
 {
     struct allocator* alloc;
-    struct hashtable_item* slots;
+    struct hashtable_item* items;
     uint slots_cnt;
     uint items_cnt;
     uint slots_grow;
@@ -202,7 +202,7 @@ struct hashtable_open
  **
  * create: creates hash table data
  * @param alloc allocator for hash table main buffers which is created immediately after call
- * @param slots_cnt number of slots in hash table, prime numbers are pefered for optimized hash-table
+ * @param slots_cnt number of items in hash table, prime numbers are pefered for optimized hash-table
  * @ingroup htable
  */
 CORE_API result_t hashtable_open_create(struct allocator* alloc,
@@ -247,15 +247,17 @@ CORE_API struct hashtable_item* hashtable_open_find(const struct hashtable_open*
 CORE_API void hashtable_open_clear(struct hashtable_open* table);
 
 #ifdef __cplusplus
+namespace dh {
+
 /* HashTableFixed */
 template <typename T, uptr_t Invalid = 0>
-class dhHashTableFixed
+class HashtableFixed
 {
 private:
     hashtable_fixed m_table;
 
 public:
-    dhHashTableFixed()
+    HashtableFixed()
     {
         memset(&m_table, 0x00, sizeof(m_table));
     }
@@ -324,13 +326,13 @@ public:
 
 /* HashTableOpen */
 template <typename T, uptr_t Invalid = 0>
-class dhHashTableOpen
+class HashtableOpen
 {
 private:
     hashtable_open m_table;
 
 public:
-    dhHashTableOpen()
+    HashtableOpen()
     {
         memset(&m_table, 0x00, sizeof(m_table));
     }
@@ -394,13 +396,13 @@ public:
 
 /* HashTableChained */
 template <typename T, uptr_t Invalid = 0>
-class dhHashTableChained
+class HashtableChained
 {
 private:
     hashtable_chained m_table;
 
 public:
-    dhHashTableChained()
+    HashtableChained()
     {
         memset(&m_table, 0x00, sizeof(m_table));
     }
@@ -462,6 +464,8 @@ public:
             return static_cast<T>(Invalid);
     }
 };
+
+}
 #endif
 
 #endif /* __HASHTABLE_H__ */

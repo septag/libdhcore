@@ -149,14 +149,16 @@ CORE_API void mem_pool_bindalloc_ts(struct pool_alloc_ts* pool, struct allocator
 #ifdef __cplusplus
 #include "mem-mgr.h"
 
+namespace dh {
+
 template <typename T>
-class dhPoolAlloc
+class PoolAlloc
 {
 private:
     mem_pool_alloc m_pool;
 
 public:
-    dhPoolAlloc()
+    PoolAlloc()
     {
         memset(&m_pool, 0x00, sizeof(m_pool));
     }
@@ -196,6 +198,8 @@ public:
         return mem_pool_getleaks(&m_pool);
     }
 };
+
+} /* dh */
 #endif
 
 #endif /* __POOLALLOC_H__ */

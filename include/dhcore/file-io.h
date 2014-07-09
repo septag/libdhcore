@@ -263,7 +263,9 @@ CORE_API int fio_mon_avail();
 #ifdef __cplusplus
 #include "err.h"
 
-class dhFile
+namespace dh {
+
+class File
 {
 private:
     file_t m_file;
@@ -277,40 +279,40 @@ public:
     };
 
 public:
-    dhFile() : m_file(NULL) {}
-    dhFile(file_t f) : m_file(f) {}
+    File() : m_file(NULL) {}
+    File(file_t f) : m_file(f) {}
 
-    virtual ~dhFile()
+    virtual ~File()
     {
         if (m_file != NULL)
             fio_close(m_file);
     }
 
-    static dhFile create_mem(const char* alias, allocator *alloc = mem_heap(), uint mem_id = 0)
+    static File create_mem(const char* alias, allocator *alloc = mem_heap(), uint mem_id = 0)
     {
-        return dhFile(fio_createmem(alloc, alias, mem_id));
+        return File(fio_createmem(alloc, alias, mem_id));
     }
 
-    static dhFile create_disk(const char *filepath)
+    static File create_disk(const char *filepath)
     {
-        return dhFile(fio_createdisk(filepath));
+        return File(fio_createdisk(filepath));
     }
 
-    static dhFile open_mem(const char *filepath, allocator *alloc = mem_heap(), uint mem_id = 0,
+    static File open_mem(const char *filepath, allocator *alloc = mem_heap(), uint mem_id = 0,
                            bool ignore_vfs = false)
     {
-        return dhFile(fio_openmem(alloc, filepath, ignore_vfs, mem_id));
+        return File(fio_openmem(alloc, filepath, ignore_vfs, mem_id));
     }
 
-    static dhFile open_disk(const char *filepath, bool ignore_vfs = false)
+    static File open_disk(const char *filepath, bool ignore_vfs = false)
     {
-        return dhFile(fio_opendisk(filepath, ignore_vfs));
+        return File(fio_opendisk(filepath, ignore_vfs));
     }
 
-    static dhFile attach_mem(void *buff, size_t size, const char *alias,
+    static File attach_mem(void *buff, size_t size, const char *alias,
                              allocator *alloc = mem_heap(), uint mem_id = 0)
     {
-        return dhFile(fio_attachmem(alloc, buff, size, alias, mem_id));
+        return File(fio_attachmem(alloc, buff, size, alias, mem_id));
     }
 
     void seek(int offset, seek_mode smode = SEEK_MODE_START)
@@ -368,8 +370,14 @@ public:
     {
         return m_file != NULL;
     }
+
+    operator file_t()
+    {
+        return m_file;
+    }
 };
 
+}
 #endif
 
 #endif /* __FILEIO_H__*/

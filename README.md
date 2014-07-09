@@ -1,6 +1,6 @@
 ## libdhcore: darkHAMMER Core 'C' library
 
-Version 0.5.1-dev  
+Version 0.5.2-dev  
 [http://www.hmrengine.com](http://www.hmrengine.com)  
 [https://github.com/septag/libdhcore](https://github.com/septag/libdhcore)  
 
@@ -109,6 +109,9 @@ int main(int argc, char** argv)
     return 0;
 }
 ```
+
+#### C++ Wrappers
+Some data types have C++ wrappers, like containers (array, hashtable), allocators (freelist, stack, pool) and math primitives (vectors, matrix, geometric). So C++ programmers can use those and benefit from cleaner syntax and easier functionality. 
 
 ### Documentation
 For API documentation (which is at it's early stage), check out this [API Documentation](http://www.hmrengine.com/docs/core/html).  
