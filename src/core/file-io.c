@@ -314,8 +314,30 @@ file_t fio_createmem(struct allocator* alloc, const char* name, uint mem_id)
     return file_buf;
 }
 
-file_t fio_openmem(struct allocator* alloc, const char* filepath,
-                       int ignore_vfs, uint mem_id)
+char* fio_loadtext(struct allocator *alloc, const char *filepath, int ignore_vfs, uint mem_id,
+                   OUT OPTIONAL size_t *size)
+{
+    file_t f = fio_openmem(alloc, filepath, ignore_vfs, mem_id);
+    if (f == NULL)
+        return NULL;
+    size_t s;
+    char *data = (char*)fio_detachmem(f, &s, NULL);
+    fio_close(f);
+    if (s == 0) {
+        if (data)
+            A_FREE(alloc, data);
+        return NULL;
+    }
+
+    data[s] = 0;    /* close string */
+
+    if (size != NULL)
+        *size = s;
+
+    return data;
+}
+
+file_t fio_openmem(struct allocator* alloc, const char* filepath, int ignore_vfs, uint mem_id)
 {
     /* if memory file is requested and we have pak files, first try loading from paks */
     if (!ignore_vfs && !arr_isempty(&g_fio->paks))    {
@@ -355,7 +377,7 @@ file_t fio_openmem(struct allocator* alloc, const char* filepath,
     header->read_fn = fio_readmem;
 
     /* data */
-    f->buffer = (uint8*)A_ALLOC(alloc, header->size, mem_id);
+    f->buffer = (uint8*)A_ALLOC(alloc, header->size+1, mem_id);
     if (f->buffer == NULL)  {
         fclose(ff);
         mem_pool_free_ts(&g_fio->memfile_alloc, file_buf);
