@@ -375,6 +375,7 @@ struct mat3f* mat3_setm(struct mat3f* r, const struct mat3f* m)
     r->m11 = m->m11;   r->m21 = m->m21;   r->m31 = m->m31;   r->m41 = m->m41;
     r->m12 = m->m12;   r->m22 = m->m22;   r->m32 = m->m32;   r->m42 = m->m42;
     r->m13 = m->m13;   r->m23 = m->m23;   r->m33 = m->m33;   r->m43 = m->m43;
+    r->m14 = 0.0f;  r->m24 = 0.0f;  r->m34 = 0.0f;  r->m44 = 1.0f;
     return r;
 }
 
@@ -855,7 +856,7 @@ struct mat4f* mat4_setidentity(struct mat4f* r)
     return r;
 }
 
-struct mat4f* mat4_muls(struct mat4f* r, struct mat4f* m, float k)
+struct mat4f* mat4_muls(struct mat4f* r, const struct mat4f* m, float k)
 {
     r->m11 *= k;   r->m21 *= k;   r->m31 *= k;   r->m41 *= k;
     r->m12 *= k;   r->m22 *= k;   r->m32 *= k;   r->m42 *= k;

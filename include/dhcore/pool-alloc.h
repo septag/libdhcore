@@ -155,7 +155,7 @@ template <typename T>
 class PoolAlloc
 {
 private:
-    mem_pool_alloc m_pool;
+    pool_alloc m_pool;
 
 public:
     PoolAlloc()
@@ -165,7 +165,7 @@ public:
 
     result_t create(uint block_sz, allocator *alloc = mem_heap(), uint mem_id = 0)
     {
-        mem_pool_create(alloc, &m_pool, sizeof(T), block_sz, mem_id);
+        return mem_pool_create(alloc, &m_pool, sizeof(T), block_sz, mem_id);
     }
 
     void destroy()
