@@ -37,7 +37,7 @@ static const struct unit_test_desc g_tests[] = {
     {test_mempool, "pool", "Pool allocator"},
     {test_thread, "thread", "Basic threads"},
     {test_taskmgr, "taskmgr", "Task manager"},
-    {test_hashtable, "hashtable", "Hash tables"}
+    {test_hashtable, "hashtable_fixed", "Hash tables (fixed)"}
     /*, {test_efsw, "watcher", "filesystem monitoring"}*/
 };
 
