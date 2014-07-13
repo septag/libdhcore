@@ -386,7 +386,7 @@ struct mat3f* mat3_setidentity(struct mat3f* r)
     return r;
 }
 
-struct mat3f* mat3_muls(struct mat3f* r, struct mat3f* m, float k)
+struct mat3f* mat3_muls(struct mat3f* r, const struct mat3f* m, float k)
 {
 #if defined(_SIMD_SSE_)
     simd_t k_ = _mm_set_ps1(k);

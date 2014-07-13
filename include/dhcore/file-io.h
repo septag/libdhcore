@@ -20,8 +20,6 @@
 #include "types.h"
 #include "core-api.h"
 #include "allocator.h"
-#include "pool-alloc.h"
-#include "array.h"
 
 /**
  * @defgroup fileio File manager
@@ -114,15 +112,15 @@ CORE_API void fio_clearpaks();
 CORE_API file_t fio_createmem(struct allocator* alloc, const char* name, uint mem_id);
 
 /**
- * open a file from disk into memory
+ * Open a file from disk into memory
  * @param filepath filepath to the file on disk (must exist), filepath will first check -
  * virtual-filesystems for valid path unless ignore_vfs option is set
  * @param ignore_vfs if true, virtual-filesystems will be ignored and file will be loaded directly
  * @return valid file handle or NULL if failed
  * @ingroup fileio
   */
-CORE_API file_t fio_openmem(struct allocator* alloc, const char* filepath,
-                                int ignore_vfs, uint mem_id);
+CORE_API file_t fio_openmem(struct allocator* alloc, const char* filepath, int ignore_vfs,
+                            uint mem_id);
 /**
  * Attach a memory buffer to the file for reading, attached buffer should not be -
  * managed (deallocated) by caller anymore
@@ -132,8 +130,12 @@ CORE_API file_t fio_openmem(struct allocator* alloc, const char* filepath,
  * @return valid file handle or NULL if failed
  * @ingroup fileio
   */
-CORE_API file_t fio_attachmem(struct allocator* alloc, void* buffer,
-                                  size_t size, const char* name, uint mem_id);
+CORE_API file_t fio_attachmem(struct allocator* alloc, void* buffer, size_t size, const char* name,
+                              uint mem_id);
+
+
+CORE_API char* fio_loadtext(struct allocator *alloc, const char *filepath, int ignore_vfs,
+                            uint mem_id, OUT OPTIONAL size_t *size);
 
 /**
  * Detach buffer from memory file, after file is detached\n
@@ -318,7 +320,7 @@ public:
     void seek(int offset, seek_mode smode = SEEK_MODE_START)
     {
         ASSERT(m_file);
-        fio_seek(m_file, smod, offset);
+        fio_seek(m_file, smode, offset);
     }
 
     void read(void *buff, size_t item_sz, size_t item_cnt)
@@ -343,7 +345,7 @@ public:
     file_mode mode() const
     {
         ASSERT(m_file);
-        return m_file != fio_getmode(m_file);
+        return fio_getmode(m_file);
     }
 
     size_t size() const

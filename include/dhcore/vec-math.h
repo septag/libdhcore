@@ -49,7 +49,7 @@
 #if defined(_SIMD_SSE_)
 #include <xmmintrin.h>
 #include <emmintrin.h>
-#include <smmintrin.h>
+//#include <smmintrin.h>
 typedef __m128  simd_t;
 typedef __m128i simd4i_t;
 
@@ -870,7 +870,7 @@ CORE_API struct mat3f* mat3_setidentity(struct mat3f* r);
 /**
  * @ingroup vmath
  */
-CORE_API struct mat3f* mat3_muls(struct mat3f* r, struct mat3f* m, float k);
+CORE_API struct mat3f* mat3_muls(struct mat3f* r, const struct mat3f* m, float k);
 /**
  * @ingroup vmath
  */
@@ -1031,7 +1031,7 @@ CORE_API struct mat4f* mat4_setidentity(struct mat4f* r);
 /**
  * @ingroup vmath
  */
-CORE_API struct mat4f* mat4_muls(struct mat4f* r, struct mat4f* m, float k);
+CORE_API struct mat4f* mat4_muls(struct mat4f* r, const struct mat4f* m, float k);
 /**
  * @ingroup vmath
  */
@@ -1203,7 +1203,7 @@ namespace dh {
 /* Vec3 */
 class ALIGN16 Vec3
 {
-private:
+protected:
     vec4f m_vec;
 
 public:
@@ -1239,53 +1239,53 @@ public:
         return vec3_isequal(&m_vec, &v.m_vec);
     }
 
-    virtual Vec3 operator*(float k) const
+    Vec3 operator*(float k) const
     {
         Vec3 r;
         vec3_muls(&r.m_vec, &m_vec, k);
         return r;
     }
 
-    virtual Vec3& operator*=(float k)
+    Vec3& operator*=(float k)
     {
         vec3_muls(&m_vec, &m_vec, k);
         return *this;
     }
 
-    virtual Vec3 operator/(float k) const
+    Vec3 operator/(float k) const
     {
         Vec3 r;
         vec3_muls(&r.m_vec, &m_vec, 1.0f/k);
         return r;
     }
 
-    virtual Vec3& operator/=(float k)
+    Vec3& operator/=(float k)
     {
         vec3_muls(&m_vec, &m_vec, 1.0f/k);
         return *this;
     }
 
-    virtual Vec3 operator+(const Vec3& v) const
+    Vec3 operator+(const Vec3& v) const
     {
         Vec3 r;
         vec3_add(&r.m_vec, &m_vec, &v.m_vec);
         return r;
     }
 
-    virtual Vec3& operator+=(const Vec3& v)
+    Vec3& operator+=(const Vec3& v)
     {
         vec3_add(&m_vec, &m_vec, &v.m_vec);
         return *this;
     }
 
-    virtual Vec3 operator-(const Vec3& v) const
+    Vec3 operator-(const Vec3& v) const
     {
         Vec3 r;
         vec3_sub(&r.m_vec, &m_vec, &v.m_vec);
         return r;
     }
 
-    virtual Vec3& operator-=(const Vec3& v)
+    Vec3& operator-=(const Vec3& v)
     {
         vec3_sub(&m_vec, &m_vec, &v.m_vec);
         return *this;
@@ -1299,7 +1299,7 @@ public:
     static Vec3 cross(const Vec3& v0, const Vec3& v1)
     {
         Vec3 r;
-        vec3_cross(&r.m_vec, &v0.m_vec, v1.m_vec);
+        vec3_cross(&r.m_vec, &v0.m_vec, &v1.m_vec);
         return r;
     }
 
@@ -1319,6 +1319,7 @@ public:
     {
         Vec3 r;
         vec3_cubic(&r.m_vec, &v0.m_vec, &v1.m_vec, &v2.m_vec, &v3.m_vec, t);
+        return r;
     }
 
     Vec3& set_normalize()
@@ -1330,7 +1331,7 @@ public:
     static Vec3 normalize(const Vec3& v)
     {
         Vec3 r;
-        vec3_norm(&r.m_vec, &m_vec);
+        vec3_norm(&r.m_vec, &v.m_vec);
         return r;
     }
 
@@ -1352,6 +1353,8 @@ public:
 class ALIGN16 Vec4 : public Vec3
 {
 public:
+    Vec4() {}
+
     Vec4(float x, float y, float z, float w)
     {
         vec4_setf(&m_vec, x, y, z, w);
@@ -1478,11 +1481,14 @@ public:
 
     Vec3 rotation_axis() const
     {
-        return quat_getrotaxis(&m_quat);
+        Vec3 r;
+        quat_getrotaxis(r, &m_quat);
+        return r;
     }
 
     Vec3 rotation_euler() const
     {
+        float pitch, yaw, roll;
         quat_geteuler(&pitch, &yaw, &roll, &m_quat);
         return Vec3(pitch, yaw, roll);
     }
@@ -1495,7 +1501,7 @@ public:
 
     Quat& from_axis(const Vec3& axis, float angle)
     {
-        quat_fromaxis(&m_quat, *((const vec3f*)axis), angle);
+        quat_fromaxis(&m_quat, axis, angle);
         return *this;
     }
 
@@ -1643,7 +1649,7 @@ public:
 
     Mat3& set_translation(float x, float y, float z)
     {
-        mat3_set_transf(&m_at, x, y, z);
+        mat3_set_transf(&m_mat, x, y, z);
         return *this;
     }
 
@@ -1714,12 +1720,14 @@ public:
     {
         Vec3 r;
         vec3_transformsrt(r, v, &m_mat);
+        return r;
     }
 
-    Vec3 transform_SR()
+    Vec3 transform_SR(const Vec3& v)
     {
         Vec3 r;
         vec3_transformsr(r, v, &m_mat);
+        return r;
     }
 
     float& operator [](int idx)   {   return m_mat.f[idx];    }
@@ -1907,7 +1915,7 @@ public:
         return r;
     }
 
-    Vec2& operator*=(float k) const
+    Vec2& operator*=(float k)
     {
         vec2f_muls(&m_vec, &m_vec, k);
         return *this;
@@ -1920,7 +1928,7 @@ public:
 
     static float dot(const Vec2& v0, const Vec2& v1)
     {
-        return v0.x*v1.x + v0.y*v1.y;
+        return v0[0]*v1[0] + v0[1]*v1[1];
     }
 
     operator vec2f*() { return &m_vec;  }
@@ -1998,7 +2006,7 @@ public:
         return r;
     }
 
-    Vec2i& operator*=(int k) const
+    Vec2i& operator*=(int k)
     {
         vec2i_muls(&m_vec, &m_vec, k);
         return *this;
@@ -2006,8 +2014,8 @@ public:
 
     operator vec2i*() { return &m_vec;  }
     operator const vec2i*() const   {   return &m_vec;  }
-    operator int*()   { return m_vec.f;   }
-    operator const int*() const   {   return m_vec.f; }
+    operator int*()   { return m_vec.n;   }
+    operator const int*() const   {   return m_vec.n; }
     int& operator[](int idx)  {   return m_vec.n[idx];    }
     int operator[](int idx) const {   return m_vec.n[idx];    }
 };
