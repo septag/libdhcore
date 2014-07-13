@@ -155,7 +155,7 @@ template <typename T>
 class PoolAlloc
 {
 private:
-    mem_pool_alloc m_pool;
+    pool_alloc m_pool;
 
 public:
     PoolAlloc()

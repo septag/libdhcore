@@ -18,20 +18,36 @@
 #include "dhcore/hash-table.h"
 #include "dhcore/color.h"
 #include "dhcore/std-math.h"
+#include "dhcore/timer.h"
+#include "dhcore/numeric.h"
 
 using namespace dh;
 
 void test_hashtable()
 {
-    Color test(1.0f, 2.0f, 3.0f);
-    const color* c = test;
+    const int item_cnt = 100000;
+    ProfileTimer tm;
+    HashtableFixed<int, -1> htable;
 
-    HashtableFixed<int, 666> htable;
-    htable.create(10);
-    htable.add(1, 1);
-    int r = htable.value(23);
+    int *keys = (int*)ALLOC(sizeof(int)*item_cnt, 0);
+    ASSERT(keys);
+    for (int i = 0; i < item_cnt; i++)
+        keys[i] = rand_geti(0, 1000000);
+
+    htable.create(item_cnt);
+
+    printf("adding %d items to fixed hashtable ...\n", item_cnt);
+    tm.begin();
+    for (int i = 0; i < item_cnt; i++)
+        htable.add(keys[i], i);
+    printf("time: %f\n", tm.end());
+
+    printf("searching %d items ...\n", item_cnt);
+    tm.begin();
+    for (int i = 0; i < item_cnt; i++)
+        htable.value(keys[i]);
+    printf("time: %f\n", tm.end());
+
     htable.destroy();
-
-    uint16 n = math_ftou16(12.123f);
-    printf("%f\n", math_u16tof(n));
+    FREE(keys);
 }
