@@ -349,6 +349,98 @@ CORE_API struct allocator* mt_thread_gettmpalloc(mt_thread thread);
  */
 CORE_API void mt_thread_resettmpalloc(mt_thread thread);
 
+#ifdef __cplusplus
+namespace dh {
+#include "err.h"
+
+class Mutex
+{
+private:
+    mt_mutex m_mtx;
+
+public:
+    Mutex() {}
+
+    void create()
+    {
+        mt_mutex_init(&m_mtx);
+    }
+
+    void destroy()
+    {
+        mt_mutex_release(&m_mtx);
+    }
+
+    void lock()
+    {
+        mt_mutex_lock(&m_mtx);
+    }
+
+    void unlock()
+    {
+        mt_mutex_unlock(&m_mtx);
+    }
+
+    bool try_lock()
+    {
+        return mt_mutex_try(&m_mtx);
+    }
+
+    operator mt_mutex() {   return m_mtx;   }
+};
+
+class Event
+{
+private:
+    mt_event m_ev;
+
+public:
+    Event() {}
+
+    bool create(allocator *alloc = mem_heap())
+    {
+        m_ev = mt_event_create(alloc);
+        if (m_ev == NULL)
+            return false;
+        return true;
+    }
+
+    void destroy()
+    {
+        mt_event_destroy(m_ev);
+        m_ev = NULL;
+    }
+
+    uint add_signal()
+    {
+        ASSERT(m_ev);
+        return mt_event_addsignal(m_ev);
+    }
+
+    mt_event_response wait(uint signal_id, uint timeout = MT_TIMEOUT_INFINITE)
+    {
+        ASSERT(m_ev);
+        return mt_event_wait(m_ev, signal_id, timeout);
+    }
+
+    mt_event_response wait_forall(uint timeout = MT_TIMEOUT_INFINITE)
+    {
+        ASSERT(m_ev);
+        return mt_event_waitforall(m_ev, timeout);
+    }
+
+    void trigger(uint signal_id)
+    {
+        ASSERT(m_ev);
+        mt_event_trigger(m_ev, signal_id);
+    }
+
+    operator mt_event() {   return m_ev;    }
+};
+
+} /* dh */
+#endif
+
 
 #endif /*__MT_H__*/
 

@@ -103,8 +103,7 @@ void query_cpuinfo(struct hwinfo* info)
 
             /* cores */
             else if (strstr(token, "cpu cores"))	{
-                info->cpu_core_cnt = str_toint32(strchr(token, ':') + 2);
-                info->cpu_pcore_cnt = info->cpu_core_cnt;
+                info->cpu_pcore_cnt = str_toint32(strchr(token, ':') + 2);
             }
 
             /* cache line */
@@ -117,7 +116,7 @@ void query_cpuinfo(struct hwinfo* info)
         FREE(data);
     }
 
-    info->cpu_core_cnt = maxui(info->cpu_core_cnt, 1);
+    info->cpu_core_cnt = maxui(sysconf(_SC_NPROCESSORS_ONLN), 1);
     info->cpu_pcore_cnt = maxui(info->cpu_pcore_cnt, 1);
 }
 
