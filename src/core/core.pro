@@ -3,7 +3,7 @@ CONFIG += shared
 CONFIG -= app_bundle
 CONFIG -= qt
 CONFIG -= warn_on
-VERSION = "0.5.2"
+VERSION = "1.0.0"
 
 DEFINES += _VERSION_=\\\"$$VERSION\\\"
 
