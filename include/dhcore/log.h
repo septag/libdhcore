@@ -20,6 +20,8 @@
 #include "types.h"
 #include "core-api.h"
 
+#define LOG_STDOUT_PADDING "50"
+
 /**
  * @defgroup log Logger
  * Performs engine logging to console, file, debugger or any custom implementation
@@ -34,7 +36,16 @@ enum log_type
     LOG_ERROR = 1,
     LOG_WARNING = 2,
     LOG_INFO = 3,
-    LOG_LOAD = 4
+    LOG_LOAD = 4,
+    LOG_PROGRESS = 5,
+    LOG_PROGRESS_RESULT = 6
+};
+
+enum log_progress_result
+{
+    LOG_PROGRESS_OK,
+    LOG_PROGRESS_FATAL,
+    LOG_PROGRESS_NONFATAL
 };
 
 /**
@@ -116,6 +127,12 @@ CORE_API void log_printf(enum log_type type, const char* fmt, ...);
  * @see log_stats   @ingroup log
  */
 CORE_API void log_getstats(struct log_stats* stats);
+
+/**
+ * @brief log_endprogress
+ * @param res
+ */
+CORE_API void log_endprogress(enum log_progress_result res);
 
 /* */
 result_t log_init();

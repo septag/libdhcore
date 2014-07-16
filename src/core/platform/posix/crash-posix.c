@@ -123,9 +123,6 @@ void crash_handler(int signum)
 result_t crash_init(pfn_crash_handler crash_fn)
 {
     if (!detect_gdb())   {
-#if defined(_DEBUG_)
-        puts("Activating crash handler");
-#endif
         signal(SIGABRT, crash_handler);
         signal(SIGSEGV, crash_handler);
         signal(SIGILL, crash_handler);

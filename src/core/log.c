@@ -178,6 +178,25 @@ void log_getstats(struct log_stats* stats)
     memcpy(stats, &g_log->stats, sizeof(g_log->stats));
 }
 
+void log_endprogress(enum log_progress_result res)
+{
+    const char *text;
+    enum log_type type;
+
+    switch (res)    {
+    case LOG_PROGRESS_OK:
+        text = "[" TERM_GREEN "OK" TERM_RESET "]";
+        break;
+    case LOG_PROGRESS_FATAL:
+        text = "[" TERM_BOLDRED "FAILED" TERM_RESET "]";
+        break;
+    case LOG_PROGRESS_NONFATAL:
+        text = "[" TERM_BOLDYELLOW "FAILED" TERM_RESET "]";
+        break;
+    }
+    log_outputtext(LOG_PROGRESS_RESULT, text);
+}
+
 static void log_outputtext(enum log_type type, const char* text)
 {
     const char* prefix;
@@ -185,12 +204,12 @@ static void log_outputtext(enum log_type type, const char* text)
 
     switch (type)   {
         case LOG_ERROR:
-            prefix = "Error: ";
+            prefix = "";
             MT_ATOMIC_INCR(g_log->stats.errors_cnt);
             break;
 
         case LOG_WARNING:
-            prefix = "Warning: ";
+            prefix = "";
             MT_ATOMIC_INCR(g_log->stats.warnings_cnt);
             break;
 
@@ -213,35 +232,45 @@ static void log_outputtext(enum log_type type, const char* text)
         char msg2[2060];
         const char* color;
         switch (type)   {
-            case LOG_ERROR:
+        case LOG_ERROR:
             color = TERM_RED;
             break;
-            case LOG_WARNING:
+        case LOG_WARNING:
             color = TERM_YELLOW;
             break;
-            case LOG_INFO:
+        case LOG_INFO:
             color = TERM_DIM;
             break;
-            case LOG_LOAD:
+        case LOG_LOAD:
             color = TERM_DIMCYAN;
             break;
-            case LOG_TEXT:
+        case LOG_TEXT:
+        case LOG_PROGRESS:
+        case LOG_PROGRESS_RESULT:
             color = TERM_RESET;
             break;
-            default:
+        default:
             color = "";
         }
 
         strcpy(msg2, color);
         strcat(msg2, msg);
         strcat(msg2, TERM_RESET);
-        puts(msg2);
+
+        if (type != LOG_PROGRESS)
+            puts(msg2);
+        else if (type == LOG_PROGRESS_RESULT)
+            puts(msg2);
+        else
+            printf("%-" LOG_STDOUT_PADDING "s", msg2);
 #else
         puts(msg);
 #endif
     }
 
-    strcat(msg, "\n");
+    if (type != LOG_PROGRESS)
+        strcat(msg, "\n");
+
     if (BIT_CHECK(g_log->outputs, OUTPUT_FILE))  {
         fputs(msg, g_log->log_file);
         fflush(g_log->log_file);

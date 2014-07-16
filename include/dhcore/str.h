@@ -143,4 +143,12 @@ CORE_API void str_utf8_free(char* s);
  */
 CORE_API void* str_toptr(const char* s);
 
+/**
+ * @brief Trims white space from the beginning and the end of the string
+ * @param str Input string, will be modified
+ * @ingroup str
+ * @return
+ */
+CORE_API char* str_trim_whitespace(char *str);
+
 #endif /*__STR_H__*/

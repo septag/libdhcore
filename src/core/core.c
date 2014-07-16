@@ -26,53 +26,71 @@
 
 result_t core_init(uint flags)
 {
+    char msg[128];
+    snprintf(msg, sizeof(msg), TERM_RESET "Initializing Core library v%s" TERM_RESET, _VERSION_);
+    printf("%-" LOG_STDOUT_PADDING "s", msg);
     if (BIT_CHECK(flags, CORE_INIT_CRASHDUMP))  {
-        if (IS_FAIL(crash_init()))
+        if (IS_FAIL(crash_init()))  {
+            puts("[" TERM_BOLDRED "FAILED" TERM_RESET "]");
             return RET_FAIL;
+        }
     }
 
-    if (IS_FAIL(mem_init(BIT_CHECK(flags, CORE_INIT_TRACEMEM))))
+    if (IS_FAIL(mem_init(BIT_CHECK(flags, CORE_INIT_TRACEMEM))))    {
+        puts("[" TERM_BOLDRED "FAILED" TERM_RESET "]");
         return RET_FAIL;
+    }
 
-    if (IS_FAIL(log_init()))
+    if (IS_FAIL(log_init()))    {
+        puts("[" TERM_BOLDRED "FAILED" TERM_RESET "]");
         return RET_FAIL;
+    }
 
     if (BIT_CHECK(flags, CORE_INIT_ERRORS)) {
-        if (IS_FAIL(err_init()))
+        if (IS_FAIL(err_init()))    {
+            puts("[" TERM_BOLDRED "FAILED" TERM_RESET "]");
             return RET_FAIL;
+        }
     }
 
     rand_seed();
 
     if (BIT_CHECK(flags, CORE_INIT_JSON))   {
-        if (IS_FAIL(json_init()))
+        if (IS_FAIL(json_init()))   {
+            puts("[" TERM_BOLDRED "FAILED" TERM_RESET "]");
             return RET_FAIL;
+        }
     }
 
     if (BIT_CHECK(flags, CORE_INIT_FILEIO)) {
-        if (IS_FAIL(fio_initmgr()))
+        if (IS_FAIL(fio_initmgr())) {
+            puts("[" TERM_BOLDRED "FAILED" TERM_RESET "]");
             return RET_FAIL;
+        }
     }
 
     if (BIT_CHECK(flags, CORE_INIT_TIMER)) {
-        if (IS_FAIL(timer_initmgr()))
+        if (IS_FAIL(timer_initmgr()))   {
+            puts("[" TERM_BOLDRED "FAILED" TERM_RESET "]");
             return RET_FAIL;
+        }
     }
 
     if (BIT_CHECK(flags, CORE_INIT_SOCKET)) {
-        if (IS_FAIL(sock_init()))
+        if (IS_FAIL(sock_init()))   {
+            puts("[" TERM_BOLDRED "FAILED" TERM_RESET "]");
             return RET_FAIL;
+        }
     }
 
-#ifdef _DEBUG_
-    printf("dhcore library %s initialized\n", _VERSION_);
-#endif
-
+    puts("[" TERM_GREEN "OK" TERM_RESET "]");
     return RET_OK;
 }
 
 void core_release(int report_leaks)
 {
+    printf("%-" LOG_STDOUT_PADDING "s", TERM_RESET "Releasing Core library" TERM_RESET);
+
     sock_release();
 
 	timer_releasemgr();
@@ -84,6 +102,8 @@ void core_release(int report_leaks)
     err_release();
 
     log_release();
+
+    puts("[" TERM_GREEN "OK" TERM_RESET "]");
 
     /* dump memory leaks before releasing memory manager and log
      * because memory leak report dumps leakage data to logger */

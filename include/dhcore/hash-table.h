@@ -86,7 +86,7 @@ CORE_API void hashtable_chained_destroy(struct hashtable_chained* table);
  * checks if hash table is empty
  * @ingroup htable
  */
-CORE_API int hashtable_chained_isempty(struct hashtable_chained* table);
+CORE_API int hashtable_chained_isempty(const struct hashtable_chained* table);
 /**
  * add item to hash table, constains key/value pair
  * @param hash_key hash key, can be created with hash functions
@@ -109,8 +109,8 @@ CORE_API void hashtable_chained_remove(struct hashtable_chained* table,
   * @ingroup htable
   */
 CORE_API struct hashtable_item_chained* hashtable_chained_find(
-    const struct hashtable_chained* table,
-    uint hash_key);
+        const struct hashtable_chained* table,
+        uint hash_key);
 /**
  * clears hash table items
  * @ingroup htable
@@ -152,7 +152,7 @@ CORE_API void hashtable_fixed_destroy(struct hashtable_fixed* table);
  * checks if hash table is empty
  * @ingroup htable
  */
-CORE_API int hashtable_fixed_isempty(struct hashtable_fixed* table);
+CORE_API int hashtable_fixed_isempty(const struct hashtable_fixed* table);
 /**
  * add item to hash table, constains key/value pair
  * @param hash_key hash key, can be created with hash functions
@@ -173,7 +173,7 @@ CORE_API void hashtable_fixed_remove(struct hashtable_fixed* table, struct hasht
   * @ingroup htable
   */
 CORE_API struct hashtable_item* hashtable_fixed_find(const struct hashtable_fixed* table,
-                                                      uint hash_key);
+                                                     uint hash_key);
 /**
  * clears hash table items
  * @ingroup htable
@@ -219,7 +219,7 @@ CORE_API void hashtable_open_destroy(struct hashtable_open* table);
  * checks if hash table is empty
  * @ingroup htable
  */
-CORE_API int hashtable_open_isempty(struct hashtable_open* table);
+CORE_API int hashtable_open_isempty(const struct hashtable_open* table);
 /**
  * add item to hash table, constains key/value pair
  * @param hash_key hash key, can be created with hash functions
@@ -239,7 +239,7 @@ CORE_API void hashtable_open_remove(struct hashtable_open* table, struct hashtab
   * @ingroup htable
   */
 CORE_API struct hashtable_item* hashtable_open_find(const struct hashtable_open* table,
-                                                      uint hash_key);
+                                                    uint hash_key);
 /**
  * clears hash table items
  * @ingroup htable
@@ -279,21 +279,21 @@ public:
 
     void add(uint key, T value)
     {
-        hashtable_fixed_add(&m_table, key, static_cast<uptr_t>(value));
+        hashtable_fixed_add(&m_table, key, (uptr_t)(value));
     }
 
-    T value(const char *key)
-    {
-        return value(hash_str(key));
-    }
-
-    T value(uint key)
+    T value(uint key) const
     {
         hashtable_item *item = hashtable_fixed_find(&m_table, key);
         if (item != NULL)
-            return static_cast<T>(item->value);
+            return (T)(item->value);
         else
-            return static_cast<T>(Invalid);
+            return (T)(Invalid);
+    }
+
+    T value(const char *key) const
+    {
+        return value(hash_str(key));
     }
 
     void remove(const char *key)
@@ -354,21 +354,21 @@ public:
 
     void add(uint key, T value)
     {
-        hashtable_open_add(&m_table, key, static_cast<uptr_t>(value));
+        hashtable_open_add(&m_table, key, (uptr_t)(value));
     }
 
-    T value(const char *key)
-    {
-        return value(hash_str(key));
-    }
-
-    T value(uint key)
+    T value(uint key) const
     {
         hashtable_item *item = hashtable_open_find(&m_table, key);
         if (item != NULL)
-            return static_cast<T>(item->value);
+            return (T)(item->value);
         else
-            return static_cast<T>(Invalid);
+            return (T)(Invalid);
+    }
+
+    T value(const char *key) const
+    {
+        return value(hash_str(key));
     }
 
     void remove(const char *key)
@@ -435,7 +435,7 @@ public:
 
     void add(uint key, T value)
     {
-        hashtable_chained_add(&m_table, key, static_cast<T>(value));
+        hashtable_chained_add(&m_table, key, (T)(value));
     }
 
     void remove(const char *key)
@@ -450,18 +450,18 @@ public:
             hashtable_chained_remove(&m_table, item);
     }
 
-    T value(const char *key)
-    {
-        return value(hash_str(key));
-    }
-
-    T value(uint key)
+    T value(uint key) const
     {
         hashtable_item_chained *item = hashtable_chained_find(&m_table, key);
         if (item != NULL)
-            return static_cast<T>(item->value);
+            return (T)(item->value);
         else
-            return static_cast<T>(Invalid);
+            return (T)(Invalid);
+    }
+
+    T value(const char *key) const
+    {
+        return value(hash_str(key));
     }
 };
 
