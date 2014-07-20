@@ -304,7 +304,7 @@ public:
 
     uint to_uint() const
     {
-        color_rgba_uint(&m_clr);
+        return color_rgba_uint(&m_clr);
     }
 
     Color swizzle() const

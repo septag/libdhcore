@@ -189,7 +189,7 @@ public:
     T* item(uint idx)
     {
         ASSERT(idx < ARR_COUNT(m_arr));
-        return ARR_ITEM(m_arr, T, idx);
+        return &ARR_ITEM(m_arr, T, idx);
     }
 
     T& operator[](uint idx)
@@ -206,6 +206,8 @@ public:
 
     operator const array*() const  {    return &m_arr;  }
     operator array*()   {   return &m_arr;  }
+    operator const T*() const   {   reinterpret_cast<T*>(m_arr.buffer); }
+    operator T*() { return reinterpret_cast<T*>(m_arr.buffer);  }
 };
 
 }   /* dh */
