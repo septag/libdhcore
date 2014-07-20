@@ -101,8 +101,8 @@ void timer_update(uint64 tick)
 fl64 timer_calctm(uint64 tick1, uint64 tick2)
 {
     fl64 freq = (fl64)g_tm->freq;
-    uint64 dt = tick2 - tick1;
-    return (fl64)dt / freq;
+    fl64 dt = (fl64)((int64)(tick2 - tick1));
+    return dt / freq;
 }
 
 void timer_pauseall()

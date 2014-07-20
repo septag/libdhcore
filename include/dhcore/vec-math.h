@@ -149,6 +149,26 @@ static const struct vec3f g_vec3_unity_neg = {0.0f, -1.0f, 0.0f, 1.0f};
 static const struct vec3f g_vec3_unitz_neg = {0.0f, 0.0f, -1.0f, 1.0f};
 #endif
 
+struct ALIGN16 mat2f
+{
+    union   {
+        struct {
+            float m11, m12, m13;
+            float m21, m22, m23;
+            float m31, m32, m33;
+        };
+
+        struct {
+            float row1[3];
+            float row2[3];
+            float row3[3];
+        };
+
+        float f[9];
+    };
+
+};
+
 /**
  * row-major 4x3 matrix \n
  * row-major representation: m(row)(col)\n
@@ -850,6 +870,85 @@ CORE_API struct quat4f* quat_fromeuler(struct quat4f* r, float pitch, float yaw,
  */
 CORE_API struct quat4f* quat_frommat3(struct quat4f* r, const struct mat3f* mat);
 
+/* mat2f functions */
+/**
+ * @ingroup vmath
+ */
+CORE_API struct mat2f* mat2_setf(struct mat2f *r,
+                                 float m11, float m12,
+                                 float m21, float m22,
+                                 float m31, float m32);
+/**
+ * @ingroup vmath
+ */
+CORE_API struct mat2f* mat2_setm(struct mat2f *r, const struct mat2f *m);
+/**
+ * @ingroup vmath
+ */
+CORE_API struct mat2f* mat2_muls(struct mat2f *r, const struct mat2f *m, float k);
+/**
+ * @ingroup vmath
+ */
+CORE_API struct mat2f* mat2_add(struct mat2f *r, const struct mat2f *m1, const struct mat2f *m2);
+/**
+ * @ingroup vmath
+ */
+CORE_API struct mat2f* mat2_mul(struct mat2f *r, const struct mat2f *m1, const struct mat2f *m2);
+/**
+ * @ingroup vmath
+ */
+CORE_API struct mat2f* mat2_set_trans(struct mat2f *r, const struct vec2f *t);
+/**
+ * @ingroup vmath
+ */
+CORE_API struct mat2f* mat2_set_transf(struct mat2f *r, float x, float y);
+/**
+ * @ingroup vmath
+ */
+CORE_API struct mat2f* mat2_set_scale(struct mat2f *r, const struct vec2f *s);
+/**
+ * @ingroup vmath
+ */
+CORE_API struct mat2f* mat2_set_scalef(struct mat2f *r, float sx, float sy);
+/**
+ * @ingroup vmath
+ */
+CORE_API struct mat2f* mat2_set_rot(struct mat2f *r, float angle);
+/**
+ * @ingroup vmath
+ */
+CORE_API struct mat2f* mat2_set_ident(struct mat2f *r);
+/**
+ * @ingroup vmath
+ */
+INLINE struct mat2f* mat2_transpose(struct mat2f *r, const struct mat2f *m)
+{
+    return mat2_setf(r,
+                     m->m11, m->m21,
+                     m->m12, m->m22,
+                     m->m31, m->m32);
+}
+
+/**
+ * @ingroup vmath
+ */
+INLINE struct vec2f* vec2_transform(struct vec2f *r, const struct vec2f *v, const struct mat2f *m)
+{
+    return vec2f_setf(r,
+                      v->x*m->m11 + v->y*m->m21 + m->m31,
+                      v->x*m->m12 + v->y*m->m22 + m->m32);
+}
+
+/**
+ * @ingroup vmath
+ */
+INLINE struct vec2f* vec2_transformsr(struct vec2f *r, const struct vec2f *v, const struct mat2f *m)
+{
+    return vec2f_setf(r,
+                      v->x*m->m11 + v->y*m->m21,
+                      v->x*m->m12 + v->y*m->m22);
+}
+
 /* mat3f functions
  **
  * @ingroup vmath
@@ -866,7 +965,7 @@ CORE_API struct mat3f* mat3_setm(struct mat3f* r, const struct mat3f* m);
 /**
  * @ingroup vmath
  */
-CORE_API struct mat3f* mat3_setidentity(struct mat3f* r);
+CORE_API struct mat3f* mat3_set_ident(struct mat3f* r);
 /**
  * @ingroup vmath
  */
@@ -1027,7 +1126,7 @@ CORE_API struct mat4f* mat4_setm(struct mat4f* r, const struct mat4f* m);
 /**
  * @ingroup vmath
  */
-CORE_API struct mat4f* mat4_setidentity(struct mat4f* r);
+CORE_API struct mat4f* mat4_set_ident(struct mat4f* r);
 /**
  * @ingroup vmath
  */
@@ -1619,7 +1718,7 @@ public:
 
     Mat3& set_identity()
     {
-        mat3_setidentity(&m_mat);
+        mat3_set_ident(&m_mat);
         return *this;
     }
 
@@ -1716,14 +1815,14 @@ public:
         return r;
     }
 
-    Vec3 transform_SRT(const Vec3& v)
+    Vec3 transform_SRT(const Vec3& v) const
     {
         Vec3 r;
         vec3_transformsrt(r, v, &m_mat);
         return r;
     }
 
-    Vec3 transform_SR(const Vec3& v)
+    Vec3 transform_SR(const Vec3& v) const
     {
         Vec3 r;
         vec3_transformsr(r, v, &m_mat);
@@ -1826,18 +1925,24 @@ public:
         return r;
     }
 
-    Vec4 transform(const Vec4& v)
+    Vec4 transform(const Vec4& v) const
     {
         Vec4 r;
         vec4_transform(r, v, &m_mat);
         return r;
     }
 
-    Vec4 transform_SRT(const Vec4& v)
+    Vec4 transform_SRT(const Vec4& v) const
     {
         Vec4 r;
         vec3_transformsrt_m4(r, v, &m_mat);
         return r;
+    }
+
+    Mat4& set_identity()
+    {
+        mat4_set_ident(&m_mat);
+        return *this;
     }
 
     float& operator [](int idx)   {   return m_mat.f[idx];    }
@@ -2020,6 +2125,137 @@ public:
     int operator[](int idx) const {   return m_vec.n[idx];    }
 };
 
+class ALIGN16 Mat2
+{
+private:
+    mat2f m_mat;
+
+public:
+    Mat2()  {}
+    Mat2(float m11, float m12,
+         float m21, float m22,
+         float m31, float m32)
+    {
+        mat2_setf(&m_mat,
+                  m11, m12,
+                  m21, m22,
+                  m31, m32);
+    }
+
+    Mat2(const mat2f mat)
+    {
+        m_mat = mat;
+    }
+
+    Mat2& set(float m11, float m12,
+              float m21, float m22,
+              float m31, float m32)
+    {
+        mat2_setf(&m_mat,
+                  m11, m12,
+                  m21, m22,
+                  m31, m32);
+        return *this;
+    }
+
+    Mat2& set(const mat2f mat)
+    {
+        m_mat = mat;
+        return *this;
+    }
+
+    Mat2 operator*(float k) const
+    {
+        Mat2 r;
+        mat2_muls(&r.m_mat, &m_mat, k);
+        return r;
+    }
+
+    Mat2& operator*=(float k)
+    {
+        mat2_muls(&m_mat, &m_mat, k);
+        return *this;
+    }
+
+    Mat2 operator+(const Mat2 &m) const
+    {
+        Mat2 r;
+        mat2_add(&r.m_mat, &m_mat, &m.m_mat);
+        return r;
+    }
+
+    Mat2& operator+=(const Mat2 &m)
+    {
+        mat2_add(&m_mat, &m_mat, &m.m_mat);
+        return *this;
+    }
+
+    Vec2 translation() const
+    {
+        return Vec2(m_mat.m31, m_mat.m32);
+    }
+
+    Mat2& set_identity()
+    {
+        mat2_set_ident(&m_mat);
+        return *this;
+    }
+
+    Mat2& set_rotation(float angle)
+    {
+        mat2_set_rot(&m_mat, angle);
+        return *this;
+    }
+
+    Mat2& set_translation(float x, float y)
+    {
+        mat2_set_transf(&m_mat, x, y);
+        return *this;
+    }
+
+    Mat2& set_translation(const Vec2 &t)
+    {
+        mat2_set_trans(&m_mat, t);
+        return *this;
+    }
+
+    Mat2& set_scale(float sx, float sy)
+    {
+        mat2_set_scalef(&m_mat, sx, sy);
+        return *this;
+    }
+
+    Mat2& set_scale(const Vec2 &s)
+    {
+        mat2_set_scale(&m_mat, s);
+        return *this;
+    }
+
+    Vec2 transform(const Vec2 &v) const
+    {
+        Vec2 r;
+        vec2_transform(r, v, &m_mat);
+        return r;
+    }
+
+    Vec2 transform_SR(const Vec2 &v) const
+    {
+        Vec2 r;
+        vec2_transformsr(r, v, &m_mat);
+        return r;
+    }
+
+    Mat2& set_transpose()
+    {
+        mat2_transpose(&m_mat, &m_mat);
+        return *this;
+    }
+
+    operator const mat2f*() const   {   return &m_mat;  }
+    operator mat2f*() { return &m_mat;  }
+    operator float*() { return m_mat.f; }
+    operator const float*() const   {   return m_mat.f; }
+};
 
 } /* dh */
 

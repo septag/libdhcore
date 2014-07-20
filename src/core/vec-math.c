@@ -379,7 +379,7 @@ struct mat3f* mat3_setm(struct mat3f* r, const struct mat3f* m)
     return r;
 }
 
-struct mat3f* mat3_setidentity(struct mat3f* r)
+struct mat3f* mat3_set_ident(struct mat3f* r)
 {
     r->m11 = 1.0f;   r->m21 = 0.0f;   r->m31 = 0.0f;   r->m41 = 0.0f;
     r->m12 = 0.0f;   r->m22 = 1.0f;   r->m32 = 0.0f;   r->m42 = 0.0f;
@@ -849,7 +849,7 @@ struct mat4f* mat4_setm(struct mat4f* r, const struct mat4f* m)
     return r;
 }
 
-struct mat4f* mat4_setidentity(struct mat4f* r)
+struct mat4f* mat4_set_ident(struct mat4f* r)
 {
     memset(r, 0x00, sizeof(struct mat4f));
     r->m11 = 1.0f;      r->m22 = 1.0f;      r->m33 = 1.0f;  r->m44 = 1.0f;
@@ -1116,3 +1116,101 @@ void vec4simd_destroy(struct vec4f_simd* v)
         A_ALIGNED_FREE(v->alloc, v->xs);
     memset(v, 0x00, sizeof(struct vec4f_simd));
 }
+
+struct mat2f* mat2_setf(struct mat2f *r,
+                        float m11, float m12,
+                        float m21, float m22,
+                        float m31, float m32)
+{
+    r->m11 = m11;   r->m12 = m12;   r->m13 = 0.0f;
+    r->m21 = m21;   r->m22 = m22;   r->m23 = 0.0f;
+    r->m31 = m31;   r->m32 = m32;   r->m33 = 1.0f;
+    return r;
+}
+
+struct mat2f* mat2_setm(struct mat2f *r, const struct mat2f *m)
+{
+    r->m11 = m->m11;    r->m12 = m->m12;    r->m13 = m->m13;
+    r->m21 = m->m21;    r->m22 = m->m22;    r->m23 = m->m23;
+    r->m31 = m->m31;    r->m32 = m->m32;    r->m33 = m->m33;
+    return r;
+}
+
+struct mat2f* mat2_muls(struct mat2f *r, const struct mat2f *m, float k)
+{
+    r->m11 = m->m11*k;        r->m12 = m->m12*k;        r->m13 = 0.0f;
+    r->m21 = m->m21*k;        r->m22 = m->m22*k;        r->m23 = 0.0f;
+    r->m31 = m->m31*k;        r->m32 = m->m32*k;        r->m33 = 1.0f;
+    return r;
+}
+
+struct mat2f* mat2_add(struct mat2f *r, const struct mat2f *m1, const struct mat2f *m2)
+{
+    r->m11 = m1->m11 + m2->m11;
+    r->m12 = m1->m12 + m2->m12;
+    r->m13 = 0.0f;
+    r->m21 = m1->m21 + m2->m21;
+    r->m22 = m1->m22 + m2->m22;
+    r->m23 = 0.0f;
+    r->m31 = m1->m31 + m2->m31;
+    r->m32 = m1->m32 + m2->m32;
+    r->m33 = 1.0f;
+    return r;
+}
+
+struct mat2f* mat2_mul(struct mat2f *r, const struct mat2f *m1, const struct mat2f *m2)
+{
+    return mat2_setf(r,
+              m1->m11*m2->m11 + m1->m12*m2->m21,
+              m1->m11*m2->m12 + m1->m12*m2->m22,
+              m1->m21*m2->m11 + m1->m22*m2->m21,
+              m1->m21*m2->m12 + m1->m22*m2->m22,
+              m1->m31*m2->m11 + m1->m32*m2->m21,
+              m1->m31*m2->m12 + m1->m32*m2->m22);
+}
+
+struct mat2f* mat2_set_trans(struct mat2f *r, const struct vec2f *t)
+{
+    r->m31 = t->x;
+    r->m32 = t->y;
+    return r;
+}
+
+struct mat2f* mat2_set_transf(struct mat2f *r, float x, float y)
+{
+    r->m31 = x;
+    r->m32 = y;
+    return r;
+}
+
+struct mat2f* mat2_set_scale(struct mat2f *r, const struct vec2f *s)
+{
+    r->m11 = s->x;
+    r->m22 = s->y;
+    return r;
+}
+
+struct mat2f* mat2_set_scalef(struct mat2f *r, float sx, float sy)
+{
+    r->m11 = sx;
+    r->m22 = sy;
+    return r;
+}
+
+struct mat2f* mat2_set_rot(struct mat2f *r, float angle)
+{
+    r->m11 = cos(angle);
+    r->m12 = -sin(angle);
+    r->m21 = sin(angle);
+    r->m22 = cos(angle);
+    return r;
+}
+
+struct mat2f* mat2_set_ident(struct mat2f *r)
+{
+    r->m11 = 1.0f;      r->m12 = 0.0f;      r->m13 = 0.0f;
+    r->m21 = 0.0f;      r->m22 = 1.0f;      r->m23 = 0.0f;
+    r->m31 = 0.0f;      r->m32 = 0.0f;      r->m33 = 1.0f;
+    return r;
+}
+
