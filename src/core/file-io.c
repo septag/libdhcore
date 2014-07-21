@@ -249,7 +249,7 @@ int fio_addvdir(const char* directory, int monitor)
     }
 #endif
 
-    log_printf(LOG_INFO, "added virtual directory '%s' with file monitoring %s", dir,
+    log_printf(LOG_INFO, "  Added virtual directory: %s (Monitor %s)", dir,
         monitor ? "ON" : "OFF");
     return TRUE;
 }

@@ -128,7 +128,7 @@ struct allocator
 template <typename T>
 T* mem_new_alloc(allocator *alloc, uint mem_id = 0)
 {
-    void *ptr = A_ALIGNED_ALLOC(alloc, sizeof(T), mem_id);
+    void *ptr = A_ALLOC(alloc, sizeof(T), mem_id);
     if (ptr != NULL)
         return new(ptr) T();
     return NULL;
@@ -138,8 +138,25 @@ template <typename T>
 void mem_delete_alloc(allocator *alloc, T *t)
 {
     t->~T();
+    A_FREE(alloc, t);
+}
+
+template <typename T>
+T* mem_new_alloc_aligned(allocator *alloc, uint mem_id = 0)
+{
+    void *ptr = A_ALIGNED_ALLOC(alloc, sizeof(T), mem_id);
+    if (ptr != NULL)
+        return new(ptr) T();
+    return NULL;
+}
+
+template <typename T>
+void mem_delete_alloc_aligned(allocator *alloc, T *t)
+{
+    t->~T();
     A_ALIGNED_FREE(alloc, t);
 }
+
 #endif
 
 #endif /*__ALLOCATOR_H__*/

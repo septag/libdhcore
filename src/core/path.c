@@ -51,12 +51,15 @@ char* path_norm(char* outpath, const char* inpath)
         outpath[sz-1] = 0;
     return outpath;
 #else
+
     char* tmp = realpath(inpath, NULL);
     if (tmp != NULL)    {
         path_tounix(outpath, tmp);
         free(tmp);
     }   else    {
-        strcpy(outpath, inpath);
+        char tmp2[DH_PATH_MAX];
+        realpath(inpath, tmp2);
+        strcpy(outpath, tmp2);
     }
 
     size_t sz = strlen(outpath);

@@ -174,7 +174,7 @@ CORE_API void mem_heap_bindalloc(struct allocator* alloc);
 template <typename T>
 T* mem_new(uint mem_id = 0)
 {
-    void *ptr = ALIGNED_ALLOC(sizeof(T), mem_id);
+    void *ptr = ALLOC(sizeof(T), mem_id);
     if (ptr != NULL)
         return new(ptr) T();
     return NULL;
@@ -184,8 +184,25 @@ template <typename T>
 void mem_delete(T *t)
 {
     t->~T();
+    FREE(t);
+}
+
+template <typename T>
+T* mem_new_aligned(uint mem_id = 0)
+{
+    void *ptr = ALIGNED_ALLOC(sizeof(T), mem_id);
+    if (ptr != NULL)
+        return new(ptr) T();
+    return NULL;
+}
+
+template <typename T>
+void mem_delete_aligned(T *t)
+{
+    t->~T();
     ALIGNED_FREE(t);
 }
+
 #endif
 
 #endif /* __MEMMGR_H__ */

@@ -22,7 +22,7 @@
 #include "mt.h"
 #include "stack.h"
 
-#define STACKALLOC_SAVES_MAX    8
+#define STACKALLOC_SAVES_MAX    16
 
 /**
  * Stack allocator: variable-size sequential stack allocator, total size is fixed\n
@@ -265,6 +265,11 @@ public:
     void bindto(allocator *alloc)
     {
         mem_stack_bindalloc(&m_stack, alloc);
+    }
+
+    void reset()
+    {
+        mem_stack_reset(&m_stack);
     }
 };
 

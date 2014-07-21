@@ -107,6 +107,16 @@ INLINE uint color_rgba_uint(const struct color* c)
     return (uint)((((r)&0xff)<<24) | (((g)&0xff)<<16) | (((b)&0xff)<<8) | ((a)&0xff));
 }
 
+INLINE uint color_rgba_uint_swizzle(const struct color* c)
+{
+    uint8 r = (uint8)(c->r*255.0f);
+    uint8 g = (uint8)(c->g*255.0f);
+    uint8 b = (uint8)(c->b*255.0f);
+    uint8 a = (uint8)(c->a*255.0f);
+    return (uint)((((a)&0xff)<<24) | (((b)&0xff)<<16) | (((g)&0xff)<<8) | ((r)&0xff));
+}
+
+
 INLINE uint color_rgb_uint(const struct color* c)
 {
     uint8 r = (uint8)(c->r*255.0f);
@@ -305,6 +315,11 @@ public:
     uint to_uint() const
     {
         return color_rgba_uint(&m_clr);
+    }
+
+    uint to_uint_swizzle() const
+    {
+        return color_rgba_uint_swizzle(&m_clr);
     }
 
     Color swizzle() const
