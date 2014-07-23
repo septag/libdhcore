@@ -2036,6 +2036,9 @@ public:
         return v0[0]*v1[0] + v0[1]*v1[1];
     }
 
+    float x() const {   return m_vec.x; }
+    float y() const {   return m_vec.y; }
+
     operator vec2f*() { return &m_vec;  }
     operator const vec2f*() const   {   return &m_vec;  }
     operator float*()   { return m_vec.f;   }
@@ -2116,6 +2119,9 @@ public:
         vec2i_muls(&m_vec, &m_vec, k);
         return *this;
     }
+
+    int x() const {   return m_vec.x; }
+    int y() const {   return m_vec.y; }
 
     operator vec2i*() { return &m_vec;  }
     operator const vec2i*() const   {   return &m_vec;  }

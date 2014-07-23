@@ -219,4 +219,38 @@ INLINE void swapptr(void** pp1, void** pp2)
 	*pp2 = tmp;
 }
 
+#ifdef __cplusplus
+namespace dh {
+
+template <typename T>
+T min(T v1, T v2)
+{
+    return (v1 < v2) ? v1 : v2;
+}
+
+template <typename T>
+T max(T v1, T v2)
+{
+    return v1 > v2 ? v1 : v2;
+}
+
+template <typename T>
+void swap(T *v1, T *v2)
+{
+    T tmp = *v1;
+    *v1 = *v2;
+    *v2 = tmp;
+}
+
+template <typename T>
+T clamp(T v, T v_min, T v_max)
+{
+    if (v < v_min)      return v_min;
+    else if (v > v_max) return v_max;
+    else                return v;
+}
+
+} // dh
+#endif
+
 #endif /* __NUMERIC_H__ */

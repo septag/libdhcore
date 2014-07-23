@@ -103,7 +103,7 @@ char* util_gettempdir(char* outdir)
 
 int util_makedir(const char* dir)
 {
-    return mkdir(dir, 777) == 0;
+    return mkdir(dir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0;
 }
 
 /* reference: http://stackoverflow.com/questions/2180079/how-can-i-copy-a-file-on-unix-using-c */
