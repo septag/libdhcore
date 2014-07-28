@@ -223,19 +223,19 @@ INLINE void swapptr(void** pp1, void** pp2)
 namespace dh {
 
 template <typename T>
-T min(T v1, T v2)
+T tmin(T v1, T v2)
 {
     return (v1 < v2) ? v1 : v2;
 }
 
 template <typename T>
-T max(T v1, T v2)
+T tmax(T v1, T v2)
 {
     return v1 > v2 ? v1 : v2;
 }
 
 template <typename T>
-void swap(T *v1, T *v2)
+void tswap(T *v1, T *v2)
 {
     T tmp = *v1;
     *v1 = *v2;
@@ -243,7 +243,7 @@ void swap(T *v1, T *v2)
 }
 
 template <typename T>
-T clamp(T v, T v_min, T v_max)
+T tclamp(T v, T v_min, T v_max)
 {
     if (v < v_min)      return v_min;
     else if (v > v_max) return v_max;

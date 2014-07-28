@@ -336,6 +336,12 @@ public:
         return r;
     }
 
+    Color& alpha_mul(float alpha)
+    {
+        m_clr.a *= alpha;
+        return *this;
+    }
+
     operator color*()   {   return &m_clr;  }
     operator const color*() const   {   return &m_clr;  }
     operator float*()   {   return m_clr.f; }
