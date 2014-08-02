@@ -78,6 +78,17 @@ INLINE int powi(int base, int n)
 }
 
 /**
+ * @brief Returns aligned value
+ * @ingroup num
+ */
+INLINE int aligni(int val, int align)
+{
+    int misalign = val & (align - 1);
+    int adjust = align - misalign;
+    return val + adjust;
+}
+
+/**
  * clamp input float value to [min_value, max_value]
  * @ingroup num
  */
@@ -249,6 +260,15 @@ T tclamp(T v, T v_min, T v_max)
     else if (v > v_max) return v_max;
     else                return v;
 }
+
+template <typename T>
+T talign(T val, T align)
+{
+    T misalign = val & (align - 1);
+    T adjust = align - misalign;
+    return val + adjust;
+}
+
 
 } // dh
 #endif
