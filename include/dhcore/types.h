@@ -254,8 +254,8 @@ typedef uint uptr_t;
 
 /* Version info structure, mostly used in file formats */
 /* useful macros */
-#define INVALID_INDEX       UINT32_MAX
-#define INVALID_HANDLE      UINT64_MAX
+#define INVALID_INDEX       0xffffffff
+#define INVALID_HANDLE      0xffffffffffffffff
 
 /* inlining */
 #if defined(_MSVC_)

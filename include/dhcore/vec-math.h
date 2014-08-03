@@ -1687,6 +1687,19 @@ public:
         return *this;
     }
 
+    Mat3 operator*(const Mat3 &m) const
+    {
+        Mat3 r;
+        mat3_mul(&r.m_mat, &m_mat, &m.m_mat);
+        return r;
+    }
+
+    Mat3 operator*=(const Mat3 &m)
+    {
+        mat3_mul(&m_mat, &m_mat, &m.m_mat);
+        return *this;
+    }
+
     Mat3 rotation() const
     {
         return Mat3(m_mat.m11, m_mat.m12, m_mat.m13,
@@ -1903,6 +1916,19 @@ public:
     Mat4& operator*=(float k)
     {
         mat4_muls(&m_mat, &m_mat, k);
+        return *this;
+    }
+
+    Mat4 operator*(const Mat4 &m) const
+    {
+        Mat4 r;
+        mat4_mul(&r.m_mat, &m_mat, &m.m_mat);
+        return r;
+    }
+
+    Mat4 operator*=(const Mat4 &m)
+    {
+        mat4_mul(&m_mat, &m_mat, &m.m_mat);
         return *this;
     }
 

@@ -516,7 +516,7 @@ private:
     aabb m_aabb;
 
 public:
-    AABB() {}
+    AABB() {    set_empty();    }
     AABB(const Vec3& minpt, const Vec3& maxpt)
     {
         aabb_setv(&m_aabb, minpt, maxpt);
