@@ -62,7 +62,8 @@ SOURCES += \
     deps/cJSON/cJSON.c \
     deps/commander/commander.c \
     deps/miniz/miniz.c \
-    path.c
+    path.c \
+    static-vars.cpp
 
 unix    {
     SOURCES += \

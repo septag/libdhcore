@@ -416,7 +416,10 @@ private:
     sphere m_sphere;
 
 public:
-    Sphere()    {}
+    Sphere()
+    {
+        sphere_setf(&m_sphere, 0.0f, 0.0f, 0.0f, 0.0f);
+    }
 
     Sphere(float x, float y, float z, float r)
     {
@@ -516,7 +519,11 @@ private:
     aabb m_aabb;
 
 public:
-    AABB() {    set_empty();    }
+    AABB()
+    {
+        aabb_setzero(&m_aabb);
+    }
+
     AABB(const Vec3& minpt, const Vec3& maxpt)
     {
         aabb_setv(&m_aabb, minpt, maxpt);
@@ -646,7 +653,14 @@ private:
     plane m_plane;
 
 public:
-    Plane() {}
+    Plane()
+    {
+        m_plane.nx = 0.0f;
+        m_plane.ny = 1.0f;
+        m_plane.nz = 0.0f;
+        m_plane.d = 0.0f;
+    }
+
     Plane(const Vec3& norm, float d)
     {
         plane_setv(&m_plane, norm, d);
@@ -688,6 +702,16 @@ public:
         return m_plane.d;
     }
 
+    void set_normalize()
+    {
+        Vec3 nd(m_plane.nx, m_plane.ny, m_plane.nz);
+        float nlen = nd.length();
+        m_plane.nx = nd.x() / nlen;
+        m_plane.ny = nd.y() / nlen;
+        m_plane.nz = nd.z() / nlen;
+        m_plane.d /= nlen;
+    }
+
     operator plane*() { return &m_plane; }
     operator const plane*() const { return &m_plane; }
 };
@@ -698,7 +722,12 @@ private:
     ray m_ray;
 
 public:
-    Ray() {}
+    Ray()
+    {
+        vec3_setf(&m_ray.pt, 0.0f, 0.0f, 0.0f);
+        vec3_setf(&m_ray.dir, 0.0f, 0.0f, 1.0f);
+    }
+
     Ray(const Vec3& pt, const Vec3& dir)
     {
         ray_setv(&m_ray, pt, dir);
@@ -746,7 +775,11 @@ private:
     rect2di m_rc;
 
 public:
-    Rect() {}
+    Rect()
+    {
+        rect2di_seti(&m_rc, 0, 0, 0, 0);
+    }
+
     Rect(int x, int y, int width, int height)
     {
         rect2di_seti(&m_rc, x, y, width, height);
@@ -817,7 +850,11 @@ private:
     rect2df m_rc;
 
 public:
-    Rectf() {}
+    Rectf()
+    {
+        rect2df_setf(&m_rc, 0.0f, 0.0f, 0.0f, 0.0f);
+    }
+
     Rectf(float x, float y, float width, float height)
     {
         rect2df_setf(&m_rc, x, y, width, height);

@@ -1306,7 +1306,19 @@ protected:
     vec4f m_vec;
 
 public:
-    Vec3()  {}
+    static const Vec3 UnitX;
+    static const Vec3 UnitY;
+    static const Vec3 UnitZ;
+    static const Vec3 UnitX_Neg;
+    static const Vec3 UnitY_Neg;
+    static const Vec3 UnitZ_Neg;
+    static const Vec3 Zero;
+
+public:
+    Vec3()
+    {
+    }
+
     Vec3(float x, float y, float z)
     {
         vec3_setf(&m_vec, x, y, z);
@@ -1327,15 +1339,20 @@ public:
         return *this;
     }
 
-    virtual Vec3& set(float x, float y, float z)
+    Vec3& set(float x, float y, float z)
     {
         vec3_setf(&m_vec, x, y, z);
         return *this;
     }
 
-    virtual bool operator==(const Vec3& v) const
+    bool operator==(const Vec3& v) const
     {
         return vec3_isequal(&m_vec, &v.m_vec);
+    }
+
+    bool operator!=(const Vec3& v) const
+    {
+        return !vec3_isequal(&m_vec, &v.m_vec);
     }
 
     Vec3 operator*(float k) const
@@ -1449,10 +1466,15 @@ public:
 };
 
 /* Vec4 */
-class ALIGN16 Vec4 : public Vec3
+class ALIGN16 Vec4
 {
+private:
+    vec4f m_vec;
+
 public:
-    Vec4() {}
+    Vec4()
+    {
+    }
 
     Vec4(float x, float y, float z, float w)
     {
@@ -1468,6 +1490,11 @@ public:
     bool operator==(const Vec4& v) const
     {
         return vec4_isequal(&m_vec, &v.m_vec);
+    }
+
+    bool operator!=(const Vec4& v) const
+    {
+        return !vec4_isequal(&m_vec, &v.m_vec);
     }
 
     Vec4 operator*(float k) const
@@ -1521,6 +1548,14 @@ public:
         vec4_sub(&m_vec, &m_vec, &v.m_vec);
         return *this;
     }
+
+    float& operator [](int idx)   {   return m_vec.f[idx];    }
+    float operator [](int idx) const {   return m_vec.f[idx];    }
+
+    operator vec4f*()   {   return &m_vec;  }
+    operator const vec4f*() const   {   return &m_vec;  }
+    operator float*()   {   return m_vec.f; }
+    operator const float*() const {   return m_vec.f; }
 };
 
 /* Quat */
@@ -1530,7 +1565,13 @@ private:
     quat4f m_quat;
 
 public:
-    Quat()  {}
+    static const Quat Ident;
+
+public:
+    Quat()
+    {
+    }
+
     Quat(float x, float y, float z, float w)
     {
         quat_setf(&m_quat, x, y, z, w);
@@ -1618,6 +1659,8 @@ public:
     operator const float*() const { return m_quat.f;  }
 };
 
+class Mat4;
+
 /* Mat3 */
 class ALIGN16 Mat3
 {
@@ -1625,7 +1668,13 @@ private:
     mat3f m_mat;
 
 public:
-    Mat3()  {}
+    static const Mat3 Ident;
+
+public:
+    Mat3()
+    {
+    }
+
     Mat3(float m11, float m12, float m13,
          float m21, float m22, float m23,
          float m31, float m32, float m33,
@@ -1699,6 +1748,8 @@ public:
         mat3_mul(&m_mat, &m_mat, &m.m_mat);
         return *this;
     }
+
+    Mat4 operator*(const Mat4 &m) const;
 
     Mat3 rotation() const
     {
@@ -1842,6 +1893,11 @@ public:
         return r;
     }
 
+    Vec3 row(int idx) const
+    {
+        return Vec3(m_mat.f[idx*4], m_mat.f[idx*4+1], m_mat.f[idx*4+2]);
+    }
+
     float& operator [](int idx)   {   return m_mat.f[idx];    }
     float operator [](int idx) const {   return m_mat.f[idx];    }
     operator mat3f*()   {   return &m_mat;  }
@@ -1857,7 +1913,13 @@ private:
     mat4f m_mat;
 
 public:
-    Mat4()  {}
+    static const Mat4 Ident;
+
+public:
+    Mat4()
+    {
+    }
+
     Mat4(float m11, float m12, float m13, float m14,
          float m21, float m22, float m23, float m24,
          float m31, float m32, float m33, float m34,
@@ -1971,6 +2033,11 @@ public:
         return *this;
     }
 
+    Vec4 row(int idx) const
+    {
+        return Vec4(m_mat.f[idx*4], m_mat.f[idx*4+1], m_mat.f[idx*4+2], m_mat.f[idx*4+3]);
+    }
+
     float& operator [](int idx)   {   return m_mat.f[idx];    }
     float operator [](int idx) const {   return m_mat.f[idx];    }
     operator mat4f*()   {   return &m_mat;  }
@@ -1979,6 +2046,13 @@ public:
     operator const float*() const {   return m_mat.f; }
 };
 
+inline Mat4 Mat3::operator*(const Mat4 &m) const
+{
+    Mat4 r;
+    mat3_mul4(r, &m_mat, m);
+    return r;
+}
+
 /* Vec2 */
 class Vec2
 {
@@ -1986,7 +2060,15 @@ private:
     vec2f m_vec;
 
 public:
-    Vec2()  {}
+    static const Vec2 Zero;
+    static const Vec2 UnitX;
+    static const Vec2 UnitY;
+
+public:
+    Vec2()
+    {
+    }
+
     Vec2(float x, float y)
     {
         vec2f_setf(&m_vec, x, y);
@@ -2080,7 +2162,15 @@ private:
     vec2i m_vec;
 
 public:
-    Vec2i()  {}
+    static const Vec2i Zero;
+    static const Vec2i UnitX;
+    static const Vec2i UnitY;
+
+public:
+    Vec2i()
+    {
+    }
+
     Vec2i(int x, int y)
     {
         vec2i_seti(&m_vec, x, y);
@@ -2163,7 +2253,13 @@ private:
     mat2f m_mat;
 
 public:
-    Mat2()  {}
+    static const Mat2 Ident;
+
+public:
+    Mat2()
+    {
+    }
+
     Mat2(float m11, float m12,
          float m21, float m22,
          float m31, float m32)
