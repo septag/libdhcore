@@ -181,7 +181,6 @@ void log_getstats(struct log_stats* stats)
 void log_endprogress(enum log_progress_result res)
 {
     const char *text;
-    enum log_type type;
 
     switch (res)    {
     case LOG_PROGRESS_OK:

@@ -99,19 +99,25 @@ def compiler_setup(conf):
             cflags.extend(['/Qstd=c99', '/Qintel-extensions-', '/Qfast-transcendentals-',
                 '/Qparallel-'])
     else:
-        cflags.extend(['-std=c99', '-ffast-math', '-fPIC',
-            '-fvisibility=internal', '-Winline', '-Wall'])
+        cflags.extend(['-std=c99', '-ffast-math', '-fPIC', '-Winline', '-Wall'])
         conf.env.append_unique('DEFINES', ['_POSIX_C_SOURCE', '_GNU_SOURCE'])
         if not compiler_is_arm(conf):
-            cflags.extend(['-msse', '-msse2', '-msse4.1', '-malign-double'])
+            if compiler_is_clang(conf):
+                cflags.extend(['-msse', '-msse2', '-msse4.1'])
+            else:    
+                cflags.extend(['-msse', '-msse2', '-msse4.1', '-malign-double', 
+                    '-fvisibility=internal'])
         if compiler_is_clang(conf):
-            cflags.extend(['-arch x86_64', '-fms-extensions'])
+            cflags.extend(['-fms-extensions'])
 
     cxxflags.extend(cflags)
 
     if '-std=c99' in cxxflags:  del cxxflags[cxxflags.index('-std=c99')]
     if '/TP' in cxxflags:   del cxxflags[cxxflags.index('/TP')]
-    if '-fvisibility=internal' in cxxflags:  del cxxflags[cxxflags.index('-fvisibility=internal')]
+
+    if not compiler_is_clang(conf):
+        if '-fvisibility=internal' in cxxflags:  
+            del cxxflags[cxxflags.index('-fvisibility=internal')]
 
     conf.env.append_unique('CFLAGS', cflags)
 
