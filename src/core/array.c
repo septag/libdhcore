@@ -15,6 +15,7 @@
 
 #include "array.h"
 #include "err.h"
+#include "numeric.h"
 
 result_t arr_create(struct allocator* alloc,
                     struct array* arr,
@@ -61,6 +62,25 @@ void* arr_add(struct array* arr)
     }
 }
 
+void* arr_add_batch(struct array *arr, int item_cnt)
+{
+    if (arr->max_cnt < item_cnt + arr->item_cnt)    {
+        uint newsz = (uint)aligni(item_cnt + arr->item_cnt, arr->expand_sz);
+
+        void *tmp = A_ALIGNED_ALLOC(arr->alloc, newsz*arr->item_sz, arr->mem_id);
+        if (tmp == NULL)
+            return NULL;
+        memcpy(tmp, arr->buffer, arr->item_cnt*arr->item_sz);
+        A_ALIGNED_FREE(arr->alloc, arr->buffer);
+        arr->buffer = tmp;
+        arr->max_cnt = newsz;
+    }
+
+    void *p = (uint8*)arr->buffer + arr->item_cnt*arr->item_sz;
+    arr->item_cnt += item_cnt;
+
+    return p;
+}
 
 result_t arr_expand(struct array* arr)
 {

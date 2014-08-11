@@ -62,6 +62,10 @@ struct stack
 {
     struct stack*   prev;
     void*           data;
+
+#ifdef __cplusplus
+    stack() : prev(NULL), data(NULL)    {}
+#endif
 };
 
 

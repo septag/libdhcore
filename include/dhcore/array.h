@@ -110,6 +110,15 @@ CORE_API result_t arr_expand(struct array* arr);
  */
 CORE_API void* arr_add(struct array* arr);
 
+
+/**
+ * Adds a batch of objects to the array contained.\n
+ * Expands if needed and returns a pointer to newly added object
+ * @param item_cnt Count of new items to add to array
+ * @return newly created pointer to last item in the buffer, @e NULL if out of memory
+ */
+CORE_API void* arr_add_batch(struct array *arr, int item_cnt);
+
 /**
  * Checks if array needs expansion (actual item count is equal to maximum item count)
  * @see arr_expand
@@ -169,6 +178,11 @@ public:
     T* add()
     {
         return static_cast<T*>(arr_add(&m_arr));
+    }
+
+    T* add_batch(int item_cnt)
+    {
+        return static_cast<T*>(arr_add_batch(&m_arr, item_cnt));
     }
 
     bool empty() const

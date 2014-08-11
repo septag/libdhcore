@@ -61,6 +61,10 @@ struct queue
 {
     struct queue* next;
     void* data;
+
+#ifdef __cplusplus
+    queue() : next(NULL), data(NULL)    {}
+#endif
 };
 
 /**

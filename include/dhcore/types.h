@@ -55,7 +55,7 @@
   #define _OSX_
 #endif
 
-#if defined(linux) && !defined(_LINUX_)
+#if (defined(linux) || defined(__linux__)) && !defined(_LINUX_)
   #define _LINUX_
 #endif
 

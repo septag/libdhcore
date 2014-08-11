@@ -61,6 +61,10 @@ struct linked_list
     struct linked_list* next;
     struct linked_list* prev;
     void* data;
+
+#ifdef __cplusplus
+    linked_list() : next(NULL), prev(NULL)  {}
+#endif
 };
 
 /**
