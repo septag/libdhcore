@@ -17,6 +17,8 @@
 #ifndef __ALLOCATOR_H__
 #define __ALLOCATOR_H__
 
+#include "types.h"
+
  /**
  * Callback function for custom allocation
  * @param size size (in bytes) to allocate
@@ -73,6 +75,19 @@ struct allocator
     pfn_alloc_saveload save_fn;
     pfn_alloc_saveload load_fn;
     void* param;            /* likely will be allocator source object */
+
+#ifdef __cplusplus
+    allocator()
+    {
+        alloc_fn = NULL;
+        free_fn = NULL;
+        alignedalloc_fn = NULL;
+        alignedfree_fn = NULL;
+        save_fn = NULL;
+        load_fn = NULL;
+        param = NULL;
+    }
+#endif
 };
 
 /**
