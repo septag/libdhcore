@@ -63,6 +63,11 @@
   #error "Platform is not defined, use macros _WIN_, _LINUX_ or _OSX_"
 #endif
 
+// Can override default alignment for allocation macros
+#ifndef _ALIGN_DEFAULT_
+  #define _ALIGN_DEFAULT_ 16
+#endif
+
 /* check for unsupported compilers */
 #if !defined(_MSVC_) && !defined(_GNUC_) && !defined(SWIG)
   #error "Compile Error: Unsupported compiler."

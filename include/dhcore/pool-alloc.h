@@ -21,7 +21,6 @@
 #include "linked-list.h"
 #include "allocator.h"
 #include "core-api.h"
-#include "mt.h"
 
 /**
  * Pool allocator: fixed-size pool allocation\n
@@ -87,64 +86,6 @@ CORE_API void mem_pool_clear(struct pool_alloc* pool);
  */
 CORE_API void mem_pool_bindalloc(struct pool_alloc* pool, struct allocator* alloc);
 
-/**
- * Pool allocator: fixed-size pool allocation (thread-safe)\n
- * it is pretty fast and can dynamically grow itself on demand. but limited to fixed sized blocks\n
- * if number of allocations go beyond 'block_size' another block will be created
- * @see mem_pool_create
- * @ingroup alloc
- */
-struct pool_alloc_ts
-{
-    struct pool_alloc p;
-    mt_mutex lock;
-};
-
-/**
- * Creates a fixed item size pool and it's buffer (thread-safe)
- * @param item_size size of each item (bytes) in the pool
- * @param block_size number of items in each pool block
- * @ingroup alloc
- */
-CORE_API result_t mem_pool_create_ts(struct allocator* alloc, struct pool_alloc_ts* pool,
-                                     uint item_size, uint block_size, uint mem_id);
-
-/**
- * Destroys pool allocator (thread-safe)
- * @ingroup alloc
- */
-CORE_API void mem_pool_destroy_ts(struct pool_alloc_ts* pool);
-
-/**
- * Allocate an item (fixed-size) from the pool (thread-safe)
- * @ingroup alloc
- */
-CORE_API void* mem_pool_alloc_ts(struct pool_alloc_ts* pool);
-
-/**
- * Free an item from the pool (thread-safe)
- * @ingroup alloc
- */
-CORE_API void mem_pool_free_ts(struct pool_alloc_ts* pool, void* ptr);
-
-/**
- * Get memory pool leaks (thread-safe)
- * @return number of leaks
- * @ingroup alloc
- */
-CORE_API uint mem_pool_getleaks_ts(struct pool_alloc_ts* pool);
-
-/**
- * Clear memory pool (thread-safe)
- * @ingroup alloc
- */
-CORE_API void mem_pool_clear_ts(struct pool_alloc_ts* pool);
-
-/**
- * Pool binding to generic allocator (thread-safe)
- * @ingroup alloc
- */
-CORE_API void mem_pool_bindalloc_ts(struct pool_alloc_ts* pool, struct allocator* alloc);
 
 #ifdef __cplusplus
 #include "mem-mgr.h"

@@ -67,12 +67,9 @@ void* arr_add_batch(struct array *arr, int item_cnt)
     if (arr->max_cnt < item_cnt + arr->item_cnt)    {
         uint newsz = (uint)aligni(item_cnt + arr->item_cnt, arr->expand_sz);
 
-        void *tmp = A_ALIGNED_ALLOC(arr->alloc, newsz*arr->item_sz, arr->mem_id);
-        if (tmp == NULL)
+        arr->buffer = A_ALIGNED_REALLOC(arr->alloc, arr->buffer, newsz*arr->item_sz, arr->mem_id);
+        if (arr->buffer == NULL)
             return NULL;
-        memcpy(tmp, arr->buffer, arr->item_cnt*arr->item_sz);
-        A_ALIGNED_FREE(arr->alloc, arr->buffer);
-        arr->buffer = tmp;
         arr->max_cnt = newsz;
     }
 
@@ -90,16 +87,10 @@ result_t arr_expand(struct array* arr)
 
     /* reallocate */
     uint newsz = arr->max_cnt + arr->expand_sz;
-    void* tmp = A_ALIGNED_ALLOC(arr->alloc, newsz*arr->item_sz, arr->mem_id);
-    if (tmp == NULL)
+    arr->buffer = A_ALIGNED_REALLOC(arr->alloc, arr->buffer, newsz*arr->item_sz, arr->mem_id);
+    if (arr->buffer == NULL)
         return RET_OUTOFMEMORY;
 
-    /* we now have a bigger buffer in temp (realloc)
-     * copy previous items into the temp buffer and assign temp buffer to the array */
-    memcpy(tmp, arr->buffer, arr->item_cnt*arr->item_sz);
-    A_ALIGNED_FREE(arr->alloc, arr->buffer);
-
-    arr->buffer = tmp;
     arr->max_cnt = newsz;
     return RET_OK;
 }

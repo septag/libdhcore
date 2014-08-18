@@ -70,6 +70,7 @@ CORE_API void mem_reportleaks();
  * @ingroup mem
  */
 CORE_API void* mem_alloc(size_t size, const char* source, uint line, uint id);
+CORE_API void* mem_realloc(void *p, size_t size, const char *source, uint line, uint id);
 /**
  * free alloacted memory from heap
  * @ingroup mem
@@ -79,8 +80,10 @@ CORE_API void mem_free(void* ptr);
  * aligned heap allocation
  * @see mem_alloc   @ingroup mem
  */
-CORE_API void* mem_alignedalloc(size_t size, uint8 alignment,
-                                const char* source, uint line, uint id);
+CORE_API void* mem_alignedalloc(size_t size, uint8 alignment, const char* source,
+                                uint line, uint id);
+CORE_API void* mem_alignedrealloc(void *p, size_t size, uint8 alignment, const char* source,
+                                  uint line, uint id);
 /**
  * Aligned heap free
  * @see mem_free
@@ -137,13 +140,15 @@ CORE_API void mem_heap_bindalloc(struct allocator* alloc);
  * @ingroup mem
  */
 #define ALLOC(size, id) mem_alloc((size), __FILE__, __LINE__, (id))
+#define REALLOC(ptr, size, id) mem_realloc((ptr), (size), __FILE__, __LINE__, (id))
 
 /**
  * Aligned Heap allocate macro (16-byte)
  * @see ALLOC
  * @ingroup mem
  */
-#define ALIGNED_ALLOC(size, id)	mem_alignedalloc((size), 16, __FILE__, __LINE__, (id))
+#define ALIGNED_ALLOC(size, id)	mem_alignedalloc((size), _ALIGN_DEFAULT_, __FILE__, __LINE__, (id))
+#define ALIGNED_REALLOC(size, id) mem_alignedrealloc((size), _ALIGN_DEFAULT_, __FILE__, __LINE__, (id))
 
 /**
  * Free heap memory

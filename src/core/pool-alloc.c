@@ -40,15 +40,33 @@ static void* p_alloc(size_t size, const char* source, uint line, uint mem_id, vo
     return mem_pool_alloc((struct pool_alloc*)param);
 }
 
+static void* p_realloc(void *p, size_t size, const char* source, uint line, uint mem_id, void* param)
+{
+    ASSERT(((struct pool_alloc*)param)->item_sz == size);
+    if (p)
+        mem_pool_free((struct pool_alloc*)param, p);
+    return mem_pool_alloc((struct pool_alloc*)param);
+}
+
 static void p_free(void* p, void* param)
 {
     mem_pool_free((struct pool_alloc*)param, p);
 }
 
-static void* p_alignedalloc(size_t size, uint8 alignment, const char* source, uint line, 
-    uint mem_id, void* param)
+static void* p_alignedalloc(size_t size, uint8 alignment, const char* source, uint line,
+                            uint mem_id, void* param)
 {
     ASSERT(((struct pool_alloc*)param)->item_sz == size);
+    return mem_pool_alloc((struct pool_alloc*)param);
+}
+
+static void* p_alignedrealloc(void *p, size_t size, uint8 alignment, const char* source, uint line,
+                              uint mem_id, void* param)
+{
+    ASSERT(((struct pool_alloc*)param)->item_sz == size);
+
+    if (p)
+        mem_pool_free((struct pool_alloc*)param, p);
     return mem_pool_alloc((struct pool_alloc*)param);
 }
 
@@ -194,7 +212,9 @@ void mem_pool_bindalloc(struct pool_alloc* pool, struct allocator* alloc)
 {
     alloc->param = pool;
     alloc->alloc_fn = p_alloc;
+    alloc->realloc_fn = p_realloc;
     alloc->alignedalloc_fn = p_alignedalloc;
+    alloc->alignedrealloc_fn = p_alignedrealloc;
     alloc->alignedfree_fn = p_alignedfree;
     alloc->free_fn = p_free;
     alloc->save_fn = NULL;
@@ -215,81 +235,3 @@ uint mem_pool_getleaks(struct pool_alloc* pool)
     return count;
 }
 
-/*************************************************************************************************
- * Thread-safe
- */
-
-/* callback functions for binding pool-alloc to generic allocator */
-static void* p_alloc_ts(size_t size, const char* source, uint line, uint mem_id, void* param)
-{
-    ASSERT(((struct pool_alloc_ts*)param)->p.item_sz == size);
-    return mem_pool_alloc_ts((struct pool_alloc_ts*)param);
-}
-
-static void p_free_ts(void* p, void* param)
-{
-    mem_pool_free_ts((struct pool_alloc_ts*)param, p);
-}
-
-static void* p_alignedalloc_ts(size_t size, uint8 alignment, const char* source, uint line, 
-    uint mem_id, void* param)
-{
-    ASSERT(((struct pool_alloc_ts*)param)->p.item_sz == size);
-    return mem_pool_alloc_ts((struct pool_alloc_ts*)param);
-}
-
-static void p_alignedfree_ts(void* p, void* param)
-{
-    mem_pool_free_ts((struct pool_alloc_ts*)param, p);
-}
-
-/* */
-result_t mem_pool_create_ts(struct allocator* alloc, struct pool_alloc_ts* pool,
-                            uint item_size, uint block_size, uint mem_id)
-{
-    memset(pool, 0x00, sizeof(struct pool_alloc_ts));
-    mt_mutex_init(&pool->lock);
-    return mem_pool_create(alloc, &pool->p, item_size, block_size, mem_id);
-}
-
-void mem_pool_destroy_ts(struct pool_alloc_ts* pool)
-{
-    mt_mutex_release(&pool->lock);
-    mem_pool_destroy(&pool->p);
-}
-
-void* mem_pool_alloc_ts(struct pool_alloc_ts* pool)
-{
-    mt_mutex_lock(&pool->lock);
-    void* ptr = mem_pool_alloc(&pool->p);
-    mt_mutex_unlock(&pool->lock);
-    return ptr;
-}
-
-void mem_pool_free_ts(struct pool_alloc_ts* pool, void* ptr)
-{
-    mt_mutex_lock(&pool->lock);
-    mem_pool_free(&pool->p, ptr);
-    mt_mutex_unlock(&pool->lock);
-}
-
-uint mem_pool_getleaks_ts(struct pool_alloc_ts* pool)
-{
-    return mem_pool_getleaks(&pool->p);
-}
-
-void mem_pool_clear_ts(struct pool_alloc_ts* pool)
-{
-    mem_pool_clear(&pool->p);
-}
-
-void mem_pool_bindalloc_ts(struct pool_alloc_ts* pool, struct allocator* alloc)
-{
-    alloc->param = pool;
-    alloc->alloc_fn = p_alloc_ts;
-    alloc->free_fn = p_free_ts;
-    alloc->alignedalloc_fn = p_alignedalloc_ts;
-    alloc->alignedfree_fn = p_alignedfree_ts;
-    alloc->save_fn = NULL;
-    alloc->load_fn = NULL;
-}

@@ -78,15 +78,47 @@ static void* fl_alloc(size_t size, const char* source, uint line, uint mem_id, v
     return mem_freelist_alloc((struct freelist_alloc*)param, size, mem_id);
 }
 
+static void* fl_realloc(void *p, size_t size, const char* source, uint line, uint mem_id, void* param)
+{
+    if (p == NULL)
+        return mem_freelist_alloc((struct freelist_alloc*)param, size, mem_id);
+
+    void *tmp = mem_freelist_alloc((struct freelist_alloc*)param, size, mem_id);
+    if (tmp == NULL)
+        return NULL;
+    memcpy(tmp, p, freelist_getchunk(p)->size);
+    mem_freelist_free((struct freelist_alloc*)param, p);
+    return tmp;
+}
+
 static void fl_free(void* p, void* param)
 {
     mem_freelist_free((struct freelist_alloc*)param, p);
 }
 
 static void* fl_alignedalloc(size_t size, uint8 alignment, const char* source,
-    uint line, uint mem_id, void* param)
+                             uint line, uint mem_id, void* param)
 {
     return mem_freelist_alignedalloc((struct freelist_alloc*)param, size, alignment, mem_id);
+}
+
+static void* fl_alignedrealloc(void *p, size_t size, uint8 alignment, const char* source,
+                               uint line, uint mem_id, void* param)
+{
+    if (p == NULL)
+        return mem_freelist_alignedalloc((struct freelist_alloc*)param, size, alignment, mem_id);
+
+    void *tmp = mem_freelist_alignedalloc((struct freelist_alloc*)param, size, alignment, mem_id);
+    if (tmp == NULL)
+        return NULL;
+
+    uptr_t aligned_addr = (uptr_t)p;
+    uint8 adjust = *((uint8*)(aligned_addr - sizeof(uint8)));
+    uptr_t raw_addr = aligned_addr - adjust;
+
+    memcpy(tmp, p, freelist_getchunk((void*)raw_addr)->size);
+    mem_freelist_free((struct freelist_alloc*)param, p);
+    return tmp;
 }
 
 static void fl_alignedfree(void* p, void* param)
@@ -303,7 +335,9 @@ void mem_freelist_bindalloc(struct freelist_alloc* freelist, struct allocator* a
 {
     alloc->param = freelist;
     alloc->alloc_fn = fl_alloc;
+    alloc->realloc_fn = fl_realloc;
     alloc->alignedalloc_fn = fl_alignedalloc;
+    alloc->alignedrealloc_fn = fl_alignedrealloc;
     alloc->free_fn = fl_free;
     alloc->alignedfree_fn = fl_alignedfree;
     alloc->save_fn = NULL;
@@ -324,102 +358,4 @@ uint mem_freelist_getleaks(struct freelist_alloc* freelist, void** pptrs)
         node = node->next;
     }
     return count;
-}
-
-/*************************************************************************************************/
-static void* fl_alloc_ts(size_t size, const char* source, uint line, uint mem_id, void* param)
-{
-    return mem_freelist_alloc_ts((struct freelist_alloc_ts*)param, size, mem_id);
-}
-
-static void fl_free_ts(void* p, void* param)
-{
-    mem_freelist_free_ts((struct freelist_alloc_ts*)param, p);
-}
-
-static void* fl_alignedalloc_ts(size_t size, uint8 alignment, const char* source,
-                         uint line, uint mem_id, void* param)
-{
-    return mem_freelist_alignedalloc_ts((struct freelist_alloc_ts*)param, size, alignment, mem_id);
-}
-
-static void fl_alignedfree_ts(void* p, void* param)
-{
-    mem_freelist_alignedfree_ts((struct freelist_alloc_ts*)param, p);
-}
-
-/* */
-result_t mem_freelist_create_ts(struct allocator* alloc, struct freelist_alloc_ts* freelist,
-                                size_t size, uint mem_id)
-{
-    memset(freelist, 0x00, sizeof(struct freelist_alloc_ts));
-    mt_mutex_init(&freelist->lock);
-    return mem_freelist_create(alloc, &freelist->fl, size, mem_id);
-}
-
-void mem_freelist_destroy_ts(struct freelist_alloc_ts* freelist)
-{
-    mt_mutex_release(&freelist->lock);
-    mem_freelist_destroy(&freelist->fl);
-}
-
-void* mem_freelist_alloc_ts(struct freelist_alloc_ts* freelist, size_t size, uint mem_id)
-{
-    mt_mutex_lock(&freelist->lock);
-    void* ptr = mem_freelist_alloc(&freelist->fl, size, mem_id);
-    mt_mutex_unlock(&freelist->lock);
-    return ptr;
-}
-
-void* mem_freelist_alignedalloc_ts(struct freelist_alloc_ts* freelist, size_t size,
-                                   uint8 alignment, uint mem_id)
-{
-    size_t ns = size + alignment;
-    uptr_t raw_addr = (uptr_t)mem_freelist_alloc_ts(freelist, ns, mem_id);
-    if (raw_addr == 0)
-        return NULL;
-
-    uptr_t misalign = raw_addr & (alignment - 1);
-    uint8 adjust = alignment - (uint8)misalign;
-    uptr_t aligned_addr = raw_addr + adjust;
-    uint8* a = (uint8*)(aligned_addr - sizeof(uint8));
-    *a = adjust;
-    return (void*)aligned_addr;
-}
-
-void mem_freelist_bindalloc_ts(struct freelist_alloc_ts* freelist, struct allocator* alloc)
-{
-    alloc->param = freelist;
-    alloc->alloc_fn = fl_alloc_ts;
-    alloc->alignedalloc_fn = fl_alignedalloc_ts;
-    alloc->free_fn = fl_free_ts;
-    alloc->alignedfree_fn = fl_alignedfree_ts;
-    alloc->save_fn = NULL;
-    alloc->load_fn = NULL;
-}
-
-void mem_freelist_free_ts(struct freelist_alloc_ts* freelist, void* ptr)
-{
-    mt_mutex_lock(&freelist->lock);
-    mem_freelist_free(&freelist->fl, ptr);
-    mt_mutex_unlock(&freelist->lock);
-}
-
-void mem_freelist_alignedfree_ts(struct freelist_alloc_ts* freelist, void* ptr)
-{
-    uptr_t aligned_addr = (uptr_t)ptr;
-    uint8 adjust = *((uint8*)(aligned_addr - sizeof(uint8)));
-    uptr_t raw_addr = aligned_addr - adjust;
-
-    mem_freelist_free_ts(freelist, (void*)raw_addr);
-}
-
-uint mem_freelist_getleaks_ts(struct freelist_alloc_ts* freelist, void** pptrs)
-{
-    return mem_freelist_getleaks(&freelist->fl, pptrs);
-}
-
-size_t mem_freelist_getsize_ts(struct freelist_alloc_ts* freelist, void* ptr)
-{
-    return mem_freelist_getsize(&freelist->fl, ptr);
 }

@@ -72,6 +72,8 @@ static struct mem_mgr* g_mem = NULL;
 /*************************************************************************************************/
 /* inline function to allocate data with memory trace block */
 static void* mem_alloc_withtrace(size_t size);
+static void* mem_realloc_withtrace(void *ptr, size_t size);
+
 /* inline function to free pointer with it's allocated memory trace block*/
 static void mem_free_withtrace(void* ptr);
 static void mem_addto_ids(uint id, size_t size);
@@ -80,8 +82,7 @@ static void mem_removefrom_ids(void* ptr);
 /*************************************************************************************************/
 INLINE struct mem_trace_data* get_trace_data(void* ptr)
 {
-    uint8* u8ptr = (uint8*)ptr;
-    return (struct mem_trace_data*)(u8ptr - sizeof(struct mem_trace_data));
+    return (struct mem_trace_data*)((uint8*)ptr - sizeof(struct mem_trace_data));
 }
 
 INLINE void* malloc_withsize(size_t s)
@@ -107,15 +108,26 @@ static void* heap_alloc(size_t size, const char* source, uint line, uint id, voi
     return mem_alloc(size, source, line, id);
 }
 
+static void* heap_realloc(void *p, size_t size, const char* source, uint line, uint id, void* param)
+{
+    return mem_realloc(p, size, source, line, id);
+}
+
 static void heap_free(void* ptr, void* param)
 {
     mem_free(ptr);
 }
 
-static void* heap_alignedalloc(size_t size, uint8 align, const char* source,
-                        uint line, uint id, void* param)
+static void* heap_alignedalloc(size_t size, uint8 align, const char* source, uint line, uint id,
+                               void* param)
 {
     return mem_alignedalloc(size, align, source, line, id);
+}
+
+static void* heap_alignedrealloc(void *p, size_t size, uint8 align, const char* source, uint line,
+                                 uint id, void* param)
+{
+    return mem_alignedrealloc(p, size, align, source, line, id);
 }
 
 static void heap_alignedfree(void* ptr, void* param)
@@ -139,6 +151,8 @@ result_t mem_init(int trace_mem)
     g_memheap.free_fn = heap_free;
     g_memheap.alignedalloc_fn = heap_alignedalloc;
     g_memheap.alignedfree_fn = heap_alignedfree;
+    g_memheap.realloc_fn = heap_realloc;
+    g_memheap.alignedrealloc_fn = heap_alignedrealloc;
     g_memheap.save_fn = NULL;
     g_memheap.load_fn = NULL;
 
@@ -171,12 +185,12 @@ int mem_isinit()
     return g_mem != NULL;
 }
 
-void* mem_alignedalloc(size_t size, uint8 alignment,
-                       const char* source, uint line, uint id)
+void* mem_alignedalloc(size_t size, uint8 alignment, const char* source, uint line, uint id)
 {
     size_t ns = size + alignment;
     uptr_t raw_addr = (uptr_t)mem_alloc(ns, source, line, id);
-    if (raw_addr == 0)     return NULL;
+    if (raw_addr == 0)
+        return NULL;
 
     uptr_t misalign = raw_addr & (alignment - 1);
     uint8 adjust = alignment - (uint8)misalign;
@@ -186,6 +200,28 @@ void* mem_alignedalloc(size_t size, uint8 alignment,
 
     return (void*)aligned_addr;
 }
+
+void* mem_alignedrealloc(void *p, size_t size, uint8 alignment, const char* source, uint line,
+                         uint id)
+{
+    uptr_t aligned_addr = (uptr_t)p;
+    uint8 adjust = *((uint8*)(aligned_addr - sizeof(uint8)));
+    uptr_t raw_addr = aligned_addr - adjust;
+
+    size_t ns = size + alignment;
+    raw_addr = (uptr_t)mem_realloc((void*)raw_addr, ns, source, line, id);
+    if (raw_addr == 0)
+        return NULL;
+
+    uptr_t misalign = raw_addr & (alignment - 1);
+    adjust = alignment - (uint8)misalign;
+    aligned_addr = raw_addr + adjust;
+    uint8* a = (uint8*)(aligned_addr - sizeof(uint8));
+    *a = adjust;
+
+    return (void*)aligned_addr;
+}
+
 
 void* mem_alloc(size_t size, const char* source, uint line, uint id)
 {
@@ -215,6 +251,38 @@ void* mem_alloc(size_t size, const char* source, uint line, uint id)
 		mt_mutex_unlock(&g_mem->lock);
     }	else	{
     	ptr = malloc_withsize(size);
+    }
+    return ptr;
+}
+
+void* mem_realloc(void *p, size_t size, const char *source, uint line, uint id)
+{
+    ASSERT(g_mem);
+
+    void* ptr;
+    if (g_mem->trace)     {
+        mt_mutex_lock(&g_mem->lock);
+        if (g_mem->stats.limit_bytes != 0 &&
+            (size + g_mem->stats.alloc_bytes) > g_mem->stats.limit_bytes)
+        {
+            return NULL;
+        }
+
+        ptr = mem_realloc_withtrace(p, size);
+        if (ptr != NULL)    {
+            struct mem_trace_data* trace = get_trace_data(ptr);
+#if defined(_DEBUG_)
+            path_getfullfilename(trace->filename, source);
+            trace->line = line;
+#endif
+            trace->size = size;
+            trace->mem_id = id;
+
+            mem_addto_ids(id, size);
+        }
+        mt_mutex_unlock(&g_mem->lock);
+    }	else	{
+        ptr = malloc_withsize(size);
     }
     return ptr;
 }
@@ -336,6 +404,43 @@ static void* mem_alloc_withtrace(size_t size)
         g_mem->stats.alloc_cnt++;
         g_mem->stats.alloc_bytes += size;
 
+        trace->node.next = trace->node.prev = NULL;
+        list_add(&g_mem->blocks, &trace->node, trace);
+
+        return ptr + sizeof(struct mem_trace_data);
+    }
+
+    return NULL;
+}
+
+static void* mem_realloc_withtrace(void *p, size_t size)
+{
+    size_t s = size + sizeof(struct mem_trace_data);
+    uint8* ptr;
+    size_t prev_sz = 0;
+    if (p)  {
+        if (g_mem->trace)   {
+            struct mem_trace_data* tdata = get_trace_data(p);
+            prev_sz = tdata->size;
+            list_remove(&g_mem->blocks, &tdata->node);
+        }   else    {
+            prev_sz = *((size_t*)((uint8*)p - sizeof(size_t)));
+        }
+
+        ptr = (uint8*)realloc((uint8*)p - sizeof(struct mem_trace_data), s);
+        ASSERT(prev_sz < size);
+    }   else    {
+        ptr = (uint8*)malloc(s);
+    }
+
+    if (ptr != NULL)    {
+        struct mem_trace_data* trace = (struct mem_trace_data*)ptr;
+
+        g_mem->stats.tracer_alloc_bytes += sizeof(struct mem_trace_data);
+        g_mem->stats.alloc_cnt++;
+        g_mem->stats.alloc_bytes += (size - prev_sz);
+
+        trace->node.next = trace->node.prev = NULL;
         list_add(&g_mem->blocks, &trace->node, trace);
 
         return ptr + sizeof(struct mem_trace_data);

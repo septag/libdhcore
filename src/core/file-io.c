@@ -75,8 +75,11 @@ struct mon_item
  */
 struct file_mgr
 {
-    struct pool_alloc_ts diskfile_alloc;
-    struct pool_alloc_ts memfile_alloc;
+    mt_mutex diskfile_mtx;
+    mt_mutex memfile_mtx;
+
+    struct pool_alloc diskfile_alloc;
+    struct pool_alloc memfile_alloc;
     struct array vdirs;   /* item: vdir */
     struct array paks;    /* item: pak_file */
     struct hashtable_open mon_table;    /* key: filepath(hashed), value: pointer to mon_item */
@@ -124,10 +127,42 @@ static size_t fio_writemem(file_t f, const void* buffer, size_t item_size, size_
 /* resolve and open a filepath from the disk */
 static FILE* open_resolvepath(const char* filepath);
 
+
 /*************************************************************************************************
  * globals
  */
 static struct file_mgr* g_fio = NULL;
+
+//
+static uint8* fio_alloc_diskbuff()
+{
+    mt_mutex_lock(&g_fio->diskfile_mtx);
+    uint8 *ptr = (uint8*)mem_pool_alloc(&g_fio->diskfile_alloc);
+    mt_mutex_unlock(&g_fio->diskfile_mtx);
+    return ptr;
+}
+
+static uint8* fio_alloc_membuff()
+{
+    mt_mutex_lock(&g_fio->memfile_mtx);
+    uint8 *ptr = (uint8*)mem_pool_alloc(&g_fio->memfile_alloc);
+    mt_mutex_unlock(&g_fio->memfile_mtx);
+    return ptr;
+}
+
+static void fio_free_diskbuff(uint8 *buff)
+{
+    mt_mutex_lock(&g_fio->diskfile_mtx);
+    mem_pool_free(&g_fio->diskfile_alloc, buff);
+    mt_mutex_unlock(&g_fio->diskfile_mtx);
+}
+
+static void fio_free_membuff(uint8 *buff)
+{
+    mt_mutex_lock(&g_fio->memfile_mtx);
+    mem_pool_free(&g_fio->memfile_alloc, buff);
+    mt_mutex_unlock(&g_fio->memfile_mtx);
+}
 
 /*************************************************************************************************/
 result_t fio_initmgr()
@@ -141,15 +176,18 @@ result_t fio_initmgr()
 
     result_t r;
 
-    r = mem_pool_create_ts(mem_heap(), &g_fio->diskfile_alloc,
-                           sizeof(struct file_header) + sizeof(struct disk_file), 32, 0);
+    mt_mutex_init(&g_fio->memfile_mtx);
+    mt_mutex_init(&g_fio->diskfile_mtx);
+
+    r = mem_pool_create(mem_heap(), &g_fio->diskfile_alloc,
+                        sizeof(struct file_header) + sizeof(struct disk_file), 32, 0);
     if (IS_FAIL(r))   {
         err_printn(__FILE__, __LINE__, r);
         return r;
     }
 
-    r = mem_pool_create_ts(mem_heap(), &g_fio->memfile_alloc,
-                           sizeof(struct file_header) + sizeof(struct mem_file), 32, 0);
+    r = mem_pool_create(mem_heap(), &g_fio->memfile_alloc,
+                        sizeof(struct file_header) + sizeof(struct mem_file), 32, 0);
     if (IS_FAIL(r))   {
         err_printn(__FILE__, __LINE__, r);
         return r;
@@ -209,8 +247,10 @@ void fio_releasemgr()
         hashtable_open_destroy(&g_fio->mon_table);
         arr_destroy(&g_fio->vdirs);
         arr_destroy(&g_fio->paks);
-        mem_pool_destroy_ts(&g_fio->memfile_alloc);
-        mem_pool_destroy_ts(&g_fio->diskfile_alloc);
+        mt_mutex_release(&g_fio->memfile_mtx);
+        mt_mutex_release(&g_fio->diskfile_mtx);
+        mem_pool_destroy(&g_fio->memfile_alloc);
+        mem_pool_destroy(&g_fio->diskfile_alloc);
 
         FREE(g_fio);
         g_fio = NULL;
@@ -283,11 +323,11 @@ void fio_clearpaks()
 
 file_t fio_createmem(struct allocator* alloc, const char* name, uint mem_id)
 {
-    uint8* file_buf = (uint8*)mem_pool_alloc_ts(&g_fio->memfile_alloc);
+    uint8* file_buf = (uint8*)fio_alloc_membuff();
 
     if (file_buf == NULL)
         return NULL;
-    memset(file_buf, 0x00, g_fio->memfile_alloc.p.item_sz);
+    memset(file_buf, 0x00, g_fio->memfile_alloc.item_sz);
 
     struct file_header* header = (struct file_header*)file_buf;
     struct mem_file* f = (struct mem_file*)(file_buf + sizeof(struct file_header));
@@ -303,7 +343,7 @@ file_t fio_createmem(struct allocator* alloc, const char* name, uint mem_id)
     /* data */
     f->buffer = (uint8*)A_ALLOC(alloc, MEM_BLOCK_SIZE, mem_id);
     if (f->buffer == NULL)  {
-        mem_pool_free_ts(&g_fio->memfile_alloc, file_buf);
+        fio_free_membuff(file_buf);
         return NULL;
     }
     f->alloc = alloc;
@@ -351,10 +391,10 @@ file_t fio_openmem(struct allocator* alloc, const char* filepath, int ignore_vfs
     }
 
     /* continue opening a file from disk and load it into memory */
-    uint8* file_buf = (uint8*)mem_pool_alloc_ts(&g_fio->memfile_alloc);
+    uint8* file_buf = (uint8*)fio_alloc_membuff();
     if (file_buf == NULL)
     	return NULL;
-    memset(file_buf, 0x00, g_fio->memfile_alloc.p.item_sz);
+    memset(file_buf, 0x00, g_fio->memfile_alloc.item_sz);
 
     struct file_header* header = (struct file_header*)file_buf;
     struct mem_file* f = (struct mem_file*)(file_buf + sizeof(struct file_header));
@@ -362,7 +402,7 @@ file_t fio_openmem(struct allocator* alloc, const char* filepath, int ignore_vfs
     FILE* ff = (!ignore_vfs && !arr_isempty(&g_fio->vdirs)) ? open_resolvepath(filepath) :
                fopen(filepath, "rb");
     if (ff == NULL)     {
-        mem_pool_free_ts(&g_fio->memfile_alloc, file_buf);
+        fio_free_membuff(file_buf);
         return NULL;
     }
 
@@ -380,7 +420,7 @@ file_t fio_openmem(struct allocator* alloc, const char* filepath, int ignore_vfs
     f->buffer = (uint8*)A_ALLOC(alloc, header->size+1, mem_id);
     if (f->buffer == NULL)  {
         fclose(ff);
-        mem_pool_free_ts(&g_fio->memfile_alloc, file_buf);
+        fio_free_membuff(file_buf);
         return NULL;
     }
     fread(f->buffer, header->size, 1, ff);
@@ -396,10 +436,10 @@ file_t fio_openmem(struct allocator* alloc, const char* filepath, int ignore_vfs
 file_t fio_attachmem(struct allocator* alloc, void* buffer,
                          size_t size, const char* name, uint mem_id)
 {
-    uint8* file_buf = (uint8*)mem_pool_alloc_ts(&g_fio->memfile_alloc);
+    uint8* file_buf = (uint8*)fio_alloc_membuff();
     if (file_buf == NULL)
         return NULL;
-    memset(file_buf, 0x00, g_fio->memfile_alloc.p.item_sz);
+    memset(file_buf, 0x00, g_fio->memfile_alloc.item_sz);
 
     struct file_header* header = (struct file_header*)file_buf;
     struct mem_file* f = (struct mem_file*)(file_buf + sizeof(struct file_header));
@@ -441,11 +481,11 @@ void* fio_detachmem(file_t f, size_t* outsize, struct allocator** palloc)
 
 file_t fio_createdisk(const char* filepath)
 {
-    uint8* file_buf = (uint8*)mem_pool_alloc_ts(&g_fio->diskfile_alloc);
+    uint8* file_buf = (uint8*)fio_alloc_diskbuff();
 
     if (file_buf == NULL)
         return NULL;
-    memset(file_buf, 0x00, g_fio->diskfile_alloc.p.item_sz);
+    memset(file_buf, 0x00, g_fio->diskfile_alloc.item_sz);
 
     struct file_header* header = (struct file_header*)file_buf;
     struct disk_file* f = (struct disk_file*)(file_buf + sizeof(struct file_header));
@@ -460,7 +500,7 @@ file_t fio_createdisk(const char* filepath)
     /* data */
     f->file = fopen(filepath, "wb");
     if (f->file == NULL)    {
-        mem_pool_free_ts(&g_fio->diskfile_alloc, file_buf);
+        fio_free_diskbuff(file_buf);
         return NULL;
     }
 
@@ -469,11 +509,11 @@ file_t fio_createdisk(const char* filepath)
 
 file_t fio_opendisk(const char* filepath, int ignore_vfs)
 {
-    uint8* file_buf = (uint8*)mem_pool_alloc_ts(&g_fio->diskfile_alloc);
+    uint8* file_buf = (uint8*)fio_alloc_diskbuff();
 
     if (file_buf == NULL)
         return NULL;
-    memset(file_buf, 0x00, g_fio->diskfile_alloc.p.item_sz);
+    memset(file_buf, 0x00, g_fio->diskfile_alloc.item_sz);
 
     struct file_header* header = (struct file_header*)file_buf;
     struct disk_file* f = (struct disk_file*)(file_buf + sizeof(struct file_header));
@@ -488,7 +528,7 @@ file_t fio_opendisk(const char* filepath, int ignore_vfs)
     f->file = (!ignore_vfs && !arr_isempty(&g_fio->vdirs)) ? open_resolvepath(filepath) :
         fopen(filepath, "rb");
     if (f->file == NULL)    {
-        mem_pool_free_ts(&g_fio->diskfile_alloc, file_buf);
+        fio_free_diskbuff(file_buf);
         return NULL;
     }
 
@@ -529,16 +569,16 @@ void fio_close(file_t f)
         struct mem_file* fdata = (struct mem_file*)((uint8*)f + sizeof(struct file_header));
         if (fdata->buffer != NULL)  {
             A_FREE(fdata->alloc, fdata->buffer);
+            fdata->buffer = NULL;
         }
-        mem_pool_free_ts(&g_fio->memfile_alloc, f);
-        memset(f, 0x00, g_fio->memfile_alloc.p.item_sz);
+        fio_free_membuff(f);
     }    else if (header->type == FILE_TYPE_DSK)    {
         struct disk_file* fdata = (struct disk_file*)((uint8*)f + sizeof(struct file_header));
         if (fdata->file != NULL)    {
             fclose(fdata->file);
+            fdata->file = NULL;
         }
-        mem_pool_free_ts(&g_fio->diskfile_alloc, f);
-        memset(f, 0x00, g_fio->diskfile_alloc.p.item_sz);
+        fio_free_diskbuff(f);
     }
 }
 
@@ -632,11 +672,10 @@ static size_t fio_writemem(file_t f, const void* buffer, size_t item_size, size_
         size_t grow_sz = write_sz + offset - fdata->max_size;
         size_t expand_sz = ((grow_sz/MEM_BLOCK_SIZE) + 1)*MEM_BLOCK_SIZE;
 
-        void* tmp = A_ALLOC(fdata->alloc, expand_sz + fdata->max_size, fdata->mem_id);
-        if (tmp == NULL)    return 0;
-        memcpy(tmp, fdata->buffer, header->size);
-        A_FREE(fdata->alloc, fdata->buffer);
-        fdata->buffer = (uint8*)tmp;
+        fdata->buffer = (uint8*)A_REALLOC(fdata->alloc, fdata->buffer, expand_sz + fdata->max_size,
+                                          fdata->mem_id);
+        if (fdata->buffer == NULL)
+            return 0;
 
         fdata->max_size += expand_sz;
     }

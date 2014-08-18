@@ -22,6 +22,7 @@
 #include "pool-alloc.h"
 #include "err.h"
 #include "util.h"
+#include "mt.h"
 
 #define JSON_ALLOC_16    0
 #define JSON_ALLOC_32    1
@@ -35,7 +36,8 @@
  */
 struct json_mgr
 {
-    struct pool_alloc_ts buffs[JSON_ALLOC_CNT];
+    mt_mutex buff_mtx[JSON_ALLOC_CNT];
+    struct pool_alloc buffs[JSON_ALLOC_CNT];
 };
 
 static struct json_mgr* g_json = NULL;
@@ -80,10 +82,13 @@ static void* json_malloc(size_t size)
     size += sizeof(uint);    /* to keep the size */
     uint a_idx = json_choose_alloc(size);
     void* ptr;
-    if (a_idx != INVALID_INDEX)
-        ptr = mem_pool_alloc_ts(&g_json->buffs[a_idx]);
-    else
+    if (a_idx != INVALID_INDEX) {
+        mt_mutex_lock(&g_json->buff_mtx[a_idx]);
+        ptr = mem_pool_alloc(&g_json->buffs[a_idx]);
+        mt_mutex_unlock(&g_json->buff_mtx[a_idx]);
+    } else  {
         ptr = mem_alloc(size, __FILE__, __LINE__, 0);
+    }
     return json_alloc_putsize(ptr, (uint)size);
 }
 
@@ -92,24 +97,30 @@ static void json_free(void* p)
     uint sz = json_alloc_getsize(p, &p);
     uint a_idx = json_choose_alloc(sz);
 
-    if (a_idx != INVALID_INDEX)
-        mem_pool_free_ts(&g_json->buffs[a_idx], p);
-    else
+    if (a_idx != INVALID_INDEX) {
+        mt_mutex_lock(&g_json->buff_mtx[a_idx]);
+        mem_pool_free(&g_json->buffs[a_idx], p);
+        mt_mutex_unlock(&g_json->buff_mtx[a_idx]);
+    } else  {
         mem_free(p);
+    }
 }
 
 /* */
 static result_t json_create_buffs()
 {
-    if (IS_FAIL(mem_pool_create_ts(mem_heap(), &g_json->buffs[JSON_ALLOC_16], 16, 1024, 0)))
+    for (int i = 0; i < JSON_ALLOC_CNT; i++)
+        mt_mutex_init(&g_json->buff_mtx[i]);
+
+    if (IS_FAIL(mem_pool_create(mem_heap(), &g_json->buffs[JSON_ALLOC_16], 16, 1024, 0)))
         return RET_OUTOFMEMORY;
-    if (IS_FAIL(mem_pool_create_ts(mem_heap(), &g_json->buffs[JSON_ALLOC_32], 32, 1024, 0)))
+    if (IS_FAIL(mem_pool_create(mem_heap(), &g_json->buffs[JSON_ALLOC_32], 32, 1024, 0)))
         return RET_OUTOFMEMORY;
-    if (IS_FAIL(mem_pool_create_ts(mem_heap(), &g_json->buffs[JSON_ALLOC_64], 64, 1024, 0)))
+    if (IS_FAIL(mem_pool_create(mem_heap(), &g_json->buffs[JSON_ALLOC_64], 64, 1024, 0)))
         return RET_OUTOFMEMORY;
-    if (IS_FAIL(mem_pool_create_ts(mem_heap(), &g_json->buffs[JSON_ALLOC_128], 128, 512, 0)))
+    if (IS_FAIL(mem_pool_create(mem_heap(), &g_json->buffs[JSON_ALLOC_128], 128, 512, 0)))
         return RET_OUTOFMEMORY;
-    if (IS_FAIL(mem_pool_create_ts(mem_heap(), &g_json->buffs[JSON_ALLOC_256], 256, 512, 0)))
+    if (IS_FAIL(mem_pool_create(mem_heap(), &g_json->buffs[JSON_ALLOC_256], 256, 512, 0)))
         return RET_OUTOFMEMORY;
 
     return RET_OK;
@@ -117,8 +128,10 @@ static result_t json_create_buffs()
 
 static void json_destroy_buffs()
 {
-    for (uint i = 0; i < JSON_ALLOC_CNT; i++)
-        mem_pool_destroy_ts(&g_json->buffs[i]);
+    for (uint i = 0; i < JSON_ALLOC_CNT; i++)   {
+        mem_pool_destroy(&g_json->buffs[i]);
+        mt_mutex_init(&g_json->buff_mtx[i]);
+    }
 }
 
 result_t json_init()

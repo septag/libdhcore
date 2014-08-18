@@ -29,8 +29,10 @@
  * @return returns pointer to allocated block
  * @ingroup mem
  */
-typedef void* (*pfn_alloc)(size_t size, const char* source, unsigned int line, unsigned int id, 
-    void* param);
+typedef void* (*pfn_alloc)(size_t size, const char* source, unsigned int line, unsigned int id,
+                           void* param);
+typedef void* (*pfn_realloc)(void *ptr, size_t size, const char* source, unsigned int line,
+                             unsigned int id, void* param);
 
 /**
  * Callback function for custom free allocation
@@ -43,8 +45,11 @@ typedef void  (*pfn_free)(void* ptr, void* param);
  * @see pfn_alloc
  * @ingroup mem
  */
-typedef void* (*pfn_alignedalloc)(size_t size, unsigned char alignment, const char* source, 
-    unsigned int line, unsigned int id, void* param);
+typedef void* (*pfn_alignedalloc)(size_t size, unsigned char alignment, const char* source,
+                                  unsigned int line, unsigned int id, void* param);
+typedef void* (*pfn_alignedrealloc)(void *ptr, size_t size, unsigned char alignment,
+                                    const char* source, unsigned int line, unsigned int id,
+                                    void* param);
 
 /**
  * Callback function for aligned free
@@ -69,8 +74,10 @@ typedef void (*pfn_alloc_saveload)(void* param);
 struct allocator
 {
     pfn_alloc alloc_fn;
+    pfn_realloc realloc_fn;
     pfn_free free_fn;
     pfn_alignedalloc alignedalloc_fn;
+    pfn_alignedrealloc alignedrealloc_fn;
     pfn_alignedfree alignedfree_fn;
     pfn_alloc_saveload save_fn;
     pfn_alloc_saveload load_fn;
@@ -80,8 +87,10 @@ struct allocator
     allocator()
     {
         alloc_fn = NULL;
+        realloc_fn = NULL;
         free_fn = NULL;
         alignedalloc_fn = NULL;
+        alignedrealloc_fn = NULL;
         alignedfree_fn = NULL;
         save_fn = NULL;
         load_fn = NULL;
@@ -99,6 +108,8 @@ struct allocator
  */
 #define A_ALLOC(alloc, size, id)   \
     (alloc)->alloc_fn((size), __FILE__, __LINE__, (id), (alloc)->param)
+#define A_REALLOC(alloc, ptr, size, id) \
+    (alloc)->realloc_fn((ptr), (size), __FILE__, __LINE__, (id), (alloc)->param)
 
 /**
  * Free memory with custom allocator
@@ -115,7 +126,9 @@ struct allocator
  * @ingroup mem
  */
 #define A_ALIGNED_ALLOC(alloc, size, id)    \
-    (alloc)->alignedalloc_fn((size), 16, __FILE__, __LINE__, (id), (alloc)->param)
+    (alloc)->alignedalloc_fn((size), _ALIGN_DEFAULT_, __FILE__, __LINE__, (id), (alloc)->param)
+#define A_ALIGNED_REALLOC(alloc, ptr, size, id) \
+    (alloc)->alignedrealloc_fn((ptr), (size), _ALIGN_DEFAULT_, __FILE__, __LINE__, (id), (alloc)->param)
 
 /**
  * Free aligned memory
