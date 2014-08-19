@@ -24,25 +24,25 @@ struct ALIGN16 mem_pool_block
     struct linked_list node; /* linked-list node */
     uint8* buffer; /* memory buffer that holds all objects */
     void** ptrs; /* pointer references to the buffer */
-    uint iter; /* iterator for current buffer position */
+    int iter; /* iterator for current buffer position */
 };
 
 
 /* fwd declarations */
-static struct mem_pool_block* pool_create_singleblock(struct pool_alloc* pool, uint item_size, 
-    uint block_size);
+static struct mem_pool_block* pool_create_singleblock(struct pool_alloc* pool, int item_size,
+                                                      int block_size);
 static void pool_destroy_singleblock(struct pool_alloc* pool, struct mem_pool_block* block);
 
 /* callback functions for binding pool-alloc to generic allocator */
 static void* p_alloc(size_t size, const char* source, uint line, uint mem_id, void* param)
 {
-    ASSERT(((struct pool_alloc*)param)->item_sz == size);
+    ASSERT(((struct pool_alloc*)param)->item_sz == (int)size);
     return mem_pool_alloc((struct pool_alloc*)param);
 }
 
 static void* p_realloc(void *p, size_t size, const char* source, uint line, uint mem_id, void* param)
 {
-    ASSERT(((struct pool_alloc*)param)->item_sz == size);
+    ASSERT(((struct pool_alloc*)param)->item_sz == (int)size);
     if (p)
         mem_pool_free((struct pool_alloc*)param, p);
     return mem_pool_alloc((struct pool_alloc*)param);
@@ -56,14 +56,14 @@ static void p_free(void* p, void* param)
 static void* p_alignedalloc(size_t size, uint8 alignment, const char* source, uint line,
                             uint mem_id, void* param)
 {
-    ASSERT(((struct pool_alloc*)param)->item_sz == size);
+    ASSERT(((struct pool_alloc*)param)->item_sz == (int)size);
     return mem_pool_alloc((struct pool_alloc*)param);
 }
 
 static void* p_alignedrealloc(void *p, size_t size, uint8 alignment, const char* source, uint line,
                               uint mem_id, void* param)
 {
-    ASSERT(((struct pool_alloc*)param)->item_sz == size);
+    ASSERT(((struct pool_alloc*)param)->item_sz == (int)size);
 
     if (p)
         mem_pool_free((struct pool_alloc*)param, p);
@@ -76,11 +76,10 @@ static void p_alignedfree(void* p, void* param)
 }
 
 /* */
-result_t mem_pool_create(struct allocator* alloc,
-                         struct pool_alloc* pool,
-                         uint item_size, uint block_size, uint mem_id)
+result_t mem_pool_create(struct allocator* alloc, struct pool_alloc* pool, int item_size,
+                         int block_size, uint mem_id)
 {
-    struct mem_pool_block* block;
+    struct mem_pool_block *block;
 
     memset(pool, 0x00, sizeof(struct pool_alloc));
     pool->item_sz = item_size;
@@ -109,10 +108,9 @@ void mem_pool_destroy(struct pool_alloc* pool)
     }
 }
 
-static struct mem_pool_block* pool_create_singleblock(struct pool_alloc* pool, uint item_size, 
-    uint block_size)
+static struct mem_pool_block* pool_create_singleblock(struct pool_alloc* pool, int item_size,
+                                                      int block_size)
 {
-    uint i;
     size_t total_sz =
         sizeof(struct mem_pool_block) +
         item_size*block_size +
@@ -129,7 +127,7 @@ static struct mem_pool_block* pool_create_singleblock(struct pool_alloc* pool, u
     block->ptrs = (void**)buff;
 
     /* assign pointer references to buffer */
-    for (i = 0; i < block_size; i++)
+    for (int i = 0; i < block_size; i++)
         block->ptrs[block_size-i-1] = block->buffer + i*item_size;
     block->iter = block_size;
 
@@ -173,7 +171,7 @@ void mem_pool_free(struct pool_alloc* pool, void* ptr)
     /* find the block that pointer belongs to */
     struct linked_list* node = pool->blocks;
     struct mem_pool_block* block;
-    uint buffer_sz = pool->items_max * pool->item_sz;
+    int buffer_sz = pool->items_max * pool->item_sz;
     uint8* u8ptr = (uint8*)ptr;
 
     while (node != NULL)   {
@@ -192,15 +190,15 @@ void mem_pool_free(struct pool_alloc* pool, void* ptr)
 
 void mem_pool_clear(struct pool_alloc* pool)
 {
-    uint item_size = pool->item_sz;
-    uint block_size = pool->items_max;
+    int item_size = pool->item_sz;
+    int block_size = pool->items_max;
 
     struct linked_list* node = pool->blocks;
     while (node != NULL)    {
         struct mem_pool_block* block = (struct mem_pool_block*)node->data;
 
         /* only re-assign pointer references to buffer */
-        for (uint i = 0; i < block_size; i++)
+        for (int i = 0; i < block_size; i++)
             block->ptrs[block_size-i-1] = block->buffer + i*item_size;
         block->iter = block_size;
 
@@ -221,9 +219,9 @@ void mem_pool_bindalloc(struct pool_alloc* pool, struct allocator* alloc)
     alloc->load_fn = NULL;
 }
 
-uint mem_pool_getleaks(struct pool_alloc* pool)
+int mem_pool_getleaks(struct pool_alloc* pool)
 {
-    uint count = 0;
+    int count = 0;
     struct linked_list* node = pool->blocks;
     struct mem_pool_block* block;
 

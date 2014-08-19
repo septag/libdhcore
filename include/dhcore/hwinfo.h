@@ -83,8 +83,8 @@ struct hwinfo
     uint cpu_clock; /**< CPU clock rate (in MHZ) */
     uint cpu_cachesize; /**< CPU Cache size */
     uint cpu_cacheline; /**< CPU Cache line size */
-    uint cpu_core_cnt; /**< Total count of cpu cores (logical) */
-    uint cpu_pcore_cnt; /**< Total count of physical cpu cores */
+    int cpu_core_cnt; /**< Total count of cpu cores (logical) */
+    int cpu_pcore_cnt; /**< Total count of physical cpu cores */
     uint cpu_caps; /**< Combination of known CPU Caps (@see hwinfo_cpu_ext) */
     enum hwinfo_cpu_type cpu_type; /**< CPU Type (@see hwinfo_cpu_type) */
     enum hwinfo_os_type os_type;    /**< OS Type (@see hwinfo_os_type) */

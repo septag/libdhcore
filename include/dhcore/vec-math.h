@@ -49,7 +49,6 @@
 #if defined(_SIMD_SSE_)
 #include <xmmintrin.h>
 #include <emmintrin.h>
-//#include <smmintrin.h>
 typedef __m128  simd_t;
 typedef __m128i simd4i_t;
 
@@ -1552,6 +1551,11 @@ public:
     float& operator [](int idx)   {   return m_vec.f[idx];    }
     float operator [](int idx) const {   return m_vec.f[idx];    }
 
+    float x() const { return m_vec.x;   }
+    float y() const { return m_vec.y;   }
+    float z() const { return m_vec.z;   }
+    float w() const { return m_vec.w;   }
+
     operator vec4f*()   {   return &m_vec;  }
     operator const vec4f*() const   {   return &m_vec;  }
     operator float*()   {   return m_vec.f; }
@@ -1686,7 +1690,7 @@ public:
                   m31, m32, m33,
                   m41, m42, m43);
     }
-    Mat3(const mat3f m)
+    Mat3(const mat3f &m)
     {
         m_mat = m;
     }
@@ -1931,7 +1935,7 @@ public:
                   m31, m32, m33, m34,
                   m41, m42, m43, m44);
     }
-    Mat4(const mat4f m)
+    Mat4(const mat4f &m)
     {
         m_mat = m;
     }

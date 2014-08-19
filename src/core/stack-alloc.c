@@ -243,7 +243,7 @@ void mem_stack_load(struct stack_alloc* stack)
 
 void mem_stack_reset(struct stack_alloc* stack)
 {
-    for (uint i = 0; i < STACKALLOC_SAVES_MAX; i++)
+    for (int i = 0; i < STACKALLOC_SAVES_MAX; i++)
         stack->save_ptrs[STACKALLOC_SAVES_MAX-i-1] = &stack->save_nodes[i];
     stack->save_iter = STACKALLOC_SAVES_MAX;
     stack->offset = 0;

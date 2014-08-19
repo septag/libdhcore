@@ -385,7 +385,7 @@ file_t fio_openmem(struct allocator* alloc, const char* filepath, int ignore_vfs
         uint paks_cnt = g_fio->paks.item_cnt;
         for (uint i = 0; i < paks_cnt; i++)   {
             uint file_id = pak_findfile(paks[i], filepath);
-            if (file_id != INVALID_INDEX)
+            if (file_id != 0)
                 return pak_getfile(paks[i], alloc, mem_heap(), file_id, mem_id);
         }
     }

@@ -36,18 +36,6 @@
 #define DECODE_ASCII(u16) (char)((u16) > 0x7f ? '?' : c)
 
 /*************************************************************************************************/
-INLINE char* str_realloc(char* s, uint newsz)
-{
-    char* new_s = (char*)ALLOC(newsz, 0);
-    if (new_s != NULL)  {
-        memcpy(new_s, s, mem_size(s));
-        FREE(s);
-        return new_s;
-    }
-    return NULL;
-}
-
-/* */
 int str_isequal(const char* str1, const char* str2)
 {
     return (strcmp(str1, str2) == 0);
@@ -204,7 +192,7 @@ char* str_utf8_encode(const char* instr, uint instr_len, uint* out_len)
         uint16 c = ENCODE_85591(*instr);
 
         size += 16; /* add 16 bytes in new buffer */
-        newbuf = (char*)str_realloc(newbuf, size);
+        newbuf = (char*)REALLOC(newbuf, size, 0);
 
         if (c < 0x80)   {
             newbuf[len++] = (char)c;
@@ -270,7 +258,7 @@ char* str_utf8_decode(const char* instr, uint instr_len)
     }
 
     if (len < instr_len)
-        newbuf = str_realloc(newbuf, len + 1);
+        newbuf = REALLOC(newbuf, len + 1, 0);
 
     newbuf[len] = '\0';
     return newbuf;

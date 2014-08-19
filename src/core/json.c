@@ -57,7 +57,7 @@ INLINE uint json_alloc_getsize(void* ptr, void** preal_ptr)
     return sz;
 }
 
-INLINE uint json_choose_alloc(size_t sz)
+INLINE int json_choose_alloc(size_t sz)
 {
     if (sz <= 16)
         return JSON_ALLOC_16;
@@ -70,7 +70,7 @@ INLINE uint json_choose_alloc(size_t sz)
     else if (sz > 128 && sz <= 256)
         return JSON_ALLOC_256;
     else
-        return INVALID_INDEX;
+        return -1;
 }
 
 /*************************************************************************************************/
@@ -80,9 +80,9 @@ static void* json_malloc(size_t size)
     ASSERT(size < UINT32_MAX);
 
     size += sizeof(uint);    /* to keep the size */
-    uint a_idx = json_choose_alloc(size);
+    int a_idx = json_choose_alloc(size);
     void* ptr;
-    if (a_idx != INVALID_INDEX) {
+    if (a_idx != -1) {
         mt_mutex_lock(&g_json->buff_mtx[a_idx]);
         ptr = mem_pool_alloc(&g_json->buffs[a_idx]);
         mt_mutex_unlock(&g_json->buff_mtx[a_idx]);
@@ -95,9 +95,9 @@ static void* json_malloc(size_t size)
 static void json_free(void* p)
 {
     uint sz = json_alloc_getsize(p, &p);
-    uint a_idx = json_choose_alloc(sz);
+    int a_idx = json_choose_alloc(sz);
 
-    if (a_idx != INVALID_INDEX) {
+    if (a_idx != -1) {
         mt_mutex_lock(&g_json->buff_mtx[a_idx]);
         mem_pool_free(&g_json->buffs[a_idx], p);
         mt_mutex_unlock(&g_json->buff_mtx[a_idx]);

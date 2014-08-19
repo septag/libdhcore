@@ -344,9 +344,9 @@ void mem_freelist_bindalloc(struct freelist_alloc* freelist, struct allocator* a
     alloc->load_fn = NULL;
 }
 
-uint mem_freelist_getleaks(struct freelist_alloc* freelist, void** pptrs)
+int mem_freelist_getleaks(struct freelist_alloc* freelist, void** pptrs)
 {
-    uint count = 0;
+    int count = 0;
     struct linked_list* node = freelist->alloc_chunks;
     while (node != NULL)   {
         if (pptrs != NULL)   {

@@ -61,8 +61,20 @@ struct hashtable_chained
     struct allocator* alloc;
     uint mem_id;
     struct linked_list** pslots;
-    uint slots_cnt;
-    uint items_cnt;
+    int slots_cnt;
+    int items_cnt;
+
+#ifdef __cplusplus
+    hashtable_chained()
+    {
+        item_alloc = NULL;
+        alloc = NULL;
+        mem_id = 0;
+        pslots = NULL;
+        slots_cnt = 0;
+        items_cnt = 0;
+    }
+#endif
 };
 
 /* chained hash table functions
@@ -75,7 +87,7 @@ struct hashtable_chained
  */
 CORE_API result_t hashtable_chained_create(struct allocator* alloc, struct allocator* item_alloc,
                                            struct hashtable_chained* table,
-                                           uint slots_cnt, uint mem_id);
+                                           int slots_cnt, uint mem_id);
 
 /**
  * destroy hash table
@@ -95,22 +107,21 @@ CORE_API int hashtable_chained_isempty(const struct hashtable_chained* table);
  * @ingroup htable
  */
 CORE_API result_t hashtable_chained_add(struct hashtable_chained* table, uint hash_key,
-    uptr_t value);
+                                        uptr_t value);
 /**
  * removes hash item from the hash table
  * @ingroup htable
  */
 CORE_API void hashtable_chained_remove(struct hashtable_chained* table,
-    struct hashtable_item_chained* item);
+                                       struct hashtable_item_chained* item);
  /**
   * finds hash table by key
   * @return found item, NULL if not found
   * @see hashtable_item_chained
   * @ingroup htable
   */
-CORE_API struct hashtable_item_chained* hashtable_chained_find(
-        const struct hashtable_chained* table,
-        uint hash_key);
+CORE_API struct hashtable_item_chained* hashtable_chained_find(const struct hashtable_chained* table,
+                                                               uint hash_key);
 /**
  * clears hash table items
  * @ingroup htable
@@ -128,8 +139,18 @@ struct hashtable_fixed
 {
     struct allocator* alloc;
     struct hashtable_item* items;
-    uint slots_cnt;
-    uint items_cnt;
+    int slots_cnt;
+    int items_cnt;
+
+#ifdef __cplusplus
+    hashtable_fixed()
+    {
+        alloc = NULL;
+        items = NULL;
+        slots_cnt = 0;
+        items_cnt = 0;
+    }
+#endif
 };
 
 /* closed hash table functions
@@ -139,9 +160,8 @@ struct hashtable_fixed
  * @param slots_cnt number of items in hash table, prime numbers are pefered for optimized hash-table
  * @ingroup htable
  */
-CORE_API result_t hashtable_fixed_create(struct allocator* alloc,
-                                         struct hashtable_fixed* table,
-                                         uint slots_cnt, uint mem_id);
+CORE_API result_t hashtable_fixed_create(struct allocator* alloc, struct hashtable_fixed* table,
+                                         int slots_cnt, uint mem_id);
 
 /**
  * destroy hash table
@@ -160,8 +180,7 @@ CORE_API int hashtable_fixed_isempty(const struct hashtable_fixed* table);
  * @see hash
  * @ingroup htable
  */
-CORE_API result_t hashtable_fixed_add(struct hashtable_fixed* table,
-                                      uint hash_key, uptr_t value);
+CORE_API result_t hashtable_fixed_add(struct hashtable_fixed* table, uint hash_key, uptr_t value);
 /**
  * removes hash item from the hash table
  * @ingroup htable
@@ -183,7 +202,7 @@ CORE_API void hashtable_fixed_clear(struct hashtable_fixed* table);
 /**
  * @ingroup htable
  */
-CORE_API size_t hashtable_fixed_estimate_size(uint slots_cnt);
+CORE_API size_t hashtable_fixed_estimate_size(int slots_cnt);
 
 /**
  * open hash table : same as closed hash table, but grows itself upon extra item additions
@@ -192,10 +211,22 @@ struct hashtable_open
 {
     struct allocator* alloc;
     struct hashtable_item* items;
-    uint slots_cnt;
-    uint items_cnt;
-    uint slots_grow;
+    int slots_cnt;
+    int items_cnt;
+    int slots_grow;
     uint mem_id;
+
+#ifdef __cplusplus
+    hashtable_open()
+    {
+        alloc = NULL;
+        items = NULL;
+        slots_cnt = 0;
+        items_cnt = 0;
+        slots_grow = 0;
+        mem_id = 0;
+    }
+#endif
 };
 
 /* open hash table functions
@@ -205,10 +236,8 @@ struct hashtable_open
  * @param slots_cnt number of items in hash table, prime numbers are pefered for optimized hash-table
  * @ingroup htable
  */
-CORE_API result_t hashtable_open_create(struct allocator* alloc,
-                                        struct hashtable_open* table,
-                                        uint slots_cnt, uint grow_cnt,
-                                        uint mem_id);
+CORE_API result_t hashtable_open_create(struct allocator* alloc, struct hashtable_open* table,
+                                        int slots_cnt, int grow_cnt, uint mem_id);
 
 /**
  * destroy hash table
@@ -259,10 +288,9 @@ private:
 public:
     HashtableFixed()
     {
-        memset(&m_table, 0x00, sizeof(m_table));
     }
 
-    result_t create(uint slot_cnt, allocator *alloc = mem_heap(), uint mem_id = 0)
+    result_t create(int slot_cnt, allocator *alloc = mem_heap(), uint mem_id = 0)
     {
         return hashtable_fixed_create(alloc, &m_table, slot_cnt, mem_id);
     }
@@ -334,10 +362,9 @@ private:
 public:
     HashtableOpen()
     {
-        memset(&m_table, 0x00, sizeof(m_table));
     }
 
-    result_t create(uint slot_cnt, allocator *alloc = mem_heap(), uint mem_id = 0)
+    result_t create(int slot_cnt, allocator *alloc = mem_heap(), uint mem_id = 0)
     {
         return hashtable_open_create(alloc, &m_table, slot_cnt, slot_cnt, mem_id);
     }
@@ -404,10 +431,9 @@ private:
 public:
     HashtableChained()
     {
-        memset(&m_table, 0x00, sizeof(m_table));
     }
 
-    result_t create(uint slot_cnt, allocator *alloc = mem_heap(), allocator *item_alloc = mem_heap(),
+    result_t create(int slot_cnt, allocator *alloc = mem_heap(), allocator *item_alloc = mem_heap(),
                     uint mem_id = 0)
     {
         return hashtable_chained_create(alloc, item_alloc, &m_table, slot_cnt, mem_id);

@@ -88,8 +88,8 @@ result_t pak_create(struct pak_file* pak, struct allocator* alloc,
 }
 
 
-result_t pak_open(struct pak_file* pak, struct allocator* alloc,
-                  const char* pakfilepath, uint mem_id)
+result_t pak_open(struct pak_file* pak, struct allocator* alloc, const char* pakfilepath,
+                  uint mem_id)
 {
     result_t r;
     memset(pak, 0x00, sizeof(struct pak_file));
@@ -165,9 +165,8 @@ int pak_isopen(struct pak_file* pak)
     return (pak->f != NULL);
 }
 
-
-result_t pak_putfile(struct pak_file* pak,
-                     struct allocator* tmp_alloc, file_t src_file, const char* dest_path)
+result_t pak_putfile(struct pak_file* pak, struct allocator* tmp_alloc, file_t src_file,
+                     const char* dest_path)
 {
     ASSERT(fio_isopen(src_file));
 
@@ -215,9 +214,8 @@ result_t pak_putfile(struct pak_file* pak,
     A_FREE(tmp_alloc, file_buffer);
 
     /* add file item description */
-    if (arr_needexpand(&pak->items))    {
+    if (arr_needexpand(&pak->items))
         arr_expand(&pak->items);
-    }
     struct pak_item* items = (struct pak_item*)pak->items.buffer;
     struct pak_item* item = &items[pak->items.item_cnt];
     strcpy(item->filepath, (dest_path[0] == '/') ? (dest_path + 1) : (dest_path));
@@ -225,9 +223,10 @@ result_t pak_putfile(struct pak_file* pak,
     item->size = (uint)compress_size;
     item->unzip_size = (uint)size;
     hash_set(&item->hash, file_hash);
-    /* add to hash-table */
-    hashtable_open_add(&pak->table, hash_str(dest_path), pak->items.item_cnt);
-    pak->items.item_cnt ++;
+
+    /* Add ID to hash-table */
+    uint file_id = ++pak->items.item_cnt;
+    hashtable_open_add(&pak->table, hash_str(dest_path), file_id);
 
     return RET_OK;
 }
@@ -239,17 +238,17 @@ uint pak_findfile(struct pak_file* pak, const char* filepath)
 
     struct hashtable_item* titem = hashtable_open_find(&pak->table, hash_str(rpath));
     if (titem != NULL)     return (uint)titem->value;
-    else                   return INVALID_INDEX;
+    else                   return 0;
 }
 
 file_t pak_getfile(struct pak_file* pak, struct allocator* alloc, struct allocator* tmp_alloc,
                    uint file_id, uint mem_id)
 {
-    ASSERT(file_id != INVALID_INDEX);
-    ASSERT(file_id < pak->items.item_cnt);
+    ASSERT(file_id != 0);
+    ASSERT(file_id < (uint)pak->items.item_cnt+1);
 
     struct pak_item* items = (struct pak_item*)pak->items.buffer;
-    struct pak_item* item = &items[file_id];
+    struct pak_item* item = &items[file_id-1];
 
     void* file_buffer = A_ALLOC(tmp_alloc, item->size, 0);
     void* unzip_buffer = A_ALLOC(alloc, item->unzip_size, 0);
@@ -261,11 +260,10 @@ file_t pak_getfile(struct pak_file* pak, struct allocator* alloc, struct allocat
 
     fseek(pak->f, (long)item->offset, SEEK_SET);
     fread(file_buffer, item->size, 1, pak->f);
-    if (pak->compress_mode != COMPRESS_NONE)    {
+    if (pak->compress_mode != COMPRESS_NONE)
         zip_decompress(unzip_buffer, item->unzip_size, file_buffer, item->size);
-    }    else    {
+    else
         memcpy(unzip_buffer, file_buffer, item->unzip_size);
-    }
 
     A_FREE(tmp_alloc, file_buffer);
 
@@ -282,7 +280,7 @@ file_t pak_getfile(struct pak_file* pak, struct allocator* alloc, struct allocat
     return fio_attachmem(alloc, unzip_buffer, item->unzip_size, item->filepath, mem_id);
 }
 
-char* pak_createfilelist(struct pak_file* pak, struct allocator* alloc, OUT uint* pcnt)
+char* pak_createfilelist(struct pak_file* pak, struct allocator* alloc, OUT int* pcnt)
 {
 	ASSERT(pcnt);
 	if (arr_isempty(&pak->items))	{
@@ -298,7 +296,7 @@ char* pak_createfilelist(struct pak_file* pak, struct allocator* alloc, OUT uint
 	memset(filelist, 0x00, DH_PATH_MAX*pak->items.item_cnt);
 
 	*pcnt = pak->items.item_cnt;
-	for (uint i = 0; i < *pcnt; i++)
+    for (int i = 0; i < *pcnt; i++)
 		strcpy(filelist + i*DH_PATH_MAX, ((struct pak_item*)pak->items.buffer)[i].filepath);
 	return filelist;
 }

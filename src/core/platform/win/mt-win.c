@@ -82,7 +82,7 @@ mt_event mt_event_create(struct allocator* alloc)
 
 void mt_event_destroy(mt_event e)
 {
-    for (uint i = 0; i < e->signals.item_cnt; i++) {
+    for (int i = 0; i < e->signals.item_cnt; i++) {
         HANDLE ehdl = ((HANDLE*)e->signals.buffer)[i];
         if (ehdl != NULL)
             CloseHandle(ehdl);
@@ -110,7 +110,7 @@ uint mt_event_addsignal(mt_event e)
 enum mt_event_response mt_event_wait(mt_event e, uint signal_id, uint timeout)
 {
     ASSERT(signal_id != 0);
-    ASSERT(signal_id <= e->signals.item_cnt);
+    ASSERT(signal_id <= (uint)e->signals.item_cnt);
 
     HANDLE ehdl = ((HANDLE*)e->signals.buffer)[signal_id-1];
     ASSERT(ehdl != NULL);
@@ -138,7 +138,7 @@ enum mt_event_response mt_event_waitforall(mt_event e, uint timeout)
 void mt_event_trigger(mt_event e, uint signal_id)
 {
     ASSERT(signal_id != 0);
-    ASSERT(signal_id <= e->signals.item_cnt);
+    ASSERT(signal_id <= (uint)e->signals.item_cnt);
 
     HANDLE ehdl = ((HANDLE*)e->signals.buffer)[signal_id-1];
     ASSERT(ehdl != NULL);

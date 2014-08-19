@@ -41,9 +41,25 @@ struct stack_alloc
     size_t alloc_max;
     struct allocator* alloc;
     struct stack* save_stack;   /* save stack, data: (size_t) offset to last save */
-    uint save_iter;
+    int save_iter;
     struct stack save_nodes[STACKALLOC_SAVES_MAX];
     struct stack* save_ptrs[STACKALLOC_SAVES_MAX];
+
+#ifdef __cplusplus
+    stack_alloc()
+    {
+        buffer = NULL;
+        offset = 0;
+        last_offset = 0;
+        size = 0;
+        alloc_max = 0;
+        alloc = NULL;
+        save_stack = NULL;
+        save_iter = 0;
+        memset(save_nodes, 0x00, sizeof(stack)*STACKALLOC_SAVES_MAX);
+        memset(save_ptrs, 0x00, sizeof(stack*)*STACKALLOC_SAVES_MAX);
+    }
+#endif
 };
 
 /**
@@ -52,8 +68,8 @@ struct stack_alloc
  * @param size size of stack allocator buffer (bytes)
  * @ingroup alloc
  */
-CORE_API result_t mem_stack_create(struct allocator* alloc,
-                                   struct stack_alloc* stack, size_t size, uint mem_id);
+CORE_API result_t mem_stack_create(struct allocator* alloc, struct stack_alloc* stack, size_t size,
+                                   uint mem_id);
 
 /**
  * Destroy stack allocator
@@ -74,11 +90,11 @@ CORE_API void* mem_stack_realloc(struct stack_alloc* stack, void *p, size_t size
  * @see mem_stack_bindalloc
  * @ingroup alloc
  */
-CORE_API void* mem_stack_alignedalloc(struct stack_alloc* stack, size_t size,
-                                      uint8 alignment, uint mem_id);
+CORE_API void* mem_stack_alignedalloc(struct stack_alloc* stack, size_t size, uint8 alignment,
+                                      uint mem_id);
 
 CORE_API void* mem_stack_alignedrealloc(struct stack_alloc* stack, void *p, size_t size,
-                                      uint8 alignment, uint mem_id);
+                                        uint8 alignment, uint mem_id);
 
 /**
  * save stack allocator state in order to load it later
@@ -135,7 +151,6 @@ private:
 public:
     StackAlloc()
     {
-        memset(&m_stack, 0x00, sizeof(m_stack));
     }
 
     result_t create(size_t size, allocator *alloc = mem_heap(), uint mem_id = 0)

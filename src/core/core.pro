@@ -26,7 +26,7 @@ DEFINES += _CORE_EXPORT_ _SIMD_SSE_
 linux-g++|linux-clang   {
     QMAKE_CFLAGS += \
         -std=gnu99 \
-        -msse -msse2 -msse4.1 \
+        -msse -msse2 \
         -ffast-math
 
     LIBS *= -lpthread -lm

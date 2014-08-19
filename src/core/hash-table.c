@@ -16,7 +16,7 @@
 #include "hash-table.h"
 #include "err.h"
 
-static const uint g_primes[] = {
+static const int g_primes[] = {
     2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,
     101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193,
     197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307,
@@ -81,15 +81,16 @@ static const uint g_primes[] = {
 
 
 /* fwd */
-static uint probe_linear(uint idx, uint hash, uint slot_cnt, const struct hashtable_item* items);
-static void hashtable_open_reorder(struct hashtable_open* table, struct hashtable_item* items, uint cnt);
-static uint hashtable_get_prime(uint n);
+static int probe_linear(int idx, uint hash, int slot_cnt, const struct hashtable_item* items);
+static void hashtable_open_reorder(struct hashtable_open* table, struct hashtable_item* items,
+                                   int cnt);
+static int hashtable_get_prime(int n);
 
 /*************************************************************************************************/
 /* chained hash table */
 result_t hashtable_chained_create(struct allocator* alloc, struct allocator* item_alloc,
                               struct hashtable_chained* table,
-                              uint slots_cnt, uint mem_id)
+                              int slots_cnt, uint mem_id)
 {
     ASSERT(alloc);
     ASSERT(item_alloc);
@@ -125,7 +126,7 @@ int hashtable_chained_isempty(const struct hashtable_chained* table)
 
 result_t hashtable_chained_add(struct hashtable_chained* table, uint hash_key, uptr_t value)
 {
-    uint idx = hash_key % table->slots_cnt;
+    int idx = hash_key % table->slots_cnt;
     struct hashtable_item_chained* item = (struct hashtable_item_chained*)A_ALLOC(table->item_alloc,
         sizeof(struct hashtable_item_chained), table->mem_id);
     if (item == NULL)
@@ -141,7 +142,7 @@ result_t hashtable_chained_add(struct hashtable_chained* table, uint hash_key, u
 
 void hashtable_chained_remove(struct hashtable_chained* table, struct hashtable_item_chained* item)
 {
-    uint idx = item->hash % table->slots_cnt;
+    int idx = item->hash % table->slots_cnt;
     ASSERT(table->pslots[idx] != NULL);
 
     list_remove(&table->pslots[idx], &item->node);
@@ -152,7 +153,7 @@ void hashtable_chained_remove(struct hashtable_chained* table, struct hashtable_
 struct hashtable_item_chained* hashtable_chained_find(const struct hashtable_chained* table,
     uint hash_key)
 {
-    uint idx = hash_key % table->slots_cnt;
+    int idx = hash_key % table->slots_cnt;
     struct linked_list* node = table->pslots[idx];
     while (node != NULL)    {
         struct hashtable_item_chained* item = (struct hashtable_item_chained*)node->data;
@@ -165,7 +166,7 @@ struct hashtable_item_chained* hashtable_chained_find(const struct hashtable_cha
 
 void hashtable_chained_clear(struct hashtable_chained* table)
 {
-    for (uint i = 0; i < table->slots_cnt; i++)   {
+    for (int i = 0; i < table->slots_cnt; i++)   {
         struct linked_list* node = table->pslots[i];
         while (node != NULL)    {
             struct hashtable_item_chained* item = (struct hashtable_item_chained*)node->data;
@@ -183,7 +184,7 @@ void hashtable_chained_clear(struct hashtable_chained* table)
  */
 result_t hashtable_fixed_create(struct allocator* alloc,
                                 struct hashtable_fixed* table,
-                                uint slots_cnt, uint mem_id)
+                                int slots_cnt, uint mem_id)
 {
     memset(table, 0x00, sizeof(struct hashtable_fixed));
     table->alloc = alloc;
@@ -198,9 +199,9 @@ result_t hashtable_fixed_create(struct allocator* alloc,
     return RET_OK;
 }
 
-size_t hashtable_fixed_estimate_size(uint slots_cnt)
+size_t hashtable_fixed_estimate_size(int slots_cnt)
 {
-    uint slot_cnt = hashtable_get_prime(slots_cnt + (slots_cnt/2));
+    int slot_cnt = hashtable_get_prime(slots_cnt + (slots_cnt/2));
     return slot_cnt*sizeof(struct hashtable_item);
 }
 
@@ -224,11 +225,11 @@ void hashtable_fixed_remove(struct hashtable_fixed* table, struct hashtable_item
 
 result_t hashtable_fixed_add(struct hashtable_fixed* table, uint hash_key, uptr_t value)
 {
-    uint idx = hash_key % table->slots_cnt;
+    int idx = hash_key % table->slots_cnt;
     /* if slot is not empty, probe linear and find a free slot */
     if (table->items[idx].hash != 0)
         idx = probe_linear(idx, 0, table->slots_cnt, table->items);
-    ASSERT(idx != INVALID_INDEX);   /* maybe too much values are added ? */
+    ASSERT(idx != -1);   /* maybe too much values are added ? */
     table->items[idx].hash = hash_key;
     table->items[idx].value = value;
     table->items_cnt ++;
@@ -240,12 +241,12 @@ struct hashtable_item* hashtable_fixed_find(const struct hashtable_fixed* table,
 	if (table->slots_cnt == 0)
 		return NULL;
 
-    uint idx = hash_key % table->slots_cnt;
+    int idx = hash_key % table->slots_cnt;
     if (table->items[idx].hash == hash_key)
         return &table->items[idx];
 
     idx = probe_linear(idx, hash_key, table->slots_cnt, table->items);
-    if (idx != INVALID_INDEX)
+    if (idx != -1)
         return &table->items[idx];
     else
         return NULL;
@@ -261,7 +262,7 @@ void hashtable_fixed_clear(struct hashtable_fixed* table)
  * hashtable_open
  */
 result_t hashtable_open_create(struct allocator* alloc, struct hashtable_open* table,
-    uint slots_cnt, uint grow_cnt, uint mem_id)
+    int slots_cnt, int grow_cnt, uint mem_id)
 {
     memset(table, 0x00, sizeof(struct hashtable_open));
 
@@ -296,7 +297,7 @@ result_t hashtable_open_add(struct hashtable_open* table,
 {
     /* grow hashtable if required, hash items are more than 60% of capacity */
     if (table->items_cnt >= (table->slots_cnt*60/100))   {
-        uint new_cnt = hashtable_get_prime(table->slots_cnt + table->slots_grow);
+        int new_cnt = hashtable_get_prime(table->slots_cnt + table->slots_grow);
         void* tmp = A_ALLOC(table->alloc, sizeof(struct hashtable_item)*new_cnt, table->mem_id);
         if (tmp == NULL)
             return RET_OUTOFMEMORY;
@@ -310,12 +311,12 @@ result_t hashtable_open_add(struct hashtable_open* table,
         table->slots_grow <<= 1; /* exponentially increase the grow value */
     }
 
-    uint idx = hash_key % table->slots_cnt;
+    int idx = hash_key % table->slots_cnt;
     /* if slot is not empty, probe linear and find a free slot */
     if (table->items[idx].hash != 0)
         idx = probe_linear(idx, 0, table->slots_cnt, table->items);
 
-    ASSERT(idx != INVALID_INDEX);   /* maybe too much values are added ? */
+    ASSERT(idx != -1);   /* maybe too much values are added ? */
 
     table->items[idx].hash = hash_key;
     table->items[idx].value = value;
@@ -326,17 +327,17 @@ result_t hashtable_open_add(struct hashtable_open* table,
 /* reorder hash table by pushing hashes into new buffer,
  * items: new items that are consturcted from 'table' hash-table (should be memzero'd) */
 static void hashtable_open_reorder(struct hashtable_open* table, struct hashtable_item* items,
-    uint cnt)
+    int cnt)
 {
-    for (uint i = 0, prev_cnt = table->slots_cnt; i < prev_cnt; i++)  {
+    for (int i = 0, prev_cnt = table->slots_cnt; i < prev_cnt; i++)  {
         uint key = table->items[i].hash;
         uptr_t value = table->items[i].value;
 
         /* look for hash = 0 */
-        uint idx = key % cnt;
+        int idx = key % cnt;
         if (items[idx].hash != 0)
             idx = probe_linear(idx, 0, cnt, items);
-        ASSERT(idx != INVALID_INDEX);
+        ASSERT(idx != -1);
 
         items[idx].hash = key;
         items[idx].value = value;
@@ -354,12 +355,12 @@ struct hashtable_item* hashtable_open_find(const struct hashtable_open* table, u
     if (table->slots_cnt == 0)
         return NULL;
 
-    uint idx = hash_key % table->slots_cnt;
+    int idx = hash_key % table->slots_cnt;
     if (table->items[idx].hash == hash_key)
         return &table->items[idx];
 
     idx = probe_linear(idx, hash_key, table->slots_cnt, table->items);
-    if (idx != INVALID_INDEX)
+    if (idx != -1)
         return &table->items[idx];
     else
         return NULL;
@@ -373,42 +374,42 @@ void hashtable_open_clear(struct hashtable_open* table)
 }
 
 /*************************************************************************************************/
-static uint probe_linear(uint idx, uint hash, uint slot_cnt, const struct hashtable_item* items)
+static int probe_linear(int idx, uint hash, int slot_cnt, const struct hashtable_item* items)
 {
-    for (uint i = 1; i < slot_cnt; i++)  {
-        uint r = (idx + i) % slot_cnt;
+    for (int i = 1; i < slot_cnt; i++)  {
+        int r = (idx + i) % slot_cnt;
         if (items[r].hash == hash)
             return r;
     }
-    return INVALID_INDEX;
+    return -1;
 }
 
 struct pn_cacheitem
 {
-    uint n;
-    uint prime;
+    int n;
+    int prime;
 };
 
-static uint hashtable_get_prime(uint n)
+static int hashtable_get_prime(int n)
 {
     static struct pn_cacheitem cache[16];
-    static uint cache_cnt = 0;
+    static int cache_cnt = 0;
 
     if (n > 1 && n <= 7919)  {
         /* first look in cached numbers, we cache these for possible runtime boost for hash-table creates */
-        for (uint i = 0; i < cache_cnt; i++)  {
+        for (int i = 0; i < cache_cnt; i++)  {
             if (cache[i].n == n)
                 return cache[i].prime;
         }
 
         /* search through the whole prime numbers */
-        uint cnt = sizeof(g_primes)/sizeof(uint) - 1;
-        for (uint i = 0; i < cnt; i++)    {
-            uint prime_a = g_primes[i];
-            uint prime_b = g_primes[i+1];
+        int cnt = sizeof(g_primes)/sizeof(int) - 1;
+        for (int i = 0; i < cnt; i++)    {
+            int prime_a = g_primes[i];
+            int prime_b = g_primes[i+1];
 
             if (n >= prime_a && n <= prime_b)    {
-                uint prime = (n > prime_a) ? prime_b : prime_a;
+                int prime = (n > prime_a) ? prime_b : prime_a;
                 cache[cache_cnt].n = n;
                 cache[cache_cnt].prime = prime;
                 cache_cnt = (cache_cnt + 1) % 16;

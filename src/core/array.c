@@ -19,7 +19,7 @@
 
 result_t arr_create(struct allocator* alloc,
                     struct array* arr,
-                    uint item_sz, uint init_item_cnt, uint expand_cnt,
+                    int item_sz, int init_item_cnt, int expand_cnt,
                     uint mem_id)
 {
     memset(arr, 0x00, sizeof(struct array));
@@ -65,7 +65,7 @@ void* arr_add(struct array* arr)
 void* arr_add_batch(struct array *arr, int item_cnt)
 {
     if (arr->max_cnt < item_cnt + arr->item_cnt)    {
-        uint newsz = (uint)aligni(item_cnt + arr->item_cnt, arr->expand_sz);
+        int newsz = aligni(item_cnt + arr->item_cnt, arr->expand_sz);
 
         arr->buffer = A_ALIGNED_REALLOC(arr->alloc, arr->buffer, newsz*arr->item_sz, arr->mem_id);
         if (arr->buffer == NULL)
@@ -86,7 +86,7 @@ result_t arr_expand(struct array* arr)
     ASSERT(arr->buffer != NULL);
 
     /* reallocate */
-    uint newsz = arr->max_cnt + arr->expand_sz;
+    int newsz = arr->max_cnt + arr->expand_sz;
     arr->buffer = A_ALIGNED_REALLOC(arr->alloc, arr->buffer, newsz*arr->item_sz, arr->mem_id);
     if (arr->buffer == NULL)
         return RET_OUTOFMEMORY;

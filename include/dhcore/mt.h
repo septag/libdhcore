@@ -93,7 +93,7 @@ typedef int64 volatile atom_t;
 /**
  * @ingroup mt
  */
-#define MT_TIMEOUT_INFINITE INVALID_INDEX
+#define MT_TIMEOUT_INFINITE 0xffffffff
 
 /*************************************************************************************************
  * Mutex

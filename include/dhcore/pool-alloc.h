@@ -32,11 +32,23 @@
 struct pool_alloc
 {
     struct linked_list* blocks;     /* first node of blocks */
-    uint blocks_cnt; /* count of memory pool blocks */
+    int blocks_cnt; /* count of memory pool blocks */
     struct allocator* alloc;      /* allocator for further block allocations */
+    int items_max;  /* maximum number of items allowed (per block) */
+    int item_sz;    /* size of the item in bytes */
     uint mem_id;     /* memory id of the pool */
-    uint items_max;  /* maximum number of items allowed (per block) */
-    uint item_sz;    /* size of the item in bytes */
+
+#ifdef __cplusplus
+    pool_alloc()
+    {
+        blocks = NULL;
+        blocks_cnt = 0;
+        alloc = NULL;
+        mem_id = 0;
+        items_max = 0;
+        item_sz = 0;
+    }
+#endif
 };
 
 /**
@@ -47,7 +59,7 @@ struct pool_alloc
  */
 CORE_API result_t mem_pool_create(struct allocator* alloc,
                                   struct pool_alloc* pool,
-                                  uint item_size, uint block_size, uint mem_id);
+                                  int item_size, int block_size, uint mem_id);
 
 /**
  * Destroys pool allocator
@@ -72,7 +84,7 @@ CORE_API void mem_pool_free(struct pool_alloc* pool, void* ptr);
  * @return number of leaks
  * @ingroup alloc
  */
-CORE_API uint mem_pool_getleaks(struct pool_alloc* pool);
+CORE_API int mem_pool_getleaks(struct pool_alloc* pool);
 
 /**
  * Clear memory pool
@@ -101,10 +113,9 @@ private:
 public:
     PoolAlloc()
     {
-        memset(&m_pool, 0x00, sizeof(m_pool));
     }
 
-    result_t create(uint block_sz, allocator *alloc = mem_heap(), uint mem_id = 0)
+    result_t create(int block_sz, allocator *alloc = mem_heap(), uint mem_id = 0)
     {
         return mem_pool_create(alloc, &m_pool, sizeof(T), block_sz, mem_id);
     }
@@ -134,7 +145,7 @@ public:
         mem_pool_bindalloc(&m_pool, alloc);
     }
 
-    uint leaks()
+    int leaks()
     {
         return mem_pool_getleaks(&m_pool);
     }

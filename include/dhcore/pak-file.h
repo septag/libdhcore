@@ -42,7 +42,7 @@ struct file_mgr;
  */
 struct pak_file
 {
-    FILE* f;
+    FILE *f;
     struct hashtable_open table; /* hash-table for referencing pak files */
     struct array items; /* file items in the pak (see pak-file.c) */
     enum compress_mode compress_mode; /* compression mode (see zip.h) */
@@ -97,7 +97,7 @@ CORE_API result_t pak_putfile(struct pak_file* pak, struct allocator* tmp_alloc,
  * Find a file in pak
  * @param filepath filepath (case sensitive) of dest_path provided in 'pak_putfile' when -
  *                  archive was created.
- * @return id of the file. INVALID_INDEX if file is not found.
+ * @return id of the file. 0 if file is not found.
  * @ingroup pak
  */
 CORE_API uint pak_findfile(struct pak_file* pak, const char* filepath);
@@ -111,8 +111,7 @@ CORE_API uint pak_findfile(struct pak_file* pak, const char* filepath);
  * @ingroup pak
  */
 CORE_API file_t pak_getfile(struct pak_file* pak, struct allocator* alloc,
-                            struct allocator* tmp_alloc,
-                            uint file_id, uint mem_id);
+                            struct allocator* tmp_alloc, uint file_id, uint mem_id);
 
 /**
  * Creates/allocates list of files inside pak-file
@@ -122,6 +121,6 @@ CORE_API file_t pak_getfile(struct pak_file* pak, struct allocator* alloc,
  * for striding the char** array you should use DH_PATH_MAX strides (char* + index*DH_PATH_MAX)
  * @ingroup pak
  */
-CORE_API char* pak_createfilelist(struct pak_file* pak, struct allocator* alloc, OUT uint* pcnt);
+CORE_API char* pak_createfilelist(struct pak_file* pak, struct allocator* alloc, OUT int* pcnt);
 
 #endif /*__PAKFILE_H__*/

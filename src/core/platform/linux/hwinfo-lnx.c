@@ -116,8 +116,8 @@ void query_cpuinfo(struct hwinfo* info)
         FREE(data);
     }
 
-    info->cpu_core_cnt = maxui(sysconf(_SC_NPROCESSORS_ONLN), 1);
-    info->cpu_pcore_cnt = maxui(info->cpu_pcore_cnt, 1);
+    info->cpu_core_cnt = maxi(sysconf(_SC_NPROCESSORS_ONLN), 1);
+    info->cpu_pcore_cnt = maxi(info->cpu_pcore_cnt, 1);
 }
 
 void query_osinfo(struct hwinfo* info)

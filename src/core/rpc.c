@@ -24,7 +24,7 @@ struct rpc_cmd
     struct rpc_value* results;
     uint result_cnt;
     struct rpc_value* params;
-    uint param_cnt;
+    int param_cnt;
     void* user_param;
     pfn_rpc_cmd run_fn;
     char desc[256];
@@ -99,7 +99,7 @@ static struct rpc_result* rpc_method_help(struct rpc_vblock* results, struct rpc
         char param_str[512];
         char param_line[128];
         param_str[0] = 0;
-        for (uint i = 0; i < cmd->param_cnt; i++)    {
+        for (int i = 0; i < cmd->param_cnt; i++)    {
             struct rpc_value* value = &cmd->params[i];
             char arr_str[32];
             arr_str[0] = 0;
@@ -138,7 +138,7 @@ static struct rpc_result* rpc_method_help(struct rpc_vblock* results, struct rpc
 static struct rpc_result* rpc_method_listmethods(struct rpc_vblock* results, struct rpc_vblock* params, 
     int id, void* user_param)
 {
-    uint i = 0;
+    int i;
     for (i = 0; i < g_rpc->cmds.item_cnt && i < MAX_COMMAND_LIST; i++)     {
         struct rpc_cmd* cmd = &ARR_ITEM(g_rpc->cmds, struct rpc_cmd, i);
         rpc_vblock_sets_idx(results, RPC_VALUE(Methods), i, cmd->name);
@@ -474,7 +474,7 @@ void rpc_release()
     if (g_rpc != NULL)  {
         hashtable_open_destroy(&g_rpc->cmd_tbl);
 
-        for (uint i = 0; i < g_rpc->cmds.item_cnt; i++) {
+        for (int i = 0; i < g_rpc->cmds.item_cnt; i++) {
             struct rpc_cmd* c = rpc_cmd_get(i+1);
             if (c->params != NULL)
                 FREE(c->params);

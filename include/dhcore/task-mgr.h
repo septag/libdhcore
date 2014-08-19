@@ -83,8 +83,7 @@ enum tsk_run_context
  * @see tsk_dispatch
  * @ingroup taskman
  */
-typedef void (*pfn_tsk_run)(void* params, void* result, uint thread_id, uint job_id, 
-    uint worker_idx);
+typedef void (*pfn_tsk_run)(void* params, void* result, uint thread_id, uint job_id, int worker_idx);
 
 /**
  * Initialize task manager, must call this function at the start of the program
@@ -96,7 +95,7 @@ typedef void (*pfn_tsk_run)(void* params, void* result, uint thread_id, uint job
  * @param flags Not used (set to 0)
  * @ingroup taskman
  */
-CORE_API result_t tsk_initmgr(uint thread_cnt, size_t localmem_perthread_sz,
+CORE_API result_t tsk_initmgr(int thread_cnt, size_t localmem_perthread_sz,
                               size_t tmpmem_perthread_sz, uint flags);
 
 /**
@@ -119,8 +118,8 @@ CORE_API void tsk_releasemgr();
  * @see tsk_destroy
  * @ingroup taskman
  */
-CORE_API uint tsk_dispatch(pfn_tsk_run run_fn, enum tsk_run_context ctx, uint thread_cnt, 
-    void* params, void* result);
+CORE_API uint tsk_dispatch(pfn_tsk_run run_fn, enum tsk_run_context ctx, int thread_cnt,
+                           void* params, void* result);
 
 /** 
  * Run a task in user defined threads only, this function is for more advanced use when caller wants 
@@ -134,8 +133,8 @@ CORE_API uint tsk_dispatch(pfn_tsk_run run_fn, enum tsk_run_context ctx, uint th
  * @see pfn_tsk_run
  * @ingroup taskman
  */
-CORE_API uint tsk_dispatch_exclusive(pfn_tsk_run run_fn, const uint* thread_idxs, uint thread_cnt, 
-    void* params, void* result);
+CORE_API uint tsk_dispatch_exclusive(pfn_tsk_run run_fn, const int* thread_idxs, int thread_cnt,
+                                     void* params, void* result);
 
 /**
  * Destroys a task (job), user must call this function after he is done with dispatch 

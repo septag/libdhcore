@@ -97,7 +97,7 @@ mt_event mt_event_create(struct allocator* alloc)
 
 void mt_event_destroy(mt_event e)
 {
-    for (uint i = 0; i < e->sigs.item_cnt; i++) {
+    for (int i = 0; i < e->sigs.item_cnt; i++) {
         struct mt_event_signal* signal = &((struct mt_event_signal*)e->sigs.buffer)[i];
         pthread_cond_destroy(&signal->cond);
         mt_mutex_release(&signal->signal_mtx);
@@ -116,13 +116,13 @@ uint mt_event_addsignal(mt_event e)
     pthread_cond_init(&signal->cond, NULL);
     mt_mutex_init(&signal->signal_mtx);
 
-    return e->sigs.item_cnt;
+    return (uint)e->sigs.item_cnt;
 }
 
 enum mt_event_response mt_event_wait(mt_event e, uint signal_id, uint timeout)
 {
     ASSERT(signal_id != 0);
-    ASSERT(signal_id <= e->sigs.item_cnt);
+    ASSERT(signal_id <= (uint)e->sigs.item_cnt);
 
     int r = 0;
     struct mt_event_signal* signal =
@@ -152,7 +152,7 @@ enum mt_event_response mt_event_wait(mt_event e, uint signal_id, uint timeout)
 enum mt_event_response mt_event_waitforall(mt_event e, uint timeout)
 {
     int r = 0;
-    for (uint i = 0; i < e->sigs.item_cnt; i++)    {
+    for (int i = 0; i < e->sigs.item_cnt; i++)    {
         struct mt_event_signal* signal = &((struct mt_event_signal*)e->sigs.buffer)[i];
         mt_mutex_lock(&signal->signal_mtx);
         if (!signal->signal) {
@@ -180,7 +180,7 @@ enum mt_event_response mt_event_waitforall(mt_event e, uint timeout)
 void mt_event_trigger(mt_event e, uint signal_id)
 {
     ASSERT(signal_id != 0);
-    ASSERT(signal_id <= e->sigs.item_cnt);
+    ASSERT(signal_id <= (uint)e->sigs.item_cnt);
     struct mt_event_signal* signal =
         &((struct mt_event_signal*)e->sigs.buffer)[signal_id-1];
 

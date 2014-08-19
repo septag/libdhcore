@@ -28,12 +28,24 @@
  */
 struct freelist_alloc
 {
-    uint8*              buffer;
-    size_t              size;
-    size_t              alloc_size;
+    uint8* buffer;
+    size_t size;
+    size_t alloc_size;
     struct linked_list* free_chunks;
     struct linked_list* alloc_chunks;
     struct allocator*   alloc;
+
+#ifdef __cplusplus
+    freelist_alloc()
+    {
+        buffer = NULL;
+        size = 0;
+        alloc_size = 0;
+        free_chunks = NULL;
+        alloc_chunks = NULL;
+        alloc = NULL;
+    }
+#endif
 };
 
 /**
@@ -83,7 +95,7 @@ CORE_API void mem_freelist_alignedfree(struct freelist_alloc* freelist, void* pt
  * @return number of leaks
  * @ingroup alloc
  */
-CORE_API uint mem_freelist_getleaks(struct freelist_alloc* freelist, void** pptrs);
+CORE_API int mem_freelist_getleaks(struct freelist_alloc* freelist, void** pptrs);
 
 /**
  * get size of the allocated memory from freelist
@@ -110,7 +122,6 @@ private:
 public:
     FreelistAlloc()
     {
-        memset(&m_fl, 0x00, sizeof(m_fl));
     }
 
     result_t create(size_t size, allocator *alloc = mem_heap(), uint mem_id = 0)
@@ -148,7 +159,7 @@ public:
         mem_freelist_bindalloc(&m_fl, alloc);
     }
 
-    uint leaks(void **pptrs = NULL)
+    int leaks(void **pptrs = NULL)
     {
         return mem_freelist_getleaks(&m_fl, pptrs);
     }

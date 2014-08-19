@@ -62,11 +62,24 @@ struct array
 {
     struct allocator* alloc;      /**< allocator */
     void* buffer;     /**< array buffer, can be casted to any pointer type for use */
-    uint item_cnt;   /**< current item count in the array */
-    uint max_cnt;    /**< maximum item count */
-    uint item_sz;    /**< item size in bytes */
+    int item_cnt;   /**< current item count in the array */
+    int max_cnt;    /**< maximum item count */
+    int item_sz;    /**< item size in bytes */
+    int expand_sz;  /**< in number of items */
     uint mem_id;     /**< memory id */
-    uint expand_sz;  /**< in number of items */
+
+#ifdef __cplusplus
+    array()
+    {
+        alloc = NULL;
+        buffer = NULL;
+        item_cnt = 0;
+        max_cnt = 0;
+        item_sz = 0;
+        mem_id = 0;
+        expand_sz = 0;
+    }
+#endif
 };
 
 /**
@@ -79,8 +92,8 @@ struct array
  * @see arr_add
  * @ingroup array
  */
-CORE_API result_t arr_create(struct allocator* alloc, struct array* arr, uint item_sz, 
-    uint init_item_cnt, uint expand_cnt, uint mem_id);
+CORE_API result_t arr_create(struct allocator* alloc, struct array* arr, int item_sz,
+    int init_item_cnt, int expand_cnt, uint mem_id);
 
 /**
  * Destroys array
@@ -162,10 +175,9 @@ private:
 public:
     Array()
     {
-        memset(&m_arr, 0x00, sizeof(m_arr));
     }
 
-    result_t create(uint item_cnt, uint expand_cnt, allocator *alloc = mem_heap(), uint mem_id = 0)
+    result_t create(int item_cnt, int expand_cnt, allocator *alloc = mem_heap(), uint mem_id = 0)
     {
         return arr_create(alloc, &m_arr, sizeof(T), item_cnt, expand_cnt, mem_id);
     }
@@ -195,24 +207,24 @@ public:
         arr_clear(&m_arr);
     }
 
-    uint count() const
+    int count() const
     {
         return ARR_COUNT(m_arr);
     }
 
-    T* item(uint idx)
+    T* item(int idx)
     {
         ASSERT(idx < ARR_COUNT(m_arr));
         return &ARR_ITEM(m_arr, T, idx);
     }
 
-    T& operator[](uint idx)
+    T& operator[](int idx)
     {
         ASSERT(idx < ARR_COUNT(m_arr));
         return ARR_ITEM(m_arr, T, idx);
     }
 
-    const T& operator[](uint idx) const
+    const T& operator[](int idx) const
     {
         ASSERT(idx < ARR_COUNT(m_arr));
         return ARR_ITEM(m_arr, T, idx);

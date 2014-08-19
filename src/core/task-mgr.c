@@ -35,7 +35,7 @@ struct tsk_worker
 {
     uint thread_id;
     uint finish_signal_id;
-    uint idx;
+    int idx;
 };
 
 struct tsk_job
@@ -45,7 +45,7 @@ struct tsk_job
     mt_event finish_event;
     void* params;
     void* result;
-    uint worker_cnt;
+    int worker_cnt;
     struct tsk_worker* workers;
     struct hashtable_fixed worker_tbl;  /* key: thread_id, value: index of worker */
     struct queue qnode;
@@ -64,14 +64,14 @@ struct tsk_thread
 struct tsk_mgr
 {
     uint flags;
-    uint thread_cnt;
-    uint job_cnt;
+    int thread_cnt;
+    int job_cnt;
 
-    uint* thread_idxs;    /* tmp buffer, init count=thread_cnt+1 */
+    int* thread_idxs;    /* tmp buffer, init count=thread_cnt+1 */
     struct tsk_thread* threads;
     struct array jobs;  /* item: tsk_job */
 
-    struct stack* free_jobs;    /* data: uint (index to jobs) */
+    struct stack* free_jobs;    /* data: int (index to jobs) */
     struct pool_alloc free_jobs_pool;   /* item: struct stack */
 
     /* allocators for main thread */
@@ -87,10 +87,10 @@ static void tsk_job_destroy(struct tsk_job* job);
 static result_t tsk_thread_init(struct tsk_thread* thread, size_t localmem_perthread_sz, 
     size_t tmpmem_perthread_sz);
 static void tsk_thread_release(struct tsk_thread* thread);
-static uint tsk_job_create(pfn_tsk_run run_fn, void* params, void* result, const uint* thread_idxs, 
-    uint thread_cnt);
-static void tsk_queuejob(uint job_id, const uint* thread_idxs, uint thread_cnt, pfn_tsk_run run_fn, 
-    void* params, void* result);
+static uint tsk_job_create(pfn_tsk_run run_fn, void* params, void* result, const int* thread_idxs,
+                           int thread_cnt);
+static void tsk_queuejob(uint job_id, const int* thread_idxs, int thread_cnt, pfn_tsk_run run_fn,
+                         void* params, void* result);
 
 /* globals */
 static struct tsk_mgr* g_tsk = NULL;
@@ -103,8 +103,8 @@ INLINE struct tsk_job* tsk_job_get(uint job_id)
 }
 
 /*************************************************************************************************/
-result_t tsk_initmgr(uint thread_cnt, size_t localmem_perthread_sz, size_t tmpmem_perthread_sz, 
-    uint flags)
+result_t tsk_initmgr(int thread_cnt, size_t localmem_perthread_sz, size_t tmpmem_perthread_sz,
+                     uint flags)
 {
     ASSERT(thread_cnt != 0);
 
@@ -130,7 +130,7 @@ result_t tsk_initmgr(uint thread_cnt, size_t localmem_perthread_sz, size_t tmpme
         return RET_FAIL;
     }
 
-    for (uint i = 0; i < thread_cnt; i++) {
+    for (int i = 0; i < thread_cnt; i++) {
         if (IS_FAIL(tsk_thread_init(&g_tsk->threads[i], localmem_perthread_sz, tmpmem_perthread_sz)))
         {
             err_print(__FILE__, __LINE__, "task-mgr init failed: could not initialize threads");
@@ -138,7 +138,7 @@ result_t tsk_initmgr(uint thread_cnt, size_t localmem_perthread_sz, size_t tmpme
         }
     }
 
-    g_tsk->thread_idxs = (uint*)ALLOC(sizeof(uint)*(thread_cnt+1), 0);
+    g_tsk->thread_idxs = (int*)ALLOC(sizeof(int)*(thread_cnt+1), 0);
     if (g_tsk->thread_idxs == NULL)  {
         err_printn(__FILE__, __LINE__, RET_OUTOFMEMORY);
         return RET_FAIL;
@@ -197,10 +197,10 @@ void tsk_releasemgr()
         if (g_tsk->job_cnt > 0)
             log_printf(LOG_WARNING, "Destroying %d unfinished/unreleased tasks", g_tsk->job_cnt);
 
-        for (uint i = 0; i < g_tsk->jobs.item_cnt; i++)
+        for (int i = 0; i < g_tsk->jobs.item_cnt; i++)
             tsk_job_destroy(&((struct tsk_job*)g_tsk->jobs.buffer)[i]);
 
-        for (uint i = 0; i < g_tsk->thread_cnt; i++)   {
+        for (int i = 0; i < g_tsk->thread_cnt; i++)   {
             MT_ATOMIC_SET(g_tsk->threads[i].quit, TRUE);
             tsk_thread_release(&g_tsk->threads[i]);
         }
@@ -258,26 +258,26 @@ static void tsk_job_destroy(struct tsk_job* job)
 }
 
 /* must be called from main thread */
-uint tsk_dispatch(pfn_tsk_run run_fn, enum tsk_run_context ctx, uint thread_cnt,
-                    void* params, void* result)
+uint tsk_dispatch(pfn_tsk_run run_fn, enum tsk_run_context ctx, int thread_cnt, void* params,
+                  void* result)
 {
     /* look for available threads based on specified context mode */
-    uint tsk_thread_cnt = g_tsk->thread_cnt;
+    int tsk_thread_cnt = g_tsk->thread_cnt;
     thread_cnt = maxui(minui(thread_cnt, tsk_thread_cnt+1), 1);
-    uint cnt = 0;
-    uint* thread_idxs = g_tsk->thread_idxs;
+    int cnt = 0;
+    int* thread_idxs = g_tsk->thread_idxs;
 
     switch (ctx)    {
     case TSK_CONTEXT_ALL:
-        thread_idxs[cnt++] = INVALID_INDEX;
+        thread_idxs[cnt++] = -1;
     case TSK_CONTEXT_ALL_NO_MAIN:
-        for (uint i = 0; i < tsk_thread_cnt && cnt < thread_cnt; i++)
+        for (int i = 0; i < tsk_thread_cnt && cnt < thread_cnt; i++)
             thread_idxs[cnt++] = i;
         break;
     case TSK_CONTEXT_FREE:
-        thread_idxs[cnt++] = INVALID_INDEX;
+        thread_idxs[cnt++] = -1;
     case TSK_CONTEXT_FREE_NO_MAIN:
-        for (uint i = 0; i < tsk_thread_cnt && cnt < thread_cnt; i++)   {
+        for (int i = 0; i < tsk_thread_cnt && cnt < thread_cnt; i++)   {
             if (g_tsk->threads[i].queue_isempty)
                 thread_idxs[cnt++] = i;
         }
@@ -298,8 +298,8 @@ uint tsk_dispatch(pfn_tsk_run run_fn, enum tsk_run_context ctx, uint thread_cnt,
     return job_id;
 }
 
-uint tsk_dispatch_exclusive(pfn_tsk_run run_fn, const uint* thread_idxs, uint thread_cnt, 
-    void* params, void* result)
+uint tsk_dispatch_exclusive(pfn_tsk_run run_fn, const int* thread_idxs, int thread_cnt,
+                            void* params, void* result)
 {
     thread_cnt = minui(thread_cnt, g_tsk->thread_cnt);
     uint job_id = tsk_job_create(run_fn, params, result, thread_idxs, thread_cnt);
@@ -310,8 +310,8 @@ uint tsk_dispatch_exclusive(pfn_tsk_run run_fn, const uint* thread_idxs, uint th
     return job_id;
 }
 
-static uint tsk_job_create(pfn_tsk_run run_fn, void* params, void* result, const uint* thread_idxs, 
-    uint thread_cnt)
+static uint tsk_job_create(pfn_tsk_run run_fn, void* params, void* result, const int* thread_idxs,
+                           int thread_cnt)
 {
     ASSERT(run_fn);
 
@@ -334,7 +334,7 @@ static uint tsk_job_create(pfn_tsk_run run_fn, void* params, void* result, const
     memset(job, 0x00, sizeof(struct tsk_job));
 
     job->id = id;
-    if (thread_cnt > 1 || thread_idxs[0] != INVALID_INDEX)
+    if (thread_cnt > 1 || thread_idxs[0] != -1)
         job->finish_event = mt_event_create(&g_tsk->main_alloc);
     job->run_fn = run_fn;
     job->params = params;
@@ -349,14 +349,12 @@ static uint tsk_job_create(pfn_tsk_run run_fn, void* params, void* result, const
     }
     job->worker_cnt = thread_cnt;
 
-    for (uint i = 0; i < thread_cnt; i++) {
-        uint thread_id = (thread_idxs[i] != INVALID_INDEX) ?
-            mt_thread_getid(g_tsk->threads[thread_idxs[i]].t) : 0;
+    for (int i = 0; i < thread_cnt; i++) {
+        uint thread_id = (thread_idxs[i] != -1) ? mt_thread_getid(g_tsk->threads[thread_idxs[i]].t) : 0;
         hashtable_fixed_add(&job->worker_tbl, thread_id, i);
 
         job->workers[i].thread_id = thread_id;
-        job->workers[i].finish_signal_id = (thread_id != 0) ? mt_event_addsignal(job->finish_event) :
-            0;
+        job->workers[i].finish_signal_id = (thread_id != 0) ? mt_event_addsignal(job->finish_event) : 0;
         job->workers[i].idx = i;
     }
 
@@ -364,19 +362,19 @@ static uint tsk_job_create(pfn_tsk_run run_fn, void* params, void* result, const
     return id;
 }
 
-static void tsk_queuejob(uint job_id, const uint* thread_idxs, uint thread_cnt, pfn_tsk_run run_fn, 
+static void tsk_queuejob(uint job_id, const int* thread_idxs, int thread_cnt, pfn_tsk_run run_fn,
     void* params, void* result)
 {
     /* dispatch them to thread queues */
     struct tsk_job* job = (struct tsk_job*)tsk_job_get(job_id);
-    uint main_thread_work = INVALID_INDEX;
+    int main_thread_work = -1;
 
-    for (uint i = 0; i < thread_cnt; i++)    {
+    for (int i = 0; i < thread_cnt; i++)    {
         struct tsk_worker* worker = &job->workers[i];
         if (worker->thread_id == 0) {
             main_thread_work = i;
         }   else    {
-            ASSERT(thread_idxs[i] != INVALID_INDEX);
+            ASSERT(thread_idxs[i] != -1);
             struct tsk_thread* tt = &g_tsk->threads[thread_idxs[i]];
             mt_mutex_lock(&tt->job_queue_mtx);
             int first_node = (tt->job_queue == NULL);
@@ -391,7 +389,7 @@ static void tsk_queuejob(uint job_id, const uint* thread_idxs, uint thread_cnt, 
     }
 
     /* main thread, starts immediately in the caller thread */
-    if (main_thread_work != INVALID_INDEX)  {
+    if (main_thread_work != -1)  {
         run_fn(params, result, 0, job->id, main_thread_work);
         MT_ATOMIC_INCR(job->finished_cnt);
     }
@@ -414,7 +412,7 @@ struct allocator* tsk_get_localalloc(uint thread_id)
     if (thread_id == 0)
         return &g_tsk->main_alloc;
     else    {
-        for (uint i = 0; i < g_tsk->thread_cnt; i++)   {
+        for (int i = 0; i < g_tsk->thread_cnt; i++)   {
             if (mt_thread_getid(g_tsk->threads[i].t) == thread_id)
                 return mt_thread_getlocalalloc(g_tsk->threads[i].t);
         }
@@ -428,7 +426,7 @@ struct allocator* tsk_get_tmpalloc(uint thread_id)
     if (thread_id == 0)   {
         return &g_tsk->tmp_alloc;
     }   else    {
-        for (uint i = 0; i < g_tsk->thread_cnt; i++)   {
+        for (int i = 0; i < g_tsk->thread_cnt; i++)   {
             if (mt_thread_getid(g_tsk->threads[i].t) == thread_id)
                 return mt_thread_gettmpalloc(g_tsk->threads[i].t);
         }
