@@ -212,6 +212,15 @@ public:
         return ARR_COUNT(m_arr);
     }
 
+    int find(const T& item) const
+    {
+        for (int i = 0; i < m_arr.item_cnt; i++)    {
+            if (item == ARR_ITEM(m_arr, T, i))
+                return i;
+        }
+        return -1;
+    }
+
     T* item(int idx)
     {
         ASSERT(idx < ARR_COUNT(m_arr));
