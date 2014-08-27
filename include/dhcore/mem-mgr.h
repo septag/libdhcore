@@ -134,6 +134,15 @@ CORE_API struct allocator* mem_heap();
 CORE_API void mem_heap_bindalloc(struct allocator* alloc);
 
 /**
+ * @brief mem_align_ptr
+ * @param ptr
+ * @param alignment
+ * @return
+ * @ingroup alloc
+ */
+CORE_API void* mem_align_ptr(void *ptr, uint8 alignment);
+
+/**
  * Heap allocate macro
  * @param size requested memory size in bytes
  * @param id ID of the memory block

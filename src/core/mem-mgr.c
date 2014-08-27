@@ -201,6 +201,16 @@ void* mem_alignedalloc(size_t size, uint8 alignment, const char* source, uint li
     return (void*)aligned_addr;
 }
 
+void* mem_align_ptr(void *ptr, uint8 alignment)
+{
+    ASSERT(ptr);
+    uptr_t raw_addr = (uptr_t)ptr;
+    uptr_t misalign = raw_addr & (alignment - 1);
+    uint8 adjust = alignment - (uint8)misalign;
+    uptr_t aligned_addr = raw_addr + adjust;
+    return (void*)aligned_addr;
+}
+
 void* mem_alignedrealloc(void *p, size_t size, uint8 alignment, const char* source, uint line,
                          uint id)
 {
