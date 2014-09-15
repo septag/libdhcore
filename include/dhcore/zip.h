@@ -24,6 +24,10 @@
 
 #include "types.h"
 #include "core-api.h"
+#include "file-io.h"
+
+struct mz_zip_archive_tag;
+typedef struct mz_zip_archive_tag* zip_t;
 
 /**
  * @ingroup zip
@@ -65,5 +69,11 @@ CORE_API size_t zip_compress(void* dest_buffer, size_t dest_size, const void* bu
  * @ingroup zip
  */
 CORE_API size_t zip_decompress(void* dest_buffer, size_t dest_size, const void* buffer, size_t size);
+
+CORE_API zip_t zip_open(const char *filepath);
+CORE_API zip_t zip_open_mem(const char *buff, size_t buff_sz);
+
+CORE_API void zip_close(zip_t zip);
+CORE_API file_t zip_getfile(zip_t zip, const char *filepath, struct allocator *alloc);
 
 #endif /* __ZIP_H__ */

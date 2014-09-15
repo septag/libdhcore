@@ -13,6 +13,8 @@
  *
  ***********************************************************************************/
 
+#include "err.h"
+#include "mem-mgr.h"
 #include "zip.h"
 #include "miniz/miniz.h"
 
@@ -44,4 +46,60 @@ size_t zip_decompress(void* dest_buffer, size_t dest_size, const void* buffer, s
     uLongf dsize = (uLongf)dest_size;
     int r = uncompress((Bytef*)dest_buffer, &dsize, (Bytef*)buffer, (uLongf)size);
     return (r == Z_OK) ? (size_t)dsize : 0;
+}
+
+zip_t zip_open(const char *filepath)
+{
+    mz_zip_archive *zip = (mz_zip_archive*)ALLOC(sizeof(mz_zip_archive), 0);
+    if (zip == NULL)
+        return NULL;
+    memset(zip, 0x00, sizeof(mz_zip_archive));
+
+    if (!mz_zip_reader_init_file(zip, filepath, 0)) {
+        FREE(zip);
+        return NULL;
+    }
+
+    return zip;
+}
+
+zip_t zip_open_mem(const char *buff, size_t buff_sz)
+{
+    mz_zip_archive *zip = (mz_zip_archive*)ALLOC(sizeof(mz_zip_archive), 0);
+    if (zip == NULL)
+        return NULL;
+    memset(zip, 0x00, sizeof(mz_zip_archive));
+
+    if (!mz_zip_reader_init_mem(zip, buff, buff_sz, 0)) {
+        FREE(zip);
+        return NULL;
+    }
+
+    return zip;
+}
+
+void zip_close(zip_t zip)
+{
+    ASSERT(zip);
+    mz_zip_reader_end(zip);
+}
+
+file_t zip_getfile(zip_t zip, const char *filepath, struct allocator *alloc)
+{
+    int idx = mz_zip_reader_locate_file(zip, filepath, NULL, 0);
+    if (idx == -1)
+        return NULL;
+
+    mz_zip_archive_file_stat stat;
+    mz_zip_reader_file_stat(zip, idx, &stat);
+
+    void *buff = A_ALLOC(alloc, stat.m_uncomp_size, 0);
+    if (buff == NULL)
+        return NULL;
+    if (!mz_zip_reader_extract_to_mem(zip, idx, buff, stat.m_uncomp_size, 0))   {
+        A_FREE(alloc, buff);
+        return NULL;
+    }
+
+    return fio_attachmem(alloc, buff, stat.m_uncomp_size, filepath, 0);
 }

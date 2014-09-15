@@ -434,7 +434,7 @@ file_t fio_openmem(struct allocator* alloc, const char* filepath, int ignore_vfs
 }
 
 file_t fio_attachmem(struct allocator* alloc, void* buffer,
-                         size_t size, const char* name, uint mem_id)
+                     size_t size, const char* name, uint mem_id)
 {
     uint8* file_buf = (uint8*)fio_alloc_membuff();
     if (file_buf == NULL)

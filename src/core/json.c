@@ -272,7 +272,8 @@ char* json_savetobuffer(json_t j, size_t* outsize, int trim)
     if (buffer == NULL)
         return NULL;
 
-    *outsize = strlen(buffer);
+    if (outsize)
+        *outsize = strlen(buffer);
     return buffer;
 }
 
