@@ -22,6 +22,7 @@
 #include <mach-o/dyld.h>
 
 #include "str.h"
+#include "path.h"
 
 char* util_getexedir(char* outpath)
 {

@@ -23,7 +23,7 @@ INCLUDEPATH = \
 
 DEFINES += _CORE_EXPORT_ _SIMD_SSE_
 
-linux-g++|linux-clang   {
+linux-g++|linux-clang|macx-clang   {
     QMAKE_CFLAGS += \
         -std=gnu99 \
         -msse -msse2 \
