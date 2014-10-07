@@ -176,7 +176,7 @@ CORE_API void fio_close(file_t f);
  * @param offset offset from the seek point to move in the file, can be positive/negative
  * @ingroup fileio
  */
-CORE_API void fio_seek(file_t f, enum seek_mode seek, int offset);
+CORE_API int fio_seek(file_t f, enum seek_mode seek, int offset);
 
 /**
  * Reads data from file
