@@ -24,7 +24,7 @@
     #if defined(_MSVC_)
       #define CORE_API _EXTERN_EXPORT_ __declspec(dllexport)
     #elif defined(_GNUC_)
-      #define CORE_API _EXTERN_EXPORT_ __attribute__((visibility("protected")))
+      #define CORE_API _EXTERN_EXPORT_ __attribute__((visibility("default")))
     #endif
   #else
     #if defined(_MSVC_)

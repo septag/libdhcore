@@ -551,9 +551,11 @@ static FILE* open_resolvepath(const char* filepath)
     for (uint i = 0; i < item_cnt; i++)   {
         struct vdir* vd = &vds[i];
         path_join(testpath, vd->path, filepath, NULL);
-        f = fopen(testpath, "rb");
-        if (f != NULL)
-            return f;
+        if (!util_pathisdir(testpath))  {
+            f = fopen(testpath, "rb");
+            if (f != NULL)
+                return f;
+        }
     }
 
     return NULL;
@@ -583,7 +585,7 @@ void fio_close(file_t f)
 }
 
 
-void fio_seek(file_t f, enum seek_mode seek, int offset)
+int fio_seek(file_t f, enum seek_mode seek, int offset)
 {
     ASSERT(f != NULL);
 
@@ -604,6 +606,7 @@ void fio_seek(file_t f, enum seek_mode seek, int offset)
                 break;
         }
         fdata->offset = clampsz(fdata->offset, 0, header->size);
+        return fdata->offset;
     }    else if (header->type == FILE_TYPE_DSK)    {
         struct disk_file* fdata = (struct disk_file*)((uint8*)f + sizeof(struct file_header));
         int seek_std;
@@ -614,6 +617,7 @@ void fio_seek(file_t f, enum seek_mode seek, int offset)
             default:				seek_std = SEEK_SET;	break;
         }
         fseek(fdata->file, offset, seek_std);
+        return ftell(fdata->file);
     }
 }
 

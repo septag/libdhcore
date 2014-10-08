@@ -19,6 +19,9 @@
 
 #ifdef HAVE_MALLOC_H
   #include <malloc.h>
+#else
+  #include <stdlib.h>
+  #include <stdio.h>
 #endif
 #include "mem-mgr.h"
 #include "allocator.h"
