@@ -250,12 +250,12 @@ CORE_API json_t json_create_arr();
 /**
  * @ingroup JSON
  */
-CORE_API json_t json_create_arri(int* nums, int count);
+CORE_API json_t json_create_arri(const int* nums, int count);
 
 /**
  * @ingroup JSON
  */
-CORE_API json_t json_create_arrf(float* nums, int count);
+CORE_API json_t json_create_arrf(const float* nums, int count);
 
 /**
  * @ingroup JSON
@@ -288,6 +288,149 @@ CORE_API void json_replaceitem_inobj(json_t obj, const char* name, json_t item);
  * @ingroup JSON
  */
 CORE_API void json_replaceitem_inarr(json_t obj, int idx, json_t item);
+
+#ifdef __cplusplus
+namespace dh {
+
+class JNode
+{
+private:
+    json_t m_j = nullptr;
+
+public:
+    JNode(json_t j)
+    {
+        m_j = j;
+    }
+
+    JNode(double n)
+    {
+        m_j = json_create_num(n);
+    }
+
+    JNode(float n)
+    {
+        m_j = json_create_num(n);
+    }
+
+    JNode(int n)
+    {
+        m_j = json_create_num(n);
+    }
+
+    JNode(uint n)
+    {
+        m_j = json_create_num(n);
+    }
+
+    JNode(const char *str)
+    {
+        if (str != nullptr)
+            m_j = json_create_str(str);
+        else
+            m_j = json_create_null();
+    }
+
+    JNode(bool b)
+    {
+        m_j = json_create_bool(b);
+    }
+
+    JNode(const int *nums, int count)
+    {
+        m_j = json_create_arri(nums, count);
+    }
+
+    JNode(const float *nums, int count)
+    {
+        m_j = json_create_arrf(nums, count);
+    }
+
+    JNode(const char **strs, int count)
+    {
+        m_j = json_create_arrs(strs, count);
+    }
+
+    JNode& add_obj(const char *name, const JNode &jnode)
+    {
+        json_additem_toobj(m_j, name, jnode.m_j);
+        return *this;
+    }
+
+    JNode& add_obj_unique(const char *name, const JNode &jnode)
+    {
+        json_additem_toobj_nodup(m_j, name, jnode.m_j);
+        return *this;
+    }
+
+    JNode& add_array_item(const JNode &jnode)
+    {
+        json_additem_toarr(m_j, jnode.m_j);
+        return *this;
+    }
+
+    JNode& replace_obj(const char *name, const JNode &jnode)
+    {
+        json_replaceitem_inobj(m_j, name, jnode.m_j);
+        return *this;
+    }
+
+    JNode& replace_array_item(int idx, const JNode &jnode)
+    {
+        json_replaceitem_inarr(m_j, idx, jnode.m_j);
+        return *this;
+    }
+
+    static JNode create_obj()
+    {
+        return JNode(json_create_obj());
+    }
+
+    static JNode create_array()
+    {
+        return JNode(json_create_arr());
+    }
+
+    void destroy()
+    {
+        if (m_j)
+            json_destroy(m_j);
+        m_j = nullptr;
+    }
+
+    const char* to_str() const  {   return json_gets(m_j);  }
+    int to_int() const          {   return json_geti(m_j);  }
+    float to_float() const      {   return json_getf(m_j);  }
+    bool to_bool() const        {   return (bool)json_getb(m_j);    }
+
+    const char* child_str(const char *name, const char *def_val = "") const
+    {
+        return json_gets_child(m_j, name, def_val);
+    }
+
+    int child_int(const char *name, int def_val = 0) const
+    {
+        return json_geti_child(m_j, name, def_val);
+    }
+
+    float child_float(const char *name, float def_val = 0.0f) const
+    {
+        return json_getf_child(m_j, name, def_val);
+    }
+
+    bool child_bool(const char *name, bool def_val = false) const
+    {
+        return (bool)json_getb_child(m_j, name, def_val);
+    }
+
+    enum json_type type() const     {   return json_gettype(m_j);   }
+
+    operator json_t() { return m_j; }
+    operator const json_t() const { return m_j; }
+};
+
+}
+#endif
 
 
 #endif /* __JSON_H__ */
