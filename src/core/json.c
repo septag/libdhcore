@@ -425,12 +425,12 @@ json_t json_create_arr()
     return cJSON_CreateArray();
 }
 
-json_t json_create_arri(int* nums, int count)
+json_t json_create_arri(const int* nums, int count)
 {
     return cJSON_CreateIntArray(nums, count);
 }
 
-json_t json_create_arrf(float* nums, int count)
+json_t json_create_arrf(const float* nums, int count)
 {
     return cJSON_CreateFloatArray(nums, count);
 }
