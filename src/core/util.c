@@ -13,12 +13,12 @@
  *
  ***********************************************************************************/
 
-#include "util.h"
+#include "dhcore/util.h"
 
 #include <stdio.h>
 
-#include "err.h"
-#include "mem-mgr.h"
+#include "dhcore/err.h"
+#include "dhcore/mem-mgr.h"
 
 /*************************************************************************************************/
 char* util_readtextfile(const char* txt_filepath, struct allocator* alloc)

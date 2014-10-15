@@ -13,7 +13,7 @@
  *
  ***********************************************************************************/
 
-#include "util.h"
+#include "dhcore/util.h"
 
 #if defined(_OSX_)
 
@@ -21,8 +21,8 @@
 #include <sys/uio.h>
 #include <mach-o/dyld.h>
 
-#include "str.h"
-#include "path.h"
+#include "dhcore/str.h"
+#include "dhcore/path.h"
 
 char* util_getexedir(char* outpath)
 {

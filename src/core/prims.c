@@ -13,7 +13,7 @@
  *
  ***********************************************************************************/
 
-#include "prims.h"
+#include "dhcore/prims.h"
 
 /* calculate sphere that goes through 4 points */
 struct sphere* sphere_circum(struct sphere* rs, const struct vec4f* v0,

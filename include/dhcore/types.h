@@ -29,6 +29,7 @@
  */
 #if _MSC_VER
   #define _MSVC_
+  #pragma warning(disable:4800) // forcing int to bool
 #endif
 
 #if __GNUC__

@@ -19,6 +19,7 @@
 #include "types.h"
 #include "allocator.h"
 #include "core-api.h"
+#include "mem-mgr.h"
 
 #if defined(_POSIXLIB_)
 #include <pthread.h>

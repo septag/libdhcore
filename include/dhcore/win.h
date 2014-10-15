@@ -13,21 +13,11 @@
  *
  ***********************************************************************************/
 
-
 /* precompiled header for win32 */
 #ifndef __WIN_H__
 #define __WIN_H__
 
 #if defined(_WIN_)
-
-#ifndef WINVER
-#define WINVER 0x0600
-#endif
-
-/* minimum VISTA */
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0600
-#endif
 
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
@@ -37,8 +27,10 @@
 #define VC_EXTRALEAN
 #endif
 
+#include <SDKDDKVer.h>
+
 #include <windows.h>
-#include <windowsx.h>
+//#include <windowsx.h>
 #endif
 
 

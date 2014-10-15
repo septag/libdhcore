@@ -14,16 +14,16 @@
  ***********************************************************************************/
 
 #if defined(_WIN_)
-#include "win.h"
+#include "dhcore/win.h"
 #endif
 
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "err.h"
-#include "mem-mgr.h"
-#include "log.h"
-#include "mt.h"
+#include "dhcore/err.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/log.h"
+#include "dhcore/mt.h"
 
 #define ERROR_STACK_MAX    32
 

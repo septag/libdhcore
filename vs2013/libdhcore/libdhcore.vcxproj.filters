@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Include">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Src\Win">
+      <UniqueIdentifier>{88bb3ab3-82f0-477b-9033-4b16d0fb08c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\cJSON">
+      <UniqueIdentifier>{050b8d72-ecbe-4292-a91f-eced47855406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Commander">
+      <UniqueIdentifier>{9f9537ac-66c4-4d64-bbe8-44191f55a563}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\miniz">
+      <UniqueIdentifier>{ff9a06fd-fb6f-48b2-a624-c701574172be}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\dhcore\allocator.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\array.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\color.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\commander.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\core.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\core-api.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\crash.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\err.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\error-codes.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\file-io.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\freelist-alloc.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\hash.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\hash-table.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\hwinfo.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\json.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\linked-list.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\log.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\mem-mgr.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\mt.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\net-socket.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\numeric.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\pak-file.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\pak-file-fmt.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\path.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\pool-alloc.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\prims.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\queue.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\rpc.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\stack.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\stack-alloc.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\std-math.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\str.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\task-mgr.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\timer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\types.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\util.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\variant.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\vec-math.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\win.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\dhcore\zip.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\core\deps\cJSON\cJSON.h">
+      <Filter>Src\cJSON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\core\deps\miniz\miniz.h">
+      <Filter>Src\miniz</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\core\array.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\core.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\errors.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\file-io.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\freelist-alloc.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\hash.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\hash-table.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\hwinfo.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\json.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\log.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\mem-mgr.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\net-socket.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\numeric.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\pak-file.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\path.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\pool-alloc.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\prims.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\rpc.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\stack-alloc.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\static-vars.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\std-math.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\str.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\task-mgr.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\timer.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\util.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\variant.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\vec-math.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\zip.c">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\platform\win\crash-win.cpp">
+      <Filter>Src\Win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\platform\win\hwinfo-win.c">
+      <Filter>Src\Win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\platform\win\mt-win.c">
+      <Filter>Src\Win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\platform\win\timer-win.c">
+      <Filter>Src\Win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\platform\win\util-win.c">
+      <Filter>Src\Win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\deps\cJSON\cJSON.c">
+      <Filter>Src\cJSON</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\deps\commander\commander.c">
+      <Filter>Src\Commander</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core\deps\miniz\miniz.c">
+      <Filter>Src\miniz</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

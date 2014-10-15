@@ -1323,7 +1323,7 @@ public:
         vec3_setf(&m_vec, x, y, z);
     }
 
-    Vec3(const vec3f v)
+    Vec3(const vec3f &v)
     {
         m_vec = v;
     }
@@ -1332,7 +1332,7 @@ public:
     float y() const     {   return m_vec.y; }
     float z() const     {   return m_vec.z; }
 
-    Vec3& set(const vec3f v)
+    Vec3& set(const vec3f &v)
     {
         m_vec = v;
         return *this;
@@ -1344,12 +1344,12 @@ public:
         return *this;
     }
 
-    bool operator==(const Vec3& v) const
+    bool operator==(const Vec3 &v) const
     {
         return vec3_isequal(&m_vec, &v.m_vec);
     }
 
-    bool operator!=(const Vec3& v) const
+    bool operator!=(const Vec3 &v) const
     {
         return !vec3_isequal(&m_vec, &v.m_vec);
     }
@@ -1486,12 +1486,12 @@ public:
         return *this;
     }
 
-    bool operator==(const Vec4& v) const
+    bool operator==(const Vec4 &v) const
     {
         return vec4_isequal(&m_vec, &v.m_vec);
     }
 
-    bool operator!=(const Vec4& v) const
+    bool operator!=(const Vec4 &v) const
     {
         return !vec4_isequal(&m_vec, &v.m_vec);
     }
@@ -1581,7 +1581,7 @@ public:
         quat_setf(&m_quat, x, y, z, w);
     }
 
-    Quat(const quat4f q)
+    Quat(const quat4f &q)
     {
         m_quat = q;
     }
@@ -1592,7 +1592,7 @@ public:
         return *this;
     }
 
-    Quat& set(const quat4f q)
+    Quat& set(const quat4f &q)
     {
         m_quat = q;
         return *this;
@@ -1708,7 +1708,7 @@ public:
         return *this;
     }
 
-    Mat3& set(const mat3f m)
+    Mat3& set(const mat3f &m)
     {
         m_mat = m;
         return *this;
@@ -1808,7 +1808,7 @@ public:
         return *this;
     }
 
-    Mat3& set_translation(const Vec3 t)
+    Mat3& set_translation(const Vec3 &t)
     {
         mat3_set_trans(&m_mat, t);
         return *this;
@@ -1953,20 +1953,20 @@ public:
         return *this;
     }
 
-    Mat4& set(const mat4f m)
+    Mat4& set(const mat4f &m)
     {
         m_mat = m;
         return *this;
     }
 
-    Mat4 operator+(const Mat4& m) const
+    Mat4 operator+(const Mat4 &m) const
     {
         Mat4 r;
         mat4_add(&r.m_mat, &m_mat, &m.m_mat);
         return r;
     }
 
-    Mat4& operator+=(const Mat4& m)
+    Mat4& operator+=(const Mat4 &m)
     {
         mat4_add(&m_mat, &m_mat, &m.m_mat);
         return *this;
@@ -2088,38 +2088,38 @@ public:
         return *this;
     }
 
-    Vec2& set(const vec2f v)
+    Vec2& set(const vec2f &v)
     {
         m_vec = v;
         return *this;
     }
 
-    bool operator==(const Vec2& v) const
+    bool operator==(const Vec2 &v) const
     {
         return vec2f_isequal(&m_vec, &v.m_vec);
     }
 
-    Vec2 operator+(const Vec2& v) const
+    Vec2 operator+(const Vec2 &v) const
     {
         Vec2 r;
         vec2f_add(&r.m_vec, &m_vec, &v.m_vec);
         return r;
     }
 
-    Vec2& operator+=(const Vec2& v)
+    Vec2& operator+=(const Vec2 &v)
     {
         vec2f_add(&m_vec, &m_vec, &v.m_vec);
         return *this;
     }
 
-    Vec2 operator-(const Vec2& v) const
+    Vec2 operator-(const Vec2 &v) const
     {
         Vec2 r;
         vec2f_sub(&r.m_vec, &m_vec, &v.m_vec);
         return r;
     }
 
-    Vec2& operator-=(const Vec2& v)
+    Vec2& operator-=(const Vec2 &v)
     {
         vec2f_sub(&m_vec, &m_vec, &v.m_vec);
         return *this;
@@ -2274,7 +2274,7 @@ public:
                   m31, m32);
     }
 
-    Mat2(const mat2f mat)
+    Mat2(const mat2f &mat)
     {
         m_mat = mat;
     }
@@ -2290,7 +2290,7 @@ public:
         return *this;
     }
 
-    Mat2& set(const mat2f mat)
+    Mat2& set(const mat2f &mat)
     {
         m_mat = mat;
         return *this;

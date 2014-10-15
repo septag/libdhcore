@@ -15,8 +15,8 @@
 
 #include <time.h>
 #include <stdlib.h>
-#include "numeric.h"
-#include "err.h"
+#include "dhcore/numeric.h"
+#include "dhcore/err.h"
 
 /*************************************************************************************************/
 void rand_seed()

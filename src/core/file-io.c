@@ -14,17 +14,17 @@
  ***********************************************************************************/
 #include <stdio.h>
 
-#include "file-io.h"
-#include "mem-mgr.h"
-#include "err.h"
-#include "numeric.h"
-#include "str.h"
-#include "pak-file.h"
-#include "log.h"
-#include "hash-table.h"
-#include "mt.h"
-#include "util.h"
-#include "path.h"
+#include "dhcore/file-io.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/err.h"
+#include "dhcore/numeric.h"
+#include "dhcore/str.h"
+#include "dhcore/pak-file.h"
+#include "dhcore/log.h"
+#include "dhcore/hash-table.h"
+#include "dhcore/mt.h"
+#include "dhcore/util.h"
+#include "dhcore/path.h"
 
 #if defined(_FILEMON_)
 /* You'll need 3rdparty EFSW library (forked): https://bitbucket.org/sepul/efsw */
@@ -573,14 +573,14 @@ void fio_close(file_t f)
             A_FREE(fdata->alloc, fdata->buffer);
             fdata->buffer = NULL;
         }
-        fio_free_membuff(f);
+        fio_free_membuff((uint8*)f);
     }    else if (header->type == FILE_TYPE_DSK)    {
         struct disk_file* fdata = (struct disk_file*)((uint8*)f + sizeof(struct file_header));
         if (fdata->file != NULL)    {
             fclose(fdata->file);
             fdata->file = NULL;
         }
-        fio_free_diskbuff(f);
+        fio_free_diskbuff((uint8*)f);
     }
 }
 
@@ -619,6 +619,8 @@ int fio_seek(file_t f, enum seek_mode seek, int offset)
         fseek(fdata->file, offset, seek_std);
         return ftell(fdata->file);
     }
+
+    return -1;
 }
 
 size_t fio_read(file_t f, void* buffer, size_t item_size, size_t items_cnt)

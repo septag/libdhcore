@@ -221,7 +221,7 @@ public:
         color_seti(&m_clr, r, g, b, a);
     }
 
-    Color(const color c)
+    Color(const color &c)
     {
         m_clr = c;
     }
@@ -258,13 +258,13 @@ public:
         return *this;
     }
 
-    Color& set(const color c)
+    Color& set(const color &c)
     {
         m_clr = c;
         return *this;
     }
 
-    bool operator==(const Color& c)
+    bool operator==(const Color &c)
     {
         return color_isequal(&m_clr, &c.m_clr);
     }

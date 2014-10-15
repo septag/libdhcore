@@ -13,18 +13,18 @@
  *
  ***********************************************************************************/
 
-#include "mt.h"
+#include "dhcore/mt.h"
 
 #if defined(_WIN_)
 
 #include <process.h>
 #include <stdio.h>
 
-#include "mem-mgr.h"
-#include "err.h"
-#include "stack-alloc.h"
-#include "freelist-alloc.h"
-#include "array.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/err.h"
+#include "dhcore/stack-alloc.h"
+#include "dhcore/freelist-alloc.h"
+#include "dhcore/array.h"
 
 #define EVENT_STOP      0
 #define EVENT_RESUME    1

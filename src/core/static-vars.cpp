@@ -13,8 +13,8 @@
  *
  ***********************************************************************************/
 
-#include "vec-math.h"
-#include "color.h"
+#include "dhcore/vec-math.h"
+#include "dhcore/color.h"
 
 using namespace dh;
 

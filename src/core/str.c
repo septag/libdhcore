@@ -18,13 +18,13 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#include "str.h"
-#include "err.h"
-#include "numeric.h"
-#include "mem-mgr.h"
+#include "dhcore/str.h"
+#include "dhcore/err.h"
+#include "dhcore/numeric.h"
+#include "dhcore/mem-mgr.h"
 
 #if defined(_WIN_)
-#include "win.h"
+#include "dhcore/win.h"
 #endif
 
 /*************************************************************************************************
@@ -257,8 +257,8 @@ char* str_utf8_decode(const char* instr, uint instr_len)
         newbuf[len++] = DECODE_85591(c);
     }
 
-    if (len < instr_len)
-        newbuf = REALLOC(newbuf, len + 1, 0);
+    if (len < (int)instr_len)
+        newbuf = (char*)REALLOC(newbuf, len + 1, 0);
 
     newbuf[len] = '\0';
     return newbuf;

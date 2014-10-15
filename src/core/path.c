@@ -17,10 +17,11 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#include "path.h"
+#include "dhcore/path.h"
 
 #if defined(_WIN_)
-#include "win.h"
+#include "dhcore/win.h"
+#include <Shlwapi.h>
 #endif
 
 #ifdef _POSIXLIB_

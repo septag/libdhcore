@@ -13,7 +13,7 @@
 #include "dhcore/array.h"
 #include "dhcore/json.h"
 
-#include "rpc.h"
+#include "dhcore/rpc.h"
 
 #define MAX_COMMAND_LIST    128
 
@@ -647,7 +647,7 @@ struct rpc_result* rpc_make_result(struct rpc_vblock* ret, int id, struct rpc_er
     json_t jroot = json_create_obj();    
     json_additem_toobj(jroot, "id", json_create_num(id));
     if (ret != NULL)    {
-        json_t jresult = json_create_obj(jroot);
+        json_t jresult = json_create_obj();
 
         for (uint i = 0; i < ret->value_cnt; i++)   {
             struct rpc_value* value = &ret->values[i];
@@ -730,7 +730,7 @@ struct rpc_result* rpc_make_result(struct rpc_vblock* ret, int id, struct rpc_er
     if (r != NULL)  {
         r->type = RPC_RESULT_JSONRPC;
         r->data.json.json_sz = 0;
-#if _DEBUG_
+#ifdef _DEBUG_
         int trim = FALSE;
 #else
         int trim = TRUE;

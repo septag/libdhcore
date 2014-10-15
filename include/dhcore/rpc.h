@@ -62,10 +62,10 @@
  * @ingroup rpc
  */
 
-#include "dhcore/types.h"
-#include "dhcore/allocator.h"
-#include "dhcore/hash-table.h"
-#include "dhcore/vec-math.h"
+#include "types.h"
+#include "allocator.h"
+#include "hash-table.h"
+#include "vec-math.h"
 #include "core-api.h"
 
 /**
