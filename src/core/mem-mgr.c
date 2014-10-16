@@ -23,14 +23,14 @@
   #include <stdlib.h>
   #include <stdio.h>
 #endif
-#include "mem-mgr.h"
-#include "allocator.h"
-#include "linked-list.h"
-#include "log.h"
-#include "str.h"
-#include "err.h"
-#include "mt.h"
-#include "path.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/allocator.h"
+#include "dhcore/linked-list.h"
+#include "dhcore/log.h"
+#include "dhcore/str.h"
+#include "dhcore/err.h"
+#include "dhcore/mt.h"
+#include "dhcore/path.h"
 
 /* global heap allocator */
 static struct allocator g_memheap;

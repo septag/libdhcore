@@ -20,6 +20,7 @@
 #include "types.h"
 #include "core-api.h"
 #include "allocator.h"
+#include "mem-mgr.h"
 
 /**
  * @defgroup fileio File manager

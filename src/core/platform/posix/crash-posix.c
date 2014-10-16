@@ -23,8 +23,8 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include "crash.h"
-#include "log.h"
+#include "dhcore/crash.h"
+#include "dhcore/log.h"
 
 /* */
 static pfn_crash_handler g_crash_fn = NULL;

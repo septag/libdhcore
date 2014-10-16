@@ -17,7 +17,7 @@
  * Author: Davide Bacchet
  */
 
-#include "hwinfo.h"
+#include "dhcore/hwinfo.h"
 
 #if defined(_OSX_)
 

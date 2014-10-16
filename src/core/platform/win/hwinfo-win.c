@@ -13,12 +13,12 @@
  *
  ***********************************************************************************/
 
-#include "hwinfo.h"
+#include "dhcore/hwinfo.h"
 
 #if defined(_WIN_)
 
-#include "core.h"
-#include "win.h"
+#include "dhcore/core.h"
+#include "dhcore/win.h"
 #include <intrin.h>
 
 void query_meminfo(struct hwinfo* info)

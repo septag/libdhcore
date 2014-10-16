@@ -12,7 +12,7 @@
  *   and/or other materials provided with the distribution.
  *
  ***********************************************************************************/
-#include "crash.h"
+#include "dhcore/crash.h"
 
 #ifdef _WIN_
 
@@ -23,8 +23,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "win.h"
-#include "log.h"
+#include "dhcore/win.h"
+#include "dhcore/log.h"
 
 /**********************************************************************
  * 

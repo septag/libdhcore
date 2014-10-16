@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "commander.h"
+#include "dhcore/commander.h"
 
 #if defined(_MSC_VER)
 #define snprintf _snprintf

@@ -13,9 +13,9 @@
  *
  ***********************************************************************************/
 
-#include "err.h"
-#include "mem-mgr.h"
-#include "zip.h"
+#include "dhcore/err.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/zip.h"
 #include "miniz/miniz.h"
 
 /* */
@@ -93,13 +93,13 @@ file_t zip_getfile(zip_t zip, const char *filepath, struct allocator *alloc)
     mz_zip_archive_file_stat stat;
     mz_zip_reader_file_stat(zip, idx, &stat);
 
-    void *buff = A_ALLOC(alloc, stat.m_uncomp_size, 0);
+    void *buff = A_ALLOC(alloc, (size_t)stat.m_uncomp_size, 0);
     if (buff == NULL)
         return NULL;
-    if (!mz_zip_reader_extract_to_mem(zip, idx, buff, stat.m_uncomp_size, 0))   {
+    if (!mz_zip_reader_extract_to_mem(zip, idx, buff, (size_t)stat.m_uncomp_size, 0))   {
         A_FREE(alloc, buff);
         return NULL;
     }
 
-    return fio_attachmem(alloc, buff, stat.m_uncomp_size, filepath, 0);
+    return fio_attachmem(alloc, buff, (size_t)stat.m_uncomp_size, filepath, 0);
 }

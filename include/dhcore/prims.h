@@ -431,7 +431,7 @@ public:
         sphere_setf(&m_sphere, center.x(), center.y(), center.z(), r);
     }
 
-    Sphere(const sphere s)
+    Sphere(const sphere &s)
     {
         m_sphere = s;
     }
@@ -442,13 +442,13 @@ public:
         return *this;
     }
 
-    Sphere& set(const Vec3& center, float r)
+    Sphere& set(const Vec3 &center, float r)
     {
         sphere_setf(&m_sphere, center.x(), center.y(), center.z(), r);
         return *this;
     }
 
-    Sphere& set(const sphere s)
+    Sphere& set(const sphere &s)
     {
         m_sphere = s;
         return *this;
@@ -460,7 +460,7 @@ public:
         return *this;
     }
 
-    bool point_in(const Vec3& pt)
+    bool point_in(const Vec3 &pt)
     {
         return sphere_ptinv(&m_sphere, pt);
     }
@@ -470,7 +470,7 @@ public:
         return sphere_ptinf(&m_sphere, x, y, z);
     }
 
-    static Sphere merge(const Sphere sphere0, const Sphere sphere1)
+    static Sphere merge(const Sphere &sphere0, const Sphere &sphere1)
     {
         Sphere r;
         sphere_merge(&r.m_sphere, &sphere0.m_sphere, &sphere1.m_sphere);
@@ -484,7 +484,7 @@ public:
         return r;
     }
 
-    static bool intersects(const Sphere& sphere0, const Sphere& sphere1)
+    static bool intersects(const Sphere &sphere0, const Sphere &sphere1)
     {
         return sphere_intersects(&sphere0.m_sphere, &sphere1.m_sphere);
     }
@@ -528,18 +528,19 @@ public:
     {
         aabb_setv(&m_aabb, minpt, maxpt);
     }
-    AABB(const aabb box)
+
+    AABB(const aabb &box)
     {
         m_aabb = box;
     }
 
-    AABB& set(const Vec3& minpt, const Vec3& maxpt)
+    AABB& set(const Vec3 &minpt, const Vec3 &maxpt)
     {
         aabb_setv(&m_aabb, minpt, maxpt);
         return *this;
     }
 
-    AABB& set(const aabb box)
+    AABB& set(const aabb &box)
     {
         m_aabb = box;
         return *this;
@@ -669,12 +670,12 @@ public:
     {
         plane_setf(&m_plane, nx, ny, nz, d);
     }
-    Plane(const plane pl)
+    Plane(const plane &pl)
     {
         m_plane = pl;
     }
 
-    Plane& set(const plane pl)
+    Plane& set(const plane &pl)
     {
         m_plane = pl;
         return *this;
@@ -733,18 +734,18 @@ public:
         ray_setv(&m_ray, pt, dir);
     }
 
-    Ray(const ray r)
+    Ray(const ray &r)
     {
         m_ray = r;
     }
 
-    Ray& set(const Vec3& pt, const Vec3& dir)
+    Ray& set(const Vec3 &pt, const Vec3 &dir)
     {
         ray_setv(&m_ray, pt, dir);
         return *this;
     }
 
-    Ray& set(const ray r)
+    Ray& set(const ray &r)
     {
         m_ray = r;
         return *this;
@@ -816,7 +817,7 @@ public:
     int width() const { return m_rc.w; }
     int height() const { return m_rc.h; }
 
-    bool point_in(const Vec2i& pt)
+    bool point_in(const Vec2i &pt)
     {
         return rect2di_testpt(&m_rc, pt);
     }

@@ -13,12 +13,12 @@
  *
  ***********************************************************************************/
 
-#include "core.h"
-#include "json.h"
-#include "file-io.h"
-#include "timer.h"
-#include "crash.h" 
-#include "net-socket.h"
+#include "dhcore/core.h"
+#include "dhcore/json.h"
+#include "dhcore/file-io.h"
+#include "dhcore/timer.h"
+#include "dhcore/crash.h" 
+#include "dhcore/net-socket.h"
 
 #ifdef _DEBUG_
   #include <stdio.h>

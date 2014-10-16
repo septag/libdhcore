@@ -15,8 +15,8 @@
 
 #include <stdio.h>
 
-#include "hwinfo.h"
-#include "log.h"
+#include "dhcore/hwinfo.h"
+#include "dhcore/log.h"
 
 /* fwd (implemented in platform sources - see platform/${PLATFORM} */
 void query_meminfo(struct hwinfo* info);

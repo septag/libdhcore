@@ -13,9 +13,9 @@
  *
  ***********************************************************************************/
 
-#include "variant.h"
-#include "str.h"
-#include "err.h"
+#include "dhcore/variant.h"
+#include "dhcore/str.h"
+#include "dhcore/err.h"
 
 /*************************************************************************************************/
 struct variant* var_setv(struct variant* rv, const struct variant* v)

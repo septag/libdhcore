@@ -13,17 +13,17 @@
  *
  ***********************************************************************************/
 
-#include "util.h"
+#include "dhcore/util.h"
 
 #if defined(_WIN_)
 
+#include "dhcore/win.h"
 #include <conio.h>
-
-#include "win.h"
-#include "err.h"
-#include "str.h"
-
 #include <Shlobj.h>
+
+#include "dhcore/err.h"
+#include "dhcore/str.h"
+#include "dhcore/path.h"
 
 char* util_getexedir(char* outpath)
 {

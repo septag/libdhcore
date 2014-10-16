@@ -14,12 +14,12 @@
  ***********************************************************************************/
 
 #if defined(_WIN_)
-#include "win.h"
+#include "dhcore/win.h"
 #endif
 
-#include "net-socket.h"
-#include "str.h"
-#include "err.h"
+#include "dhcore/net-socket.h"
+#include "dhcore/str.h"
+#include "dhcore/err.h"
 
 #if !defined(_WIN_)
 #include <sys/socket.h>
@@ -103,6 +103,16 @@ void sock_udp_destroy(socket_t sock)
 
 result_t sock_udp_bind(socket_t sock, int port)
 {
+    struct sockaddr_in addr;
+    memset(&addr, 0x00, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    if (bind(sock, (struct sockaddr*)&addr, sizeof(addr)) == SOCK_ERROR)   {
+        return RET_FAIL;
+    }
+
     return RET_OK;
 }
 

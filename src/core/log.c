@@ -15,16 +15,16 @@
 
 
 #if defined(_WIN_)
-#include "win.h"
+#include "dhcore/win.h"
 #endif
 
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "mem-mgr.h"
-#include "log.h"
-#include "mt.h"
-#include "util.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/log.h"
+#include "dhcore/mt.h"
+#include "dhcore/util.h"
 
 #define LINE_COUNT_FLUSH    20
 

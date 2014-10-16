@@ -13,11 +13,11 @@
  *
  ***********************************************************************************/
 
-#include "timer.h"
+#include "dhcore/timer.h"
 
 #if defined(_WIN_)
 
-#include "win.h"
+#include "dhcore/win.h"
 
 uint64 timer_queryfreq()
 {

@@ -13,7 +13,7 @@
  *
  ***********************************************************************************/
 
-#include "util.h"
+#include "dhcore/util.h"
 
 #if defined(_POSIXLIB_)
 
@@ -36,8 +36,8 @@
   #include <mach-o/dyld.h>
 #endif
 
-#include "mem-mgr.h"
-#include "str.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/str.h"
 
 char* util_runcmd(const char* cmd)
 {

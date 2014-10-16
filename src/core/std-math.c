@@ -13,9 +13,8 @@
  *
  ***********************************************************************************/
 
-
-#include "std-math.h"
-#include "mem-mgr.h"
+#include "dhcore/std-math.h"
+#include "dhcore/mem-mgr.h"
 
 union bits_t
 {

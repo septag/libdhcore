@@ -14,10 +14,10 @@
  ***********************************************************************************/
 
 #include <stdio.h>
-#include "mem-mgr.h"
-#include "stack-alloc.h"
-#include "err.h"
-#include "log.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/stack-alloc.h"
+#include "dhcore/err.h"
+#include "dhcore/log.h"
 
 /*************************************************************************************************/
 /* functions for binding allocators to stack-alloc */
@@ -170,7 +170,7 @@ void* mem_stack_realloc(struct stack_alloc* stack, void *p, size_t size, uint me
         return ALLOC(size, mem_id);
     }
 
-    uptr_t poffset = (uptr_t)(p - (void*)stack->buffer);
+    uptr_t poffset = (uptr_t)p - (uptr_t)stack->buffer;
     if (poffset == stack->last_offset)   {
         stack->offset += size;
         return stack->buffer + stack->last_offset;
