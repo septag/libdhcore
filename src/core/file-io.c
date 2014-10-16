@@ -619,6 +619,8 @@ int fio_seek(file_t f, enum seek_mode seek, int offset)
         fseek(fdata->file, offset, seek_std);
         return ftell(fdata->file);
     }
+
+    return -1;
 }
 
 size_t fio_read(file_t f, void* buffer, size_t item_size, size_t items_cnt)

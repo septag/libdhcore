@@ -168,6 +168,7 @@ struct rpc_vblock* rpc_vblock_create(const struct rpc_value* values, uint value_
     struct allocator stack_alloc;
     result_t r;
 
+    memset(&stack_mem, 0x00, sizeof(stack_mem));
     r = mem_stack_create(alloc, &stack_mem, total_sz, 0);
     if (IS_FAIL(r)) 
         return NULL;
