@@ -7,6 +7,7 @@
  ***********************************************************************************/
 
 #include <stdarg.h>
+#include <stdio.h>
 
 #include "dhcore/core.h"
 #include "dhcore/stack-alloc.h"

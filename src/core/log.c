@@ -192,6 +192,9 @@ void log_endprogress(enum log_progress_result res)
     case LOG_PROGRESS_NONFATAL:
         text = "[" TERM_BOLDYELLOW "FAILED" TERM_RESET "]";
         break;
+    default:
+        text = "";
+        break;
     }
     log_outputtext(LOG_PROGRESS_RESULT, text);
 }

@@ -22,15 +22,14 @@
 #include "dhcore/err.h"
 
 #if !defined(_WIN_)
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <netdb.h>
-
-#define closesocket close
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+  #include <unistd.h>
+  #include <netdb.h>
+  #define closesocket close
 #else
-typedef int socklen_t;
+  typedef int socklen_t;
 #endif
 
 /* globals */
