@@ -84,8 +84,8 @@ def compiler_setup(conf):
         conf.env.append_unique('LINKFLAGS', ['/MANIFEST', '/NOLOGO'])
         conf.env['WINDOWS_EMBED_MANIFEST'] = True
 
-        if compiler_is_x64(conf):   conf.env.append_unique('LINKFLAGS', '/MACHINE:X64')
-        else:                       conf.env.append_unique('LINKFLAGS', '/MACHINE:X86')
+        if Compiler.x64(conf):   conf.env.append_unique('LINKFLAGS', '/MACHINE:X64')
+        else:                    conf.env.append_unique('LINKFLAGS', '/MACHINE:X86')
 
         conf.env.append_unique('DEFINES', ['_CRT_SECURE_NO_WARNINGS', '_CRT_NONSTDC_NO_DEPRECATE',
             '_SCL_SECURE_NO_WARNINGS', '_MBCS'])
@@ -209,7 +209,7 @@ def configure(conf):
 
     compiler_setup_config(conf)
 
-    # set remaining option variables
+    # Set remaining option variables
     conf.env.ROOTDIR = ROOTDIR
     conf.env.PREFIX = os.path.abspath(conf.options.PREFIX)
     conf.env.VERSION = VERSION
@@ -220,7 +220,7 @@ def configure(conf):
     conf.start_msg('Processor')
     conf.end_msg(conf.env.DEST_CPU)
 
-    ## install directory
+    ## Install directory
     conf.start_msg('Install directory')
     conf.end_msg(conf.env.PREFIX)
 
