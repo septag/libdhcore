@@ -351,8 +351,9 @@ CORE_API struct allocator* mt_thread_gettmpalloc(mt_thread thread);
 CORE_API void mt_thread_resettmpalloc(mt_thread thread);
 
 #ifdef __cplusplus
-namespace dh {
 #include "err.h"
+
+namespace dh {
 
 class Mutex
 {
@@ -441,7 +442,6 @@ public:
 
 } /* dh */
 #endif
-
 
 #endif /*__MT_H__*/
 
