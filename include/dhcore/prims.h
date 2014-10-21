@@ -21,6 +21,14 @@
 #include "std-math.h"
 #include "err.h"
 
+#ifdef min
+#undef min
+#endif
+
+#ifdef max
+#undef max
+#endif
+
 struct rect2di
 {
     union   {

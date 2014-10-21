@@ -22,8 +22,9 @@
 #include "types.h"
 #include "mem-mgr.h"
 #include "numeric.h"
+#include "core-api.h"
 
-struct ALIGN16 color
+struct CORE_CPP_API ALIGN16 color
 {
     union   {
         struct {

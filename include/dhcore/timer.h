@@ -122,17 +122,17 @@ private:
 
 public:
     Timer() : m_tm(NULL) {}
+    Timer(timer *tm) : m_tm(tm) {}
 
-    result_t create(bool start = false)
+    static Timer create(bool start = false)
     {
-        m_tm = timer_createinstance(start);
-        return m_tm != NULL ? RET_OUTOFMEMORY : RET_OK;
+        return Timer(timer_createinstance(start));
     }
 
     void destroy()
     {
-        ASSERT(m_tm);
-        timer_destroyinstance(m_tm);
+        if (m_tm)
+            timer_destroyinstance(m_tm);
     }
 
     void start()

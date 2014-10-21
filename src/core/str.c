@@ -283,7 +283,7 @@ char* str_trim_whitespace(char *str)
 {
     int i;
     int begin = 0;
-    int end = strlen(str) - 1;
+    int end = (uint)strlen(str) - 1;
 
     while (isspace(str[begin]))
         begin++;

@@ -1299,7 +1299,7 @@ INLINE struct vec4i* vec4i_or(struct vec4i* r, const struct vec4i* a, const stru
 namespace dh {
 
 /* Vec3 */
-class ALIGN16 Vec3
+class CORE_CPP_API ALIGN16 Vec3
 {
 protected:
     vec4f m_vec;
@@ -1563,7 +1563,7 @@ public:
 };
 
 /* Quat */
-class ALIGN16 Quat
+class CORE_CPP_API ALIGN16 Quat
 {
 private:
     quat4f m_quat;
@@ -1666,7 +1666,7 @@ public:
 class Mat4;
 
 /* Mat3 */
-class ALIGN16 Mat3
+class CORE_CPP_API ALIGN16 Mat3
 {
 private:
     mat3f m_mat;
@@ -1911,7 +1911,7 @@ public:
 };
 
 /* Mat4 */
-class ALIGN16 Mat4
+class CORE_CPP_API ALIGN16 Mat4
 {
 private:
     mat4f m_mat;
@@ -2058,7 +2058,7 @@ inline Mat4 Mat3::operator*(const Mat4 &m) const
 }
 
 /* Vec2 */
-class Vec2
+class CORE_CPP_API Vec2
 {
 private:
     vec2f m_vec;
@@ -2160,7 +2160,7 @@ public:
 };
 
 /* Vec2i */
-class Vec2i
+class CORE_CPP_API Vec2i
 {
 private:
     vec2i m_vec;
@@ -2251,7 +2251,7 @@ public:
     int operator[](int idx) const {   return m_vec.n[idx];    }
 };
 
-class ALIGN16 Mat2
+class CORE_CPP_API ALIGN16 Mat2
 {
 private:
     mat2f m_mat;

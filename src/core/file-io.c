@@ -606,7 +606,7 @@ int fio_seek(file_t f, enum seek_mode seek, int offset)
                 break;
         }
         fdata->offset = clampsz(fdata->offset, 0, header->size);
-        return fdata->offset;
+        return (int)fdata->offset;
     }    else if (header->type == FILE_TYPE_DSK)    {
         struct disk_file* fdata = (struct disk_file*)((uint8*)f + sizeof(struct file_header));
         int seek_std;

@@ -399,7 +399,7 @@ void rpc_vblock_sets(struct rpc_vblock* vb, uint name_hash, const char* val)
     struct rpc_value* value = rpc_lookup_value(vb, name_hash);
     if (value != NULL)  {
         ASSERT(value->type == RPC_VALUE_STRING);
-        memcpy(vb->buff + value->offset, val, minui(strlen(val)+1, value->stride));
+        memcpy(vb->buff + value->offset, val, minui((uint)strlen(val)+1, value->stride));
     }
 }
 
@@ -410,7 +410,7 @@ void rpc_vblock_sets_idx(struct rpc_vblock* vb, uint name_hash, int idx, const c
         ASSERT(value->type == RPC_VALUE_STRING_ARRAY);
         ASSERT(idx < value->array_cnt);
         memcpy(vb->buff + value->offset + idx*value->stride, val, 
-            minui(strlen(val)+1, value->stride));
+            minui((uint)strlen(val)+1, value->stride));
     }
 }
 
