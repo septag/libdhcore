@@ -45,21 +45,26 @@
 #include "types.h"
 #include "core-api.h"
 
+// Enable assert in debug mode anyway
+#if defined(_DEBUG_)
+  #define _ENABLEASSERT_
+#endif
+
 #if defined(_ENABLEASSERT_)
+  #if defined(ASSERT)
+    #undef ASSERT
+  #endif
 
-#if defined(ASSERT)
-#undef ASSERT
-#endif
+  #if defined(_MSVC_)
+    #define DEBUG_BREAK()   __debugbreak();
+  #elif defined(_GNUC_)
+    #define DEBUG_BREAK()   __builtin_trap();
+  #endif
 
-#if defined(_MSVC_)
-#define DEBUG_BREAK()   __debugbreak();
-#elif defined(_GNUC_)
-#define DEBUG_BREAK()   __builtin_trap();
-#endif
-#define ASSERT(expr)    \
-    if (!(expr))    {   err_reportassert(#expr, __FILE__, __LINE__);     DEBUG_BREAK();  }
+  #define ASSERT(expr)    \
+      if (!(expr))    {   err_reportassert(#expr, __FILE__, __LINE__);     DEBUG_BREAK();  }
 #else
-#define ASSERT(expr)
+  #define ASSERT(expr)
 #endif
 
 /* Assertion */

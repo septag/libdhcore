@@ -2,7 +2,7 @@
 
 import os
 def build(bld):
-    files = bld.path.ant_glob('*.c')
+    files = bld.path.ant_glob('*.c*')
 
     bld.program(
         source = files,

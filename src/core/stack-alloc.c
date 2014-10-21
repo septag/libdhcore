@@ -73,6 +73,7 @@ result_t mem_stack_create(struct allocator* alloc, struct stack_alloc* stack,
 
     stack->size = size;
     stack->alloc = alloc;
+    stack->offset = 0;
 
     for (uint i = 0; i < STACKALLOC_SAVES_MAX; i++)
         stack->save_ptrs[STACKALLOC_SAVES_MAX-i-1] = &stack->save_nodes[i];
