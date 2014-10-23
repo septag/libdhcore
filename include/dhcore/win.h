@@ -30,7 +30,6 @@
 #include <SDKDDKVer.h>
 
 #include <windows.h>
-//#include <windowsx.h>
 #endif
 
 

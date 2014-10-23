@@ -129,7 +129,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>dhcore-dbg</TargetName>
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\Lib\</OutDir>
+    <OutDir>..\..\Bin\</OutDir>
     <IntDir>..\..\Build\$(Platform)-$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Static|Win32'">
@@ -200,7 +200,12 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Ws2_32.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImportLibrary>..\..\Lib\$(TargetName).lib</ImportLibrary>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Static|Win32'">
     <ClCompile>

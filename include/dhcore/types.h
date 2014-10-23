@@ -304,4 +304,8 @@ typedef uint uptr_t;
 /* maximum path string length */
 #define DH_PATH_MAX  255
 
+#ifndef INVALID_INDEX
+  #define INVALID_INDEX 0xffffffff
+#endif
+
 #endif /* __TYPES_H__ */
