@@ -25,6 +25,7 @@
 #include "dhcore/log.h"
 #include "dhcore/mt.h"
 #include "dhcore/util.h"
+#include "dhcore/str.h"
 
 #define LINE_COUNT_FLUSH    20
 
@@ -226,7 +227,7 @@ static void log_outputtext(enum log_type type, const char* text)
 
     MT_ATOMIC_INCR(g_log->stats.msgs_cnt);
     strcpy(msg, prefix);
-    strcat(msg, text);
+    str_safecat(msg, sizeof(msg)-1, text);
 
     /* message is ready, dispatch it to outputs */
     if (BIT_CHECK(g_log->outputs, OUTPUT_CONSOLE))   {
@@ -269,7 +270,8 @@ static void log_outputtext(enum log_type type, const char* text)
         puts(msg);
 #endif
     }
-
+    
+    
     if (type != LOG_PROGRESS)
         strcat(msg, "\n");
 

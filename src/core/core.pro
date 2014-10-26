@@ -17,7 +17,6 @@ CONFIG(debug, debug|release) {
 }
 
 INCLUDEPATH = \
-    ../../include/dhcore \
     ../../include \
     deps
 

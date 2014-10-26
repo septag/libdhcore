@@ -124,7 +124,7 @@ int hashtable_chained_isempty(const struct hashtable_chained* table)
     return (table->items_cnt == 0);
 }
 
-result_t hashtable_chained_add(struct hashtable_chained* table, uint hash_key, uptr_t value)
+result_t hashtable_chained_add(struct hashtable_chained* table, uint hash_key, iptr_t value)
 {
     int idx = hash_key % table->slots_cnt;
     struct hashtable_item_chained* item = (struct hashtable_item_chained*)A_ALLOC(table->item_alloc,
@@ -223,7 +223,7 @@ void hashtable_fixed_remove(struct hashtable_fixed* table, struct hashtable_item
     table->items_cnt --;
 }
 
-result_t hashtable_fixed_add(struct hashtable_fixed* table, uint hash_key, uptr_t value)
+result_t hashtable_fixed_add(struct hashtable_fixed* table, uint hash_key, iptr_t value)
 {
     int idx = hash_key % table->slots_cnt;
     /* if slot is not empty, probe linear and find a free slot */
@@ -293,7 +293,7 @@ int hashtable_open_isempty(const struct hashtable_open* table)
 }
 
 result_t hashtable_open_add(struct hashtable_open* table,
-    uint hash_key, uptr_t value)
+    uint hash_key, iptr_t value)
 {
     /* grow hashtable if required, hash items are more than 60% of capacity */
     if (table->items_cnt >= (table->slots_cnt*60/100))   {
@@ -331,7 +331,7 @@ static void hashtable_open_reorder(struct hashtable_open* table, struct hashtabl
 {
     for (int i = 0, prev_cnt = table->slots_cnt; i < prev_cnt; i++)  {
         uint key = table->items[i].hash;
-        uptr_t value = table->items[i].value;
+        iptr_t value = table->items[i].value;
 
         /* look for hash = 0 */
         int idx = key % cnt;

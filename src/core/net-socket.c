@@ -122,7 +122,7 @@ int sock_udp_recv(socket_t sock, void* buffer, int size, char* out_sender_ipaddr
     memset(&addr, 0x00, sizeof(struct sockaddr_in));
     socklen_t addrlen = sizeof(addr);
 
-    int r = recvfrom(sock, (char*)buffer, size, 0, (struct sockaddr*)&addr, &addrlen);
+    int r = (size_t)recvfrom(sock, (char*)buffer, (size_t)size, 0, (struct sockaddr*)&addr, &addrlen);
     if (r > 0)     {
         strcpy(out_sender_ipaddr, inet_ntoa(addr.sin_addr));
     }
@@ -154,8 +154,8 @@ int sock_udp_send(socket_t sock, const char* ipaddr, int port, const void* buffe
     /* divide and send packets */
     int sent_bytes = 0;
     if (size <= max_size)   {
-        sent_bytes = sendto(sock, (const char*)buffer, size, 0,
-                            (struct sockaddr*)&addr, sizeof(addr));
+        sent_bytes = (size_t)sendto(sock, (const char*)buffer, (size_t)size, 0,
+                                    (struct sockaddr*)&addr, sizeof(addr));
     }    else    {
         int packets_cnt = size / max_size;
         int remain_size = size % max_size;
@@ -235,14 +235,14 @@ int sock_tcp_recv(socket_t sock, void* buffer, int size)
 {
     if (sock == SOCK_NULL)      
         return -1;
-    return recv(sock, (char*)buffer, size, 0);
+    return (size_t)recv(sock, (char*)buffer, (size_t)size, 0);
 }
 
 int sock_tcp_send(socket_t sock, const void* buffer, int size)
 {
     if (sock == SOCK_NULL)      
         return -1;
-    return send(sock, (const char*)buffer, size, 0);
+    return (size_t)send(sock, (const char*)buffer, (size_t)size, 0);
 }
 
 

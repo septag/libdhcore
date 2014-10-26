@@ -617,7 +617,7 @@ int fio_seek(file_t f, enum seek_mode seek, int offset)
             default:				seek_std = SEEK_SET;	break;
         }
         fseek(fdata->file, offset, seek_std);
-        return ftell(fdata->file);
+        return (int)ftell(fdata->file);
     }
 
     return -1;
