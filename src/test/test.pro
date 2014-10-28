@@ -8,11 +8,15 @@ INCLUDEPATH = ../../include
 
 DEFINES += _VERSION_=\\\"1.0\\\"
 
-linux-g++|linux-clang   {
+linux-g++|linux-clang|macx-clang   {
     QMAKE_CFLAGS += \
         -std=gnu99 \
-        -msse -msse2 -msse4.1 \
+        -msse -msse2 \
         -ffast-math
+    QMAKE_CXXFLAGS += \
+        -msse -msse2 \
+        -ffast-math \
+        -std=c++11
 
     LIBS *= -lpthread -lm
 }

@@ -27,6 +27,9 @@ linux-g++|linux-clang|macx-clang   {
         -std=gnu99 \
         -msse -msse2 \
         -ffast-math
+    QMAKE_CXXFLAGS += \
+        -msse -msse2 \
+        -ffast-math
 
     LIBS *= -lpthread -lm
 }
