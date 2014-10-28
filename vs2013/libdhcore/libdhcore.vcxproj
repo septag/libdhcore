@@ -174,7 +174,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WIN_;_CORE_EXPORT_;_CRT_SECURE_NO_WARNINGS;_SIMD_SSE_;_VERSION_="1.0.0";_DEBUG;_WINDOWS;_USRDLL;LIBDHCORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WIN_;_CORE_EXPORT_;_CRT_SECURE_NO_WARNINGS;_SIMD_SSE_;_DEBUG;_WINDOWS;_USRDLL;LIBDHCORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../include;../../src/core/deps</AdditionalIncludeDirectories>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>

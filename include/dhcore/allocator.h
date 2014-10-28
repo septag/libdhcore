@@ -108,6 +108,16 @@ struct allocator
  */
 #define A_ALLOC(alloc, size, id)   \
     (alloc)->alloc_fn((size), __FILE__, __LINE__, (id), (alloc)->param)
+
+/**
+ * Reallocate memory with custom allocator
+ * @param alloc custom allocator pointer
+ * @param ptr Current allocated pointer to be reallocated, if NULL, the requested size will be 
+ * allocated instead of reallocation.
+ * @param size Size of the requested memory block
+ * @param ID of the memory block (optional)
+ * @ingroup mem
+ */
 #define A_REALLOC(alloc, ptr, size, id) \
     (alloc)->realloc_fn((ptr), (size), __FILE__, __LINE__, (id), (alloc)->param)
 
@@ -184,6 +194,9 @@ void mem_delete_alloc_aligned(allocator *alloc, T *t)
     t->~T();
     A_ALIGNED_FREE(alloc, t);
 }
+
+// A C++ style friendly name for allocator
+typedef struct allocator Allocator;
 
 #endif
 

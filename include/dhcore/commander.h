@@ -173,4 +173,42 @@ CORE_API void command_option_pos(command_t *self, const char *name, const char* 
  */
 CORE_API void command_parse(command_t *self, int argc, char **argv, void* param);
 
+#ifdef __cplusplus
+namespace dh {
+class CommandArgs
+{
+private:
+    command_t m_cmd;
+
+public:
+    CommandArgs(const char *name, const char *version = "1.0")
+    {
+        command_init(&m_cmd, name, version);
+    }
+
+    ~CommandArgs()
+    {
+        command_free(&m_cmd);
+    }
+
+    void add_option(const char *small, const char *large, const char *desc, command_callback_t cb)
+    {
+        command_option(&m_cmd, small, large, desc, cb);
+    }
+
+    void add_option_positional(const char *name, const char *desc, command_callback_t cb, 
+                               bool optional)
+    {
+        command_option_pos(&m_cmd, name, desc, optional, cb);
+    }
+
+    void parse(int argc, char **argv, void *user_param = nullptr)
+    {
+        command_parse(&m_cmd, argc, argv, user_param);
+    }
+};
+
+}
+#endif
+
 #endif /* COMMANDER_H */

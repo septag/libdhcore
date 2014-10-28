@@ -89,7 +89,7 @@ def compiler_setup(conf):
 
         conf.env.append_unique('DEFINES', ['_CRT_SECURE_NO_WARNINGS', '_CRT_NONSTDC_NO_DEPRECATE',
             '_SCL_SECURE_NO_WARNINGS', '_MBCS'])
-        if compiler_is_icc(conf):
+        if Compiler.icc(conf):
             cflags.extend(['/Qstd=c99', '/Qintel-extensions-', '/Qfast-transcendentals-',
                 '/Qparallel-'])
     else:
