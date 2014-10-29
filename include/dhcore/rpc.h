@@ -13,8 +13,8 @@
  *
  ***********************************************************************************/
 
-#ifndef __RPC_H__
-#define __RPC_H__
+#ifndef __JRPC_H__
+#define __JRPC_H__
  
 /**
  * @defgroup rpc JSON-RPC
@@ -307,4 +307,4 @@ CORE_API result_t rpc_registercmd(const char* name, pfn_rpc_cmd run_fn, const st
     uint param_cnt, const struct rpc_value* results, uint result_cnt, const char* desc, 
     void* user_param);
    
-#endif /* __RPC_H__ */
+#endif /* __JRPC_H__ */
