@@ -14,10 +14,10 @@
  ***********************************************************************************/
 
 #include <stdio.h>
-#include "mem-mgr.h"
-#include "freelist-alloc.h"
-#include "err.h"
-#include "log.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/freelist-alloc.h"
+#include "dhcore/err.h"
+#include "dhcore/log.h"
 
 /* this threshold value is for custom allocators
  * more than this amount of memory request is allocated from heap instead

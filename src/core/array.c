@@ -13,9 +13,9 @@
  *
  ***********************************************************************************/
 
-#include "array.h"
-#include "err.h"
-#include "numeric.h"
+#include "dhcore/array.h"
+#include "dhcore/err.h"
+#include "dhcore/numeric.h"
 
 result_t arr_create(struct allocator* alloc,
                     struct array* arr,

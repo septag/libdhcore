@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "commander.h"
+#include "dhcore/commander.h"
 
 #if defined(_MSC_VER)
 #define snprintf _snprintf
@@ -44,7 +44,7 @@ static void
 command_help(command_t *self, void* param) {
   char* usage;
   int i;
-  int usage_size = strlen(self->usage);
+  int usage_size = (size_t)strlen(self->usage);
   char pname[128];
   for (i = 0; i < self->pos_count; i++) {
     usage_size += strlen(self->poss[i].name) + 1 /* for space */;

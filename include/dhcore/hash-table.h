@@ -35,7 +35,7 @@
 struct hashtable_item
 {
     uint hash;   /**< hash */
-    uptr_t value;  /**< saved user value */
+    iptr_t value;  /**< saved user value */
 };
 
  /**
@@ -45,7 +45,7 @@ struct hashtable_item
 struct hashtable_item_chained
 {
     uint hash;   /**< hash */
-    uptr_t value;  /**< saved user value */
+    iptr_t value;  /**< saved user value */
     struct linked_list node;    /* for chaining hash collisions */
 };
 
@@ -107,7 +107,7 @@ CORE_API int hashtable_chained_isempty(const struct hashtable_chained* table);
  * @ingroup htable
  */
 CORE_API result_t hashtable_chained_add(struct hashtable_chained* table, uint hash_key,
-                                        uptr_t value);
+                                        iptr_t value);
 /**
  * removes hash item from the hash table
  * @ingroup htable
@@ -145,8 +145,8 @@ struct hashtable_fixed
 #ifdef __cplusplus
     hashtable_fixed()
     {
-        alloc = NULL;
-        items = NULL;
+        alloc = nullptr;
+        items = nullptr;
         slots_cnt = 0;
         items_cnt = 0;
     }
@@ -180,7 +180,7 @@ CORE_API int hashtable_fixed_isempty(const struct hashtable_fixed* table);
  * @see hash
  * @ingroup htable
  */
-CORE_API result_t hashtable_fixed_add(struct hashtable_fixed* table, uint hash_key, uptr_t value);
+CORE_API result_t hashtable_fixed_add(struct hashtable_fixed* table, uint hash_key, iptr_t value);
 /**
  * removes hash item from the hash table
  * @ingroup htable
@@ -256,7 +256,7 @@ CORE_API int hashtable_open_isempty(const struct hashtable_open* table);
  * @see hash
  * @ingroup htable
  */
-CORE_API result_t hashtable_open_add(struct hashtable_open* table, uint hash_key, uptr_t value);
+CORE_API result_t hashtable_open_add(struct hashtable_open* table, uint hash_key, iptr_t value);
 /**
  * removes hash item from the hash table
  * @ingroup htable
@@ -279,7 +279,7 @@ CORE_API void hashtable_open_clear(struct hashtable_open* table);
 namespace dh {
 
 /* HashTableFixed */
-template <typename T, uptr_t Invalid = 0>
+template <typename T, iptr_t Invalid = 0>
 class HashtableFixed
 {
 private:
@@ -307,7 +307,7 @@ public:
 
     void add(uint key, T value)
     {
-        hashtable_fixed_add(&m_table, key, (uptr_t)(value));
+        hashtable_fixed_add(&m_table, key, (iptr_t)(value));
     }
 
     T value(uint key) const
@@ -353,7 +353,7 @@ public:
 };
 
 /* HashTableOpen */
-template <typename T, uptr_t Invalid = 0>
+template <typename T, iptr_t Invalid = 0>
 class HashtableOpen
 {
 private:
@@ -381,7 +381,7 @@ public:
 
     void add(uint key, T value)
     {
-        hashtable_open_add(&m_table, key, (uptr_t)(value));
+        hashtable_open_add(&m_table, key, (iptr_t)(value));
     }
 
     T value(uint key) const
@@ -422,7 +422,7 @@ public:
 };
 
 /* HashTableChained */
-template <typename T, uptr_t Invalid = 0>
+template <typename T, iptr_t Invalid = 0>
 class HashtableChained
 {
 private:

@@ -17,12 +17,12 @@
 
 #include "cJSON/cJSON.h"
 
-#include "mem-mgr.h"
-#include "json.h"
-#include "pool-alloc.h"
-#include "err.h"
-#include "util.h"
-#include "mt.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/json.h"
+#include "dhcore/pool-alloc.h"
+#include "dhcore/err.h"
+#include "dhcore/util.h"
+#include "dhcore/mt.h"
 
 #define JSON_ALLOC_16    0
 #define JSON_ALLOC_32    1

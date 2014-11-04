@@ -2,39 +2,32 @@
 
 import os, sys, glob
 
-def compiler_is_msvc(conf):
-    cc = conf.env['CC'][0].lower()
-    if 'cl.exe' in cc or 'icl.exe' in cc:
-        return True
-    else:
-        return False
-
 def build(bld):
-    files = bld.path.ant_glob('*.c')
+    files = bld.path.ant_glob('*.c*')
     files.extend(bld.path.ant_glob('deps/cJSON/*.c'))
     files.extend(bld.path.ant_glob('deps/miniz/*.c'))
     files.extend(bld.path.ant_glob('deps/commander/*.c'))
 
-    # platform dependent files
-    if sys.platform == 'win32':
+    platform = bld.env.PLATFORM
+    # Platform files
+    if platform == 'win32':
         files.extend(bld.path.ant_glob('platform/win/*.c*'))
-    elif sys.platform.startswith('linux'):
+    elif platform.startswith('linux'):
         files.extend(bld.path.ant_glob('platform/posix/*.c'))
         files.extend(bld.path.ant_glob('platform/linux/*.c'))
-    elif sys.platform == 'darwin':
+    elif platform == 'darwin':
         files.extend(bld.path.ant_glob('platform/posix/*.c'))
         files.extend(bld.path.ant_glob('platform/osx/*.c'))
 
-    # general libs
+    # Libs
     libs = []
     linkflags = []
     frameworks = []
-    if sys.platform.startswith('linux'):
+    if platform.startswith('linux'):
         libs.extend(['rt', 'm'])
-    elif sys.platform == 'darwin':
-        frameworks.extend(['Cocoa','CoreFoundation'])
+    elif platform == 'darwin':
         libs.extend(['stdc++'])
-    elif sys.platform == 'win32':
+    elif platform == 'win32':
         linkflags.extend(['/NODEFAULTLIB:"LIBCMTD.LIB"', '/NODEFAULTLIB:"LIBCMT.LIB"'])
         libs.extend(['ws2_32', 'Shell32', 'Advapi32', 'User32'])
 
@@ -45,10 +38,12 @@ def build(bld):
         libs.append('efsw')
         defines.append('_FILEMON_')
 
+    # Version number
     vnum = ''
-    if sys.platform.startswith('linux'):
+    if sys.platform.startswith('linux') or sys.platform == 'darwin':
         vnum = bld.env.VERSION
-        
+    
+    # Copy under /bin for windows and /lib for others
     if sys.platform != 'win32':
         install_path = '${PREFIX}/lib'
     else:

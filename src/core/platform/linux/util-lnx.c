@@ -13,7 +13,7 @@
  *
  ***********************************************************************************/
 
-#include "util.h"
+#include "dhcore/util.h"
 
 #if defined(_LINUX_)
 
@@ -25,7 +25,7 @@
 #include <sys/sendfile.h>
 #include <stdio.h>
 
-#include "path.h"
+#include "dhcore/path.h"
 
 char* util_getexedir(char* outpath)
 {

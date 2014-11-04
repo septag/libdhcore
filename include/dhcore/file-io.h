@@ -20,6 +20,7 @@
 #include "types.h"
 #include "core-api.h"
 #include "allocator.h"
+#include "mem-mgr.h"
 
 /**
  * @defgroup fileio File manager
@@ -176,7 +177,7 @@ CORE_API void fio_close(file_t f);
  * @param offset offset from the seek point to move in the file, can be positive/negative
  * @ingroup fileio
  */
-CORE_API void fio_seek(file_t f, enum seek_mode seek, int offset);
+CORE_API int fio_seek(file_t f, enum seek_mode seek, int offset);
 
 /**
  * Reads data from file
@@ -273,7 +274,7 @@ private:
     file_t m_file;
 
 public:
-    struct mem_data
+    struct MemData
     {
         void *buff;
         size_t size;
@@ -335,9 +336,9 @@ public:
         fio_write(m_file, buff, item_sz, item_cnt);
     }
 
-    mem_data detach_mem()
+    MemData detach_mem()
     {
-        mem_data fm;
+        MemData fm;
         fm.buff = fio_detachmem(m_file, &fm.size, &fm.alloc);
         return fm;
     }

@@ -14,17 +14,17 @@
  ***********************************************************************************/
 #include <stdio.h>
 
-#include "file-io.h"
-#include "mem-mgr.h"
-#include "err.h"
-#include "numeric.h"
-#include "str.h"
-#include "pak-file.h"
-#include "log.h"
-#include "hash-table.h"
-#include "mt.h"
-#include "util.h"
-#include "path.h"
+#include "dhcore/file-io.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/err.h"
+#include "dhcore/numeric.h"
+#include "dhcore/str.h"
+#include "dhcore/pak-file.h"
+#include "dhcore/log.h"
+#include "dhcore/hash-table.h"
+#include "dhcore/mt.h"
+#include "dhcore/util.h"
+#include "dhcore/path.h"
 
 #if defined(_FILEMON_)
 /* You'll need 3rdparty EFSW library (forked): https://bitbucket.org/sepul/efsw */
@@ -551,9 +551,11 @@ static FILE* open_resolvepath(const char* filepath)
     for (uint i = 0; i < item_cnt; i++)   {
         struct vdir* vd = &vds[i];
         path_join(testpath, vd->path, filepath, NULL);
-        f = fopen(testpath, "rb");
-        if (f != NULL)
-            return f;
+        if (!util_pathisdir(testpath))  {
+            f = fopen(testpath, "rb");
+            if (f != NULL)
+                return f;
+        }
     }
 
     return NULL;
@@ -571,19 +573,19 @@ void fio_close(file_t f)
             A_FREE(fdata->alloc, fdata->buffer);
             fdata->buffer = NULL;
         }
-        fio_free_membuff(f);
+        fio_free_membuff((uint8*)f);
     }    else if (header->type == FILE_TYPE_DSK)    {
         struct disk_file* fdata = (struct disk_file*)((uint8*)f + sizeof(struct file_header));
         if (fdata->file != NULL)    {
             fclose(fdata->file);
             fdata->file = NULL;
         }
-        fio_free_diskbuff(f);
+        fio_free_diskbuff((uint8*)f);
     }
 }
 
 
-void fio_seek(file_t f, enum seek_mode seek, int offset)
+int fio_seek(file_t f, enum seek_mode seek, int offset)
 {
     ASSERT(f != NULL);
 
@@ -604,6 +606,7 @@ void fio_seek(file_t f, enum seek_mode seek, int offset)
                 break;
         }
         fdata->offset = clampsz(fdata->offset, 0, header->size);
+        return (int)fdata->offset;
     }    else if (header->type == FILE_TYPE_DSK)    {
         struct disk_file* fdata = (struct disk_file*)((uint8*)f + sizeof(struct file_header));
         int seek_std;
@@ -614,7 +617,10 @@ void fio_seek(file_t f, enum seek_mode seek, int offset)
             default:				seek_std = SEEK_SET;	break;
         }
         fseek(fdata->file, offset, seek_std);
+        return (int)ftell(fdata->file);
     }
+
+    return -1;
 }
 
 size_t fio_read(file_t f, void* buffer, size_t item_size, size_t items_cnt)

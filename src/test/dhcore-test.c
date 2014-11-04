@@ -100,7 +100,7 @@ int parse_cmd(const char* arg)
 int main(int argc, char** argv)
 {
     command_t cmd;
-    command_init(&cmd, "dhcore-test", _VERSION_);    
+    command_init(&cmd, "dhcore-test", "1.0");    
     command_option_pos(&cmd, "test", "Choose unit test", TRUE, cmd_gettest);
     command_parse(&cmd, argc, argv, NULL);
 

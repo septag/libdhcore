@@ -13,11 +13,10 @@
  *
  ***********************************************************************************/
 
-
-#include "types.h"
-#include "pool-alloc.h"
-#include "err.h"
-#include "mem-mgr.h"
+#include "dhcore/types.h"
+#include "dhcore/pool-alloc.h"
+#include "dhcore/err.h"
+#include "dhcore/mem-mgr.h"
 
 struct ALIGN16 mem_pool_block
 {

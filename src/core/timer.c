@@ -13,9 +13,9 @@
  *
  ***********************************************************************************/
 
-#include "timer.h"
-#include "mem-mgr.h"
-#include "err.h"
+#include "dhcore/timer.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/err.h"
 
  /* types */
 struct timer_mgr

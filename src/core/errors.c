@@ -14,16 +14,16 @@
  ***********************************************************************************/
 
 #if defined(_WIN_)
-#include "win.h"
+#include "dhcore/win.h"
 #endif
 
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "err.h"
-#include "mem-mgr.h"
-#include "log.h"
-#include "mt.h"
+#include "dhcore/err.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/log.h"
+#include "dhcore/mt.h"
 
 #define ERROR_STACK_MAX    32
 
@@ -142,7 +142,7 @@ void err_print(const char* source, uint line, const char* text)
         return;
 
     mt_mutex_lock(&g_err->mtx);
-    uint idx = g_err->err_cnt;
+    uint idx = (uint)g_err->err_cnt;
     strcpy(g_err->err_stack[idx].text, text);
 
 #if defined(_DEBUG_)
@@ -201,7 +201,7 @@ const char* err_getstring()
 
 uint err_getcode()
 {
-    return g_err->err_code;
+    return (uint)g_err->err_code;
 }
 
 void err_clear()

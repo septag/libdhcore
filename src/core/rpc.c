@@ -7,13 +7,14 @@
  ***********************************************************************************/
 
 #include <stdarg.h>
+#include <stdio.h>
 
 #include "dhcore/core.h"
 #include "dhcore/stack-alloc.h"
 #include "dhcore/array.h"
 #include "dhcore/json.h"
 
-#include "rpc.h"
+#include "dhcore/rpc.h"
 
 #define MAX_COMMAND_LIST    128
 
@@ -168,6 +169,7 @@ struct rpc_vblock* rpc_vblock_create(const struct rpc_value* values, uint value_
     struct allocator stack_alloc;
     result_t r;
 
+    memset(&stack_mem, 0x00, sizeof(stack_mem));
     r = mem_stack_create(alloc, &stack_mem, total_sz, 0);
     if (IS_FAIL(r)) 
         return NULL;
@@ -399,7 +401,7 @@ void rpc_vblock_sets(struct rpc_vblock* vb, uint name_hash, const char* val)
     struct rpc_value* value = rpc_lookup_value(vb, name_hash);
     if (value != NULL)  {
         ASSERT(value->type == RPC_VALUE_STRING);
-        memcpy(vb->buff + value->offset, val, minui(strlen(val)+1, value->stride));
+        memcpy(vb->buff + value->offset, val, minui((uint)strlen(val)+1, value->stride));
     }
 }
 
@@ -410,7 +412,7 @@ void rpc_vblock_sets_idx(struct rpc_vblock* vb, uint name_hash, int idx, const c
         ASSERT(value->type == RPC_VALUE_STRING_ARRAY);
         ASSERT(idx < value->array_cnt);
         memcpy(vb->buff + value->offset + idx*value->stride, val, 
-            minui(strlen(val)+1, value->stride));
+            minui((uint)strlen(val)+1, value->stride));
     }
 }
 
@@ -647,7 +649,7 @@ struct rpc_result* rpc_make_result(struct rpc_vblock* ret, int id, struct rpc_er
     json_t jroot = json_create_obj();    
     json_additem_toobj(jroot, "id", json_create_num(id));
     if (ret != NULL)    {
-        json_t jresult = json_create_obj(jroot);
+        json_t jresult = json_create_obj();
 
         for (uint i = 0; i < ret->value_cnt; i++)   {
             struct rpc_value* value = &ret->values[i];
@@ -730,7 +732,7 @@ struct rpc_result* rpc_make_result(struct rpc_vblock* ret, int id, struct rpc_er
     if (r != NULL)  {
         r->type = RPC_RESULT_JSONRPC;
         r->data.json.json_sz = 0;
-#if _DEBUG_
+#ifdef _DEBUG_
         int trim = FALSE;
 #else
         int trim = TRUE;

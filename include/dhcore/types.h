@@ -29,6 +29,7 @@
  */
 #if _MSC_VER
   #define _MSVC_
+  #pragma warning(disable:4800) // forcing int to bool
 #endif
 
 #if __GNUC__
@@ -37,6 +38,10 @@
 
 #if defined(_DEBUG) && !defined(_DEBUG_)
   #define _DEBUG_
+#endif
+
+#if defined(DEBUG) && !defined(_DEBUG_)
+#define _DEBUG_
 #endif
 
 #if defined(WIN32) && !defined(_WIN_)
@@ -154,8 +159,10 @@ typedef uint64 reshandle_t;
 /* pointer type (64/32 platforms are different) */
 #if defined(_X64_)
 typedef uint64 uptr_t;
+typedef int64 iptr_t;
 #else
 typedef uint uptr_t;
+typedef int iptr_t;
 #endif
 
 /* TRUE/FALSE definitions */

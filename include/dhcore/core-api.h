@@ -23,22 +23,28 @@
   #if defined(_CORE_EXPORT_)
     #if defined(_MSVC_)
       #define CORE_API _EXTERN_EXPORT_ __declspec(dllexport)
+      #define CORE_CPP_API __declspec(dllexport)
     #elif defined(_GNUC_)
       #define CORE_API _EXTERN_EXPORT_ __attribute__((visibility("default")))
+      #define CORE_CPP_API __attribute__((visibility("default")))
     #endif
   #else
     #if defined(_MSVC_)
    	  #define CORE_API _EXTERN_EXPORT_ __declspec(dllimport)
+      #define CORE_CPP_API __declspec(dllimport)
     #elif defined(_GNUC_)
       #define CORE_API _EXTERN_EXPORT_ __attribute__((visibility("default")))
+      #define CORE_CPP_API __attribute__((visibility("default")))
     #endif
   #endif /* defined(_CORE_EXPORT) */
 #else
   #define CORE_API _EXTERN_EXPORT_
+  #define CORE_CPP_API 
 #endif
 
 #if defined(SWIG)
 #define CORE_API
+#define CORE_CPP_API
 #endif
 
 #endif /* __COREAPI_H__*/

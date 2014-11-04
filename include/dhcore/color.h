@@ -22,8 +22,9 @@
 #include "types.h"
 #include "mem-mgr.h"
 #include "numeric.h"
+#include "core-api.h"
 
-struct ALIGN16 color
+struct CORE_CPP_API ALIGN16 color
 {
     union   {
         struct {
@@ -191,7 +192,7 @@ INLINE struct color* color_lerp(struct color* r, const struct color* c1, const s
 
 namespace dh {
 
-class ALIGN16 Color
+class ALIGN16 CORE_CPP_API Color
 {
 private:
     color m_clr;
@@ -221,7 +222,7 @@ public:
         color_seti(&m_clr, r, g, b, a);
     }
 
-    Color(const color c)
+    Color(const color &c)
     {
         m_clr = c;
     }
@@ -258,13 +259,13 @@ public:
         return *this;
     }
 
-    Color& set(const color c)
+    Color& set(const color &c)
     {
         m_clr = c;
         return *this;
     }
 
-    bool operator==(const Color& c)
+    bool operator==(const Color &c)
     {
         return color_isequal(&m_clr, &c.m_clr);
     }

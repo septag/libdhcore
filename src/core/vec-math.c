@@ -13,8 +13,8 @@
  *
  ***********************************************************************************/
 
-#include "vec-math.h"
-#include "err.h"
+#include "dhcore/vec-math.h"
+#include "dhcore/err.h"
 
 /* vec3 functions */
 float vec3_angle(const struct vec4f* v1, const struct vec4f* v2)

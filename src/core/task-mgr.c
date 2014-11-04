@@ -13,16 +13,16 @@
  *
  ***********************************************************************************/
 
-#include "core.h"
-#include "mt.h"
-#include "freelist-alloc.h"
-#include "queue.h"
-#include "stack.h"
-#include "array.h"
-#include "pool-alloc.h"
-#include "hash-table.h"
-#include "task-mgr.h"
-#include "stack-alloc.h"
+#include "dhcore/core.h"
+#include "dhcore/mt.h"
+#include "dhcore/freelist-alloc.h"
+#include "dhcore/queue.h"
+#include "dhcore/stack.h"
+#include "dhcore/array.h"
+#include "dhcore/pool-alloc.h"
+#include "dhcore/hash-table.h"
+#include "dhcore/task-mgr.h"
+#include "dhcore/stack-alloc.h"
 
 #define LOCAL_MEM_SIZE (1024*1024)
 #define TEMP_MEM_SIZE (4*1024*1024)

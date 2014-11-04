@@ -15,11 +15,11 @@
 
 
 #include <stdio.h>
-#include "pak-file.h"
-#include "err.h"
-#include "pak-file-fmt.h"
-#include "str.h"
-#include "numeric.h"
+#include "dhcore/pak-file.h"
+#include "dhcore/err.h"
+#include "dhcore/pak-file-fmt.h"
+#include "dhcore/str.h"
+#include "dhcore/numeric.h"
 
 #define ITEM_BLOCK_SIZE     100
 #define PAK_MAJOR_VERSION   1

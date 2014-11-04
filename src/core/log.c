@@ -15,16 +15,17 @@
 
 
 #if defined(_WIN_)
-#include "win.h"
+#include "dhcore/win.h"
 #endif
 
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "mem-mgr.h"
-#include "log.h"
-#include "mt.h"
-#include "util.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/log.h"
+#include "dhcore/mt.h"
+#include "dhcore/util.h"
+#include "dhcore/str.h"
 
 #define LINE_COUNT_FLUSH    20
 
@@ -192,6 +193,9 @@ void log_endprogress(enum log_progress_result res)
     case LOG_PROGRESS_NONFATAL:
         text = "[" TERM_BOLDYELLOW "FAILED" TERM_RESET "]";
         break;
+    default:
+        text = "";
+        break;
     }
     log_outputtext(LOG_PROGRESS_RESULT, text);
 }
@@ -223,7 +227,7 @@ static void log_outputtext(enum log_type type, const char* text)
 
     MT_ATOMIC_INCR(g_log->stats.msgs_cnt);
     strcpy(msg, prefix);
-    strcat(msg, text);
+    str_safecat(msg, sizeof(msg)-1, text);
 
     /* message is ready, dispatch it to outputs */
     if (BIT_CHECK(g_log->outputs, OUTPUT_CONSOLE))   {
@@ -266,7 +270,8 @@ static void log_outputtext(enum log_type type, const char* text)
         puts(msg);
 #endif
     }
-
+    
+    
     if (type != LOG_PROGRESS)
         strcat(msg, "\n");
 

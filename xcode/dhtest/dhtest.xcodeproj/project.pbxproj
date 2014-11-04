@@ -1,0 +1,292 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		143C472A19FC1CD500F76402 /* libdhcore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 143C472919FC1CD500F76402 /* libdhcore.dylib */; };
+		14FDCA9019FC17BC00F6DE96 /* dhcore-test.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA8719FC17BC00F6DE96 /* dhcore-test.c */; };
+		14FDCA9119FC17BC00F6DE96 /* test-freelist.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA8919FC17BC00F6DE96 /* test-freelist.c */; };
+		14FDCA9219FC17BC00F6DE96 /* test-hashtable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA8A19FC17BC00F6DE96 /* test-hashtable.cpp */; };
+		14FDCA9319FC17BC00F6DE96 /* test-heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA8B19FC17BC00F6DE96 /* test-heap.c */; };
+		14FDCA9419FC17BC00F6DE96 /* test-json.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA8C19FC17BC00F6DE96 /* test-json.c */; };
+		14FDCA9519FC17BC00F6DE96 /* test-pool.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA8D19FC17BC00F6DE96 /* test-pool.c */; };
+		14FDCA9619FC17BC00F6DE96 /* test-taskmgr.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA8E19FC17BC00F6DE96 /* test-taskmgr.c */; };
+		14FDCA9719FC17BC00F6DE96 /* test-thread.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA8F19FC17BC00F6DE96 /* test-thread.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		14FDCA5019FC15F500F6DE96 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		143C472919FC1CD500F76402 /* libdhcore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdhcore.dylib; path = "../../../../../Library/Developer/Xcode/DerivedData/libdhcore-afrifoxvavghptcuonnvwbavoaeq/Build/Products/Debug/libdhcore.dylib"; sourceTree = "<group>"; };
+		14FDCA5219FC15F500F6DE96 /* dhtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dhtest; sourceTree = BUILT_PRODUCTS_DIR; };
+		14FDCA8719FC17BC00F6DE96 /* dhcore-test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "dhcore-test.c"; path = "../../src/test/dhcore-test.c"; sourceTree = "<group>"; };
+		14FDCA8819FC17BC00F6DE96 /* dhcore-test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "dhcore-test.h"; path = "../../src/test/dhcore-test.h"; sourceTree = "<group>"; };
+		14FDCA8919FC17BC00F6DE96 /* test-freelist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "test-freelist.c"; path = "../../src/test/test-freelist.c"; sourceTree = "<group>"; };
+		14FDCA8A19FC17BC00F6DE96 /* test-hashtable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "test-hashtable.cpp"; path = "../../src/test/test-hashtable.cpp"; sourceTree = "<group>"; };
+		14FDCA8B19FC17BC00F6DE96 /* test-heap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "test-heap.c"; path = "../../src/test/test-heap.c"; sourceTree = "<group>"; };
+		14FDCA8C19FC17BC00F6DE96 /* test-json.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "test-json.c"; path = "../../src/test/test-json.c"; sourceTree = "<group>"; };
+		14FDCA8D19FC17BC00F6DE96 /* test-pool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "test-pool.c"; path = "../../src/test/test-pool.c"; sourceTree = "<group>"; };
+		14FDCA8E19FC17BC00F6DE96 /* test-taskmgr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "test-taskmgr.c"; path = "../../src/test/test-taskmgr.c"; sourceTree = "<group>"; };
+		14FDCA8F19FC17BC00F6DE96 /* test-thread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "test-thread.c"; path = "../../src/test/test-thread.c"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		14FDCA4F19FC15F500F6DE96 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				143C472A19FC1CD500F76402 /* libdhcore.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		14FDCA4919FC15F500F6DE96 = {
+			isa = PBXGroup;
+			children = (
+				143C472919FC1CD500F76402 /* libdhcore.dylib */,
+				14FDCA9819FC17C900F6DE96 /* src */,
+				14FDCA5319FC15F500F6DE96 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		14FDCA5319FC15F500F6DE96 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				14FDCA5219FC15F500F6DE96 /* dhtest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		14FDCA9819FC17C900F6DE96 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				14FDCA8719FC17BC00F6DE96 /* dhcore-test.c */,
+				14FDCA8819FC17BC00F6DE96 /* dhcore-test.h */,
+				14FDCA8919FC17BC00F6DE96 /* test-freelist.c */,
+				14FDCA8A19FC17BC00F6DE96 /* test-hashtable.cpp */,
+				14FDCA8B19FC17BC00F6DE96 /* test-heap.c */,
+				14FDCA8C19FC17BC00F6DE96 /* test-json.c */,
+				14FDCA8D19FC17BC00F6DE96 /* test-pool.c */,
+				14FDCA8E19FC17BC00F6DE96 /* test-taskmgr.c */,
+				14FDCA8F19FC17BC00F6DE96 /* test-thread.c */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		14FDCA5119FC15F500F6DE96 /* dhtest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 14FDCA5919FC15F500F6DE96 /* Build configuration list for PBXNativeTarget "dhtest" */;
+			buildPhases = (
+				14FDCA4E19FC15F500F6DE96 /* Sources */,
+				14FDCA4F19FC15F500F6DE96 /* Frameworks */,
+				14FDCA5019FC15F500F6DE96 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = dhtest;
+			productName = dhtest;
+			productReference = 14FDCA5219FC15F500F6DE96 /* dhtest */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		14FDCA4A19FC15F500F6DE96 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = "Sepehr Taghdissian";
+				TargetAttributes = {
+					14FDCA5119FC15F500F6DE96 = {
+						CreatedOnToolsVersion = 6.1;
+					};
+				};
+			};
+			buildConfigurationList = 14FDCA4D19FC15F500F6DE96 /* Build configuration list for PBXProject "dhtest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 14FDCA4919FC15F500F6DE96;
+			productRefGroup = 14FDCA5319FC15F500F6DE96 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				14FDCA5119FC15F500F6DE96 /* dhtest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		14FDCA4E19FC15F500F6DE96 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14FDCA9019FC17BC00F6DE96 /* dhcore-test.c in Sources */,
+				14FDCA9619FC17BC00F6DE96 /* test-taskmgr.c in Sources */,
+				14FDCA9519FC17BC00F6DE96 /* test-pool.c in Sources */,
+				14FDCA9719FC17BC00F6DE96 /* test-thread.c in Sources */,
+				14FDCA9419FC17BC00F6DE96 /* test-json.c in Sources */,
+				14FDCA9219FC17BC00F6DE96 /* test-hashtable.cpp in Sources */,
+				14FDCA9119FC17BC00F6DE96 /* test-freelist.c in Sources */,
+				14FDCA9319FC17BC00F6DE96 /* test-heap.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		14FDCA5719FC15F500F6DE96 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		14FDCA5819FC15F500F6DE96 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		14FDCA5A19FC15F500F6DE96 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../include",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/libdhcore-afrifoxvavghptcuonnvwbavoaeq/Build/Products/Debug",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		14FDCA5B19FC15F500F6DE96 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../include",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/libdhcore-afrifoxvavghptcuonnvwbavoaeq/Build/Products/Debug",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		14FDCA4D19FC15F500F6DE96 /* Build configuration list for PBXProject "dhtest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14FDCA5719FC15F500F6DE96 /* Debug */,
+				14FDCA5819FC15F500F6DE96 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		14FDCA5919FC15F500F6DE96 /* Build configuration list for PBXNativeTarget "dhtest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14FDCA5A19FC15F500F6DE96 /* Debug */,
+				14FDCA5B19FC15F500F6DE96 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 14FDCA4A19FC15F500F6DE96 /* Project object */;
+}

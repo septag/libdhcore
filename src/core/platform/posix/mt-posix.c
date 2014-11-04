@@ -13,18 +13,18 @@
  *
  ***********************************************************************************/
 
-#include "mt.h"
+#include "dhcore/mt.h"
 
 #if defined(_POSIXLIB_)
 
 #include <stdio.h>
 #include <errno.h>
 
-#include "mem-mgr.h"
-#include "err.h"
-#include "freelist-alloc.h"
-#include "stack-alloc.h"
-#include "array.h"
+#include "dhcore/mem-mgr.h"
+#include "dhcore/err.h"
+#include "dhcore/freelist-alloc.h"
+#include "dhcore/stack-alloc.h"
+#include "dhcore/array.h"
 
 /* thread's own callback */
 void* thread_callback(void* param);
