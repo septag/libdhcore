@@ -192,7 +192,7 @@ INLINE struct color* color_lerp(struct color* r, const struct color* c1, const s
 
 namespace dh {
 
-class ALIGN16 Color
+class ALIGN16 CORE_CPP_API Color
 {
 private:
     color m_clr;

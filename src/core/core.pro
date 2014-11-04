@@ -30,7 +30,6 @@ linux-g++|linux-clang|macx-clang   {
     QMAKE_CXXFLAGS += \
         -msse -msse2 \
         -ffast-math
-
     LIBS *= -lpthread -lm
 }
 

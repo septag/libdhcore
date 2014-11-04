@@ -17,7 +17,6 @@ linux-g++|linux-clang|macx-clang   {
         -msse -msse2 \
         -ffast-math \
         -std=c++11
-
     LIBS *= -lpthread -lm
 }
 
