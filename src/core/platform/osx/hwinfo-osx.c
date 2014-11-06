@@ -50,10 +50,9 @@ void query_meminfo(struct hwinfo* info)
     size_t len = sizeof(mem_size);
 
     if (sysctl(mib, namelen, &mem_size, &len, NULL, 0) < 0)    {
-        perror("sysctl");
-    }    else    {
-        printf("HW.HW_MEMSIZE = %llu bytes\n", mem_size);
+        perror("ERROR: sysctl");
     }
+
     info->sys_mem = mem_size;
     info->sys_memfree = 0;      ///< \todo implement free memory count on OSX
 }
