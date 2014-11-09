@@ -194,7 +194,12 @@ int path_exists(const char* inpath)
         return FALSE;
     }
 #elif _WIN_
-    return PathFileExists(inpath);
+    if (PathIsDirectory(inpath))
+        return 2;
+    else if (PathFileExists(inpath))
+        return 1;
+    else
+        return 0;
 #endif
 }
 
