@@ -63,6 +63,10 @@ void query_cpuinfo(struct hwinfo* info)
     int buff[4];
     char man[13];
 
+    SYSTEM_INFO sysinfo;
+    GetSystemInfo(&sysinfo);
+    info->cpu_core_cnt = info->cpu_pcore_cnt = sysinfo.dwNumberOfProcessors;
+
     /*  */
     __cpuid(buff, 0);
     high_feat = (uint)(buff[0]);
@@ -74,20 +78,6 @@ void query_cpuinfo(struct hwinfo* info)
     if (str_isequal(man, "AuthenticAMD"))       info->cpu_type = HWINFO_CPU_AMD;
     else if (str_isequal(man, "GenuineIntel"))  info->cpu_type = HWINFO_CPU_INTEL;
     else                                        info->cpu_type = HWINFO_CPU_UNKNOWN;
-
-    /* Cpu Hyper-Threading and Number of Cores */
-    if (high_feat >= 1)        {
-        __cpuid(buff, 1);
-        info->cpu_core_cnt = (buff[1]>>16)&0xFF;
-        /* this doesn't work !
-        if (high_feat >= 4) {
-            __cpuid(buff, 4);
-            info->cpu_pcore_cnt = (buff[0]&0xFC000000)>>26;
-        }
-        info->cpu_pcore_cnt ++;
-        */
-        info->cpu_pcore_cnt = info->cpu_core_cnt;
-    }
 
     /* Get Highest Extended Feature */
     __cpuid(buff, 0x80000000);

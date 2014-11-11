@@ -46,9 +46,8 @@ char util_getch()
 char* util_getuserdir(char* outdir)
 {
     outdir[0] = 0;
-    SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, outdir);
-    path_join(outdir, outdir, "..", NULL);
-    return path_norm(outdir, outdir);
+    SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, SHGFP_TYPE_CURRENT, outdir);
+    return outdir;
 }
 
 char* util_gettempdir(char* outdir)
