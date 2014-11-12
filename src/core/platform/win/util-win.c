@@ -73,7 +73,10 @@ int util_copyfile(const char* dest, const char* src)
 
 int util_pathisdir(const char* path)
 {
-    return (GetFileAttributes(path) & FILE_ATTRIBUTE_DIRECTORY);
+    DWORD atts = GetFileAttributes(path);
+    if (atts == INVALID_FILE_ATTRIBUTES)
+        return FALSE;
+    return (atts & FILE_ATTRIBUTE_DIRECTORY) ? TRUE : FALSE;
 }
 
 void util_sleep(uint msecs)
