@@ -1,12 +1,12 @@
 #! /usr/bin/env python
 
-import os
-def build(bld):
-    files = bld.path.ant_glob('*.c*')
+import os, glob, sys
 
+def build(bld):
     bld.program(
-        source = files,
+        source = bld.path.ant_glob('*.c*'),
         target = 'dhcore-test' + bld.env.SUFFIX,
+        includes = ['../../include'],
         install_path = '${PREFIX}/bin',
         use = ['dhcore'])
 

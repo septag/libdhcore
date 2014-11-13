@@ -42,7 +42,7 @@
 
 /* check for SSE validity */
 #if !(defined(_X86_) || defined(_X64_)) && defined(_SIMD_SSE_)
-#error "SSE SIMD instructions not available in any platform except x86-64"
+#error "SSE SIMD instructions not available in any platform except x86/x86-64"
 #endif
 
 /* SIMD - SSE */

@@ -53,7 +53,7 @@ def build(bld):
         source = files,
         includes = [\
             os.path.join(bld.env.ROOTDIR, 'build'),
-            os.path.join(bld.env.ROOTDIR, 'include', 'dhcore'),
+            os.path.join('..', '..', 'include'),
             'deps'
         ],
         lib = libs,
