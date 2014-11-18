@@ -62,7 +62,7 @@ struct log_stats
  * custom log function callback \n
  * @see log_outputfunc  @ingroup log
  */
-typedef void (*pfn_log_handler)(enum log_type /*type*/, const char* /*text*/, void* /*param*/);
+typedef void (*pfn_log_handler)(enum log_type type, const char* text, void* param);
 
 /* set output options of the logger 
  **

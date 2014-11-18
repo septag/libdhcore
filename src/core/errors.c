@@ -142,7 +142,7 @@ void err_print(const char* source, uint line, const char* text)
         return;
 
     mt_mutex_lock(&g_err->mtx);
-    uint idx = g_err->err_cnt;
+    uint idx = (uint)g_err->err_cnt;
     strcpy(g_err->err_stack[idx].text, text);
 
 #if defined(_DEBUG_)
@@ -201,7 +201,7 @@ const char* err_getstring()
 
 uint err_getcode()
 {
-    return g_err->err_code;
+    return (uint)g_err->err_code;
 }
 
 void err_clear()

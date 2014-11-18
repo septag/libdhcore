@@ -43,16 +43,16 @@ result_t sock_init();
 void sock_release();
 
 /**
- * get current host name
+ * Get current host name
  * @ingroup socket
  */
 CORE_API const char* sock_gethostname();
 
 /**
- * resolves ip address of network name (dns resolve)
+ * Resolves ip address of network name (dns resolve)
  * @ingroup socket
  */
-CORE_API const char* sock_resolveip(const char* name);
+CORE_API char* sock_resolveip(const char* name, OUT char *ipaddr);
 
 /**
  * creates udp socket, udp sockets are connection-less but not very stable/reliable
@@ -156,5 +156,120 @@ CORE_API int sock_poll_recv(socket_t sock, uint timeout);
  * @ingroup socket
  */
 CORE_API int sock_poll_send(socket_t sock, uint timeout);
+
+#ifdef __cplusplus
+namespace dh {
+
+// TCP
+class SocketTCP
+{
+private:
+    socket_t m_sock = SOCK_NULL;
+
+private:
+    SocketTCP(socket_t sock) : m_sock(sock) {}
+
+public:
+    SocketTCP()
+    {
+        m_sock = sock_tcp_create();
+    }
+
+    ~SocketTCP()
+    {
+        if (m_sock != SOCK_NULL && m_sock != SOCK_ERROR)
+            sock_tcp_destroy(m_sock);
+        m_sock = SOCK_NULL;
+    }
+
+    bool listen(int port)
+    {
+        return sock_tcp_listen(m_sock, port) != RET_FAIL ? true : false;
+    }
+
+    SocketTCP accept(char *peer_addr = nullptr)
+    {
+        return SocketTCP(sock_tcp_accept(m_sock, peer_addr));
+    }
+
+    bool connect(const char *addr, int port)
+    {
+        return sock_tcp_connect(m_sock, addr, port) != RET_FAIL ? true : false;
+    }
+
+    bool poll_recv(uint timeout = UINT32_MAX)
+    {
+        return static_cast<bool>(sock_poll_recv(m_sock, timeout));
+    }
+
+    bool poll_send(uint timeout = UINT32_MAX)
+    {
+        return static_cast<bool>(sock_poll_send(m_sock, timeout));
+    }
+
+    int recv(void *buffer, int size)
+    {
+        return sock_tcp_recv(m_sock, buffer, size);
+    }
+
+    int send(const void *buffer, int size)
+    {
+        return sock_tcp_send(m_sock, buffer, size);
+    }
+
+    operator socket_t() {   return m_sock;  }
+    bool is_open() const    {   return m_sock != SOCK_NULL; }
+};
+
+// UDP
+class SocketUDP
+{
+private:
+    socket_t m_sock = SOCK_NULL;
+
+public:
+    SocketUDP()
+    {
+        m_sock = sock_udp_create();
+    }
+
+    ~SocketUDP()
+    {
+        if (m_sock != SOCK_NULL && m_sock != SOCK_ERROR)
+            sock_udp_destroy(m_sock);
+        m_sock = SOCK_NULL;
+    }
+
+    bool bind(int port)
+    {
+        return sock_udp_bind(m_sock, port) != RET_FAIL ? true : false;
+    }
+
+    bool poll_recv(uint timeout = UINT32_MAX)
+    {
+        return static_cast<bool>(sock_poll_recv(m_sock, timeout));
+    }
+
+    bool poll_send(uint timeout = UINT32_MAX)
+    {
+        return static_cast<bool>(sock_poll_send(m_sock, timeout));
+    }
+
+    int recv(void *buffer, int size, char *peer_addr = nullptr)
+    {
+        return sock_udp_recv(m_sock, buffer, size, peer_addr);
+    }
+
+    int send(const void *buffer, int size, const char *addr, int port)
+    {
+        return sock_udp_send(m_sock, addr, port, buffer, size);
+    }
+
+    operator socket_t() {   return m_sock;  }
+    bool is_open() const    {   return m_sock != SOCK_NULL; }
+};
+
+} // dh
+#endif
 
 #endif /* __NETSOCKET_H__ */

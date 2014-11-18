@@ -64,7 +64,7 @@ void crash_print_callstack(uint max_frames)
     void* addrlist[max_frames+1];
 
     /* retrieve current stack addresses */
-    uint addrlen = backtrace( addrlist, sizeof( addrlist ) / sizeof( void* ));
+    uint addrlen = backtrace( addrlist, (int)(sizeof(addrlist)/sizeof(void*)));
 
     if (addrlen == 0) {
         crash_print("");

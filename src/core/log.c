@@ -25,6 +25,7 @@
 #include "dhcore/log.h"
 #include "dhcore/mt.h"
 #include "dhcore/util.h"
+#include "dhcore/str.h"
 
 #define LINE_COUNT_FLUSH    20
 
@@ -40,6 +41,11 @@ struct log_mgr
     FILE* log_file;
     pfn_log_handler log_fn;
     void* fn_param;
+
+#ifdef _WIN_
+    HANDLE con_hdl;
+    WORD con_attrs;
+#endif
 };
 
 enum output_mode
@@ -84,6 +90,19 @@ result_t log_outputconsole(int enable)
     else
     	BIT_REMOVE(g_log->outputs, OUTPUT_CONSOLE);
 
+#ifdef _WIN_
+    if (enable) {
+        g_log->con_hdl = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_SCREEN_BUFFER_INFO con_info;
+        GetConsoleScreenBufferInfo(g_log->con_hdl, &con_info);
+        g_log->con_attrs = con_info.wAttributes;
+    }   else    {
+        if (g_log->con_hdl) {
+            SetConsoleTextAttribute(g_log->con_hdl, g_log->con_attrs);
+            CloseHandle(g_log->con_hdl);
+        }
+    }
+#endif
     return RET_OK;
 }
 
@@ -180,6 +199,7 @@ void log_getstats(struct log_stats* stats)
 
 void log_endprogress(enum log_progress_result res)
 {
+#ifndef _WIN_
     const char *text;
 
     switch (res)    {
@@ -197,6 +217,7 @@ void log_endprogress(enum log_progress_result res)
         break;
     }
     log_outputtext(LOG_PROGRESS_RESULT, text);
+#endif
 }
 
 static void log_outputtext(enum log_type type, const char* text)
@@ -226,7 +247,7 @@ static void log_outputtext(enum log_type type, const char* text)
 
     MT_ATOMIC_INCR(g_log->stats.msgs_cnt);
     strcpy(msg, prefix);
-    strcat(msg, text);
+    str_safecat(msg, sizeof(msg)-1, text);
 
     /* message is ready, dispatch it to outputs */
     if (BIT_CHECK(g_log->outputs, OUTPUT_CONSOLE))   {
@@ -266,10 +287,33 @@ static void log_outputtext(enum log_type type, const char* text)
         else
             printf("%-" LOG_STDOUT_PADDING "s", msg2);
 #else
+        ASSERT(g_log->con_hdl);
+        switch (type)   {
+        case LOG_ERROR:
+            SetConsoleTextAttribute(g_log->con_hdl, FOREGROUND_RED|FOREGROUND_INTENSITY);
+            break;
+        case LOG_WARNING:
+            SetConsoleTextAttribute(g_log->con_hdl, FOREGROUND_RED|FOREGROUND_GREEN);
+            break;
+        case LOG_TEXT:
+        case LOG_PROGRESS:
+            SetConsoleTextAttribute(g_log->con_hdl, 
+                FOREGROUND_RED|FOREGROUND_GREEN|FOREGROUND_BLUE|FOREGROUND_INTENSITY);
+            break;
+        case LOG_PROGRESS_RESULT:
+        case LOG_INFO:
+            SetConsoleTextAttribute(g_log->con_hdl, g_log->con_attrs);
+            break;
+        case LOG_LOAD:
+            SetConsoleTextAttribute(g_log->con_hdl, FOREGROUND_BLUE);
+            break;
+        }
         puts(msg);
+        SetConsoleTextAttribute(g_log->con_hdl, g_log->con_attrs);
 #endif
     }
-
+    
+    
     if (type != LOG_PROGRESS)
         strcat(msg, "\n");
 

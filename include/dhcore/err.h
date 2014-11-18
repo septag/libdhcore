@@ -46,7 +46,7 @@
 #include "core-api.h"
 
 // Enable assert in debug mode anyway
-#if defined(_DEBUG_)
+#if defined(_DEBUG_) && !defined(_ENABLEASSERT_)
   #define _ENABLEASSERT_
 #endif
 

@@ -17,7 +17,6 @@ CONFIG(debug, debug|release) {
 }
 
 INCLUDEPATH = \
-    ../../include/dhcore \
     ../../include \
     deps
 
@@ -28,8 +27,23 @@ linux-g++|linux-clang|macx-clang   {
         -std=gnu99 \
         -msse -msse2 \
         -ffast-math
-
+    QMAKE_CXXFLAGS += \
+        -msse -msse2 \
+        -ffast-math
     LIBS *= -lpthread -lm
+}
+
+win32-msvc2013 | win32-msvc2012 | win32-msvc2010 {
+    QMAKE_CFLAGS += /TP
+
+    CONFIG(debug, debug|release)    {
+        DEFINES += _DEBUG
+    }
+
+    DEFINES += _CRT_SECURE_NO_WARNINGS _WINDOWS _WINDLL _MBCS
+    DEFINES -= UNICODE
+
+    LIBS += -lws2_32 -lShlwapi -luser32 -lgdi32 -lkernel32 -lAdvapi32 -lShell32
 }
 
 SOURCES += \

@@ -5,7 +5,7 @@ Version 0.5.2-dev
 [https://github.com/septag/libdhcore](https://github.com/septag/libdhcore)  
 
 ### Description
-*libdhcore* is a lightweight and cross-platform C (C99) library, mainly targeted to game developers. It is used in *darkHAMMER* game engine, I don't know how mature it is, but it is being used and tested for 2 years in various projects.  
+*libdhcore* is a lightweight and cross-platform C (C99) library with C++ wrappers, mainly targeted to game developers. It is used in *darkHAMMER* game engine, I don't know how mature it is, but it is being used and tested for 2 years in various projects.  
 It can be built with GCC, MSVC and Clang compilers, on x86, x86-64 and ARM platforms, including windows, linux, MacOS and RaspberryPI.  
 Source code License is BSD.  
 
@@ -45,7 +45,7 @@ Here's a list of library modules and their descriptions:
 
 ### Installation
 
-#### Linux
+#### Linux/Waf
 Install the packages listed below before proceeding to build and install the library :   
 
 - **git**: source control client (not required, as you can download the source too)
@@ -72,21 +72,25 @@ sudo waf install_debug
 
 To build test applications (*$(prefix)/bin/dhcore-test*) , use `--build-tests` argument in `waf configure`.   
 
-To use a cross compiler, use `--cross-compile` argument in *configure* and provide your compiler binary. For example, I have a ARMv6 cross compiler named *armv6-rpi-linux-gnueabi-gcc*, I use below command to configure the build for that platform:
+To use a __Cross Compiler__, like for example compiling for RaspberryPI device, use `CC` and `CXX` enviroment variables, and `--platform` argument in *configure* and provide platform code for builder.  
+For example, I have a ARMv6 cross compiler named *armv6-rpi-linux-gnueabi-gcc*, I use below command to configure the build for RaspberryPI device (under unix):
 
 ```
-waf configure --cross-compile=armv6-rpi-linux-gnueabi-gcc
+CC=armv6-rpi-linux-gnueabi-gcc CXX=armv6-rpi-linux-gnueabi-g++ waf configure --platform=linux_rpi
 ```
 
 For more *configure* options, run `waf --help` when you are in *libdhcore* directory to see more command line arguments.
 
-#### Windows
-The code should compile on windows using the same commands with `waf`, in the following days, I'll test it on that platform and write a more useful documentation. Also I'll add Visual Studio 2012 project files and thus easier build for MSVC folks.
+#### Linux/QtCreator
+The code can also be built with Qt Creator. Fetch the code from _github_, open the project file `libdhcore.pro` and build.
 
+#### Windows/Visual Studio
+There is also Visual Studio 2013 projects under `vs2013` folder. Open the solution. Choose your configuration and build.  
+The code can also be built with _Qt Creator_. Just open the project file `libdhcore.pro` and build.
 
-#### MacOS
-The code was also built on MacOS (Clang/GCC) last year, but unfortunately I don't have MacOS device to test it myself,  so contributors are welcomed.
-
+#### MacOS/Xcode
+There are xcode project files under `xcode` directory.  
+The code can also be built with _Qt Creator_. Just open the project file `libdhcore.pro` and build.
 
 ### Usage
 Make sure the you have setup *include* and *library* paths of *libdhcore* in your compiler. Then include any header file from `dhcore` directory into your source. And link your program to `dhcore`.  

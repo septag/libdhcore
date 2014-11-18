@@ -192,7 +192,7 @@ INLINE uint maxui(uint n1, uint n2)
  */
 INLINE void swapf(float* n1, float* n2)
 {
-    register float tmp = *n1;
+    float tmp = *n1;
     *n1 = *n2;
     *n2 = tmp;
 }
@@ -203,7 +203,7 @@ INLINE void swapf(float* n1, float* n2)
  */
 INLINE void swapi(int* n1, int* n2)
 {
-    register int tmp = *n1;
+    int tmp = *n1;
     *n1 = *n2;
     *n2 = tmp;
 }
@@ -214,7 +214,7 @@ INLINE void swapi(int* n1, int* n2)
  */
 INLINE void swapui(uint* n1, uint* n2)
 {
-    register uint tmp = *n1;
+    uint tmp = *n1;
     *n1 = *n2;
     *n2 = tmp;
 }
@@ -225,7 +225,7 @@ INLINE void swapui(uint* n1, uint* n2)
  */
 INLINE void swapptr(void** pp1, void** pp2)
 {
-	register void* tmp = *pp1;
+	void* tmp = *pp1;
 	*pp1 = *pp2;
 	*pp2 = tmp;
 }

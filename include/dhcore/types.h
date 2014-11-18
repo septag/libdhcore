@@ -40,6 +40,10 @@
   #define _DEBUG_
 #endif
 
+#if defined(DEBUG) && !defined(_DEBUG_)
+#define _DEBUG_
+#endif
+
 #if defined(WIN32) && !defined(_WIN_)
   #define _WIN_
 #endif
@@ -155,8 +159,10 @@ typedef uint64 reshandle_t;
 /* pointer type (64/32 platforms are different) */
 #if defined(_X64_)
 typedef uint64 uptr_t;
+typedef int64 iptr_t;
 #else
 typedef uint uptr_t;
+typedef int iptr_t;
 #endif
 
 /* TRUE/FALSE definitions */

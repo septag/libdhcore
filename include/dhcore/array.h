@@ -71,8 +71,8 @@ struct array
 #ifdef __cplusplus
     array()
     {
-        alloc = NULL;
-        buffer = NULL;
+        alloc = nullptr;
+        buffer = nullptr;
         item_cnt = 0;
         max_cnt = 0;
         item_sz = 0;

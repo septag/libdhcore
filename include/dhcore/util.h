@@ -25,7 +25,9 @@
 #include "core-api.h"
 #include "allocator.h"
 
-/* terminal ANSI colors for linux console only */
+/* terminal ANSI colors for UNIX console only 
+   In case of windows, we will translate these to API calls internally
+ */
 #if defined(_POSIXLIB_)
 #define TERM_RESET   "\033[0m"
 #define TERM_DIM     "\033[2m"

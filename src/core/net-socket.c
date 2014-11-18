@@ -33,7 +33,7 @@
 #endif
 
 /* globals */
-static int sock_hasinit = FALSE;
+static int sock_isinit = FALSE;
 
 /*************************************************************************************************/
 result_t sock_init()
@@ -49,14 +49,14 @@ result_t sock_init()
         return RET_FAIL;
     }
 #endif
-    sock_hasinit = TRUE;
+    sock_isinit = TRUE;
     return RET_OK;
 }
 
 void sock_release()
 {
 #if defined(_WIN_)
-    if (sock_hasinit)
+    if (sock_isinit)
         WSACleanup();
 #endif
 }
@@ -68,7 +68,7 @@ const char* sock_gethostname()
     return name;
 }
 
-const char* sock_resolveip(const char* name)
+char* sock_resolveip(const char* name, char *ipaddr)
 {
     char host_name[255];
     if (name == NULL || str_isempty(name) || str_isequal_nocase(name, "localhost")) {
@@ -80,9 +80,9 @@ const char* sock_resolveip(const char* name)
     /* return first binded ip address to the host */
     struct hostent* addr = gethostbyname(host_name);
     if (addr == NULL)   
-        return "0.0.0.0";
+        return strcpy(ipaddr, "0.0.0.0");
     else                
-        return inet_ntoa(*((struct in_addr*)addr->h_addr_list[0]));
+        return strcpy(ipaddr, inet_ntoa(*((struct in_addr*)addr->h_addr_list[0])));
 }
 
 /*************************************************************************************************/
@@ -122,8 +122,8 @@ int sock_udp_recv(socket_t sock, void* buffer, int size, char* out_sender_ipaddr
     memset(&addr, 0x00, sizeof(struct sockaddr_in));
     socklen_t addrlen = sizeof(addr);
 
-    int r = recvfrom(sock, (char*)buffer, size, 0, (struct sockaddr*)&addr, &addrlen);
-    if (r > 0)     {
+    int r = (size_t)recvfrom(sock, (char*)buffer, (size_t)size, 0, (struct sockaddr*)&addr, &addrlen);
+    if (r > 0 && out_sender_ipaddr)     {
         strcpy(out_sender_ipaddr, inet_ntoa(addr.sin_addr));
     }
     return r;
@@ -154,8 +154,8 @@ int sock_udp_send(socket_t sock, const char* ipaddr, int port, const void* buffe
     /* divide and send packets */
     int sent_bytes = 0;
     if (size <= max_size)   {
-        sent_bytes = sendto(sock, (const char*)buffer, size, 0,
-                            (struct sockaddr*)&addr, sizeof(addr));
+        sent_bytes = (size_t)sendto(sock, (const char*)buffer, (size_t)size, 0,
+                                    (struct sockaddr*)&addr, sizeof(addr));
     }    else    {
         int packets_cnt = size / max_size;
         int remain_size = size % max_size;
@@ -214,7 +214,7 @@ socket_t sock_tcp_accept(socket_t sock, char* out_peer_ipaddr)
     struct sockaddr_in addr;
     socklen_t addrlen = sizeof(addr);
     socket_t ret_sock = accept(sock, (struct sockaddr*)&addr, &addrlen);
-    if (ret_sock != SOCK_NULL)  {
+    if (ret_sock != SOCK_NULL && out_peer_ipaddr)  {
         strcpy(out_peer_ipaddr, inet_ntoa(addr.sin_addr));
     }
     return ret_sock;
@@ -235,14 +235,14 @@ int sock_tcp_recv(socket_t sock, void* buffer, int size)
 {
     if (sock == SOCK_NULL)      
         return -1;
-    return recv(sock, (char*)buffer, size, 0);
+    return (size_t)recv(sock, (char*)buffer, (size_t)size, 0);
 }
 
 int sock_tcp_send(socket_t sock, const void* buffer, int size)
 {
     if (sock == SOCK_NULL)      
         return -1;
-    return send(sock, (const char*)buffer, size, 0);
+    return (size_t)send(sock, (const char*)buffer, (size_t)size, 0);
 }
 
 

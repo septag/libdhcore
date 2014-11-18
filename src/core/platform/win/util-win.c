@@ -46,7 +46,7 @@ char util_getch()
 char* util_getuserdir(char* outdir)
 {
     outdir[0] = 0;
-    SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, SHGFP_TYPE_CURRENT, outdir);
+    SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, SHGFP_TYPE_CURRENT, outdir);
     return outdir;
 }
 
@@ -73,7 +73,10 @@ int util_copyfile(const char* dest, const char* src)
 
 int util_pathisdir(const char* path)
 {
-    return (GetFileAttributes(path) & FILE_ATTRIBUTE_DIRECTORY);
+    DWORD atts = GetFileAttributes(path);
+    if (atts == INVALID_FILE_ATTRIBUTES)
+        return FALSE;
+    return (atts & FILE_ATTRIBUTE_DIRECTORY) ? TRUE : FALSE;
 }
 
 void util_sleep(uint msecs)

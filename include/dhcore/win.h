@@ -17,6 +17,8 @@
 #ifndef __WIN_H__
 #define __WIN_H__
 
+#include "types.h"
+
 #if defined(_WIN_)
 
 #if !defined(WIN32_LEAN_AND_MEAN)

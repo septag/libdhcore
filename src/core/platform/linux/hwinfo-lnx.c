@@ -101,11 +101,6 @@ void query_cpuinfo(struct hwinfo* info)
                 info->cpu_cachesize = str_toint32(strchr(token, ':') + 2);
             }
 
-            /* cores */
-            else if (strstr(token, "cpu cores"))	{
-                info->cpu_pcore_cnt = str_toint32(strchr(token, ':') + 2);
-            }
-
             /* cache line */
             else if (strstr(token, "cache_alignment"))	{
                 info->cpu_cacheline = str_toint32(strchr(token, ':') + 2);
