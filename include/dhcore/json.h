@@ -403,6 +403,11 @@ public:
     float to_float() const      {   return json_getf(m_j);  }
     bool to_bool() const        {   return (bool)json_getb(m_j);    }
 
+    JNode child(const char *name) const
+    {
+        return JNode(json_getitem(m_j, name));
+    }
+
     const char* child_str(const char *name, const char *def_val = "") const
     {
         return json_gets_child(m_j, name, def_val);
@@ -423,8 +428,18 @@ public:
         return (bool)json_getb_child(m_j, name, def_val);
     }
 
-    enum json_type type() const     {   return json_gettype(m_j);   }
+    int array_item_count() const
+    {
+        return json_getarr_count(m_j);
+    }
 
+    JNode array_item(int index) const
+    {
+        return JNode(json_getarr_item(m_j, index));
+    }
+
+    enum json_type type() const     {   return json_gettype(m_j);   }
+    bool is_valid() const    { return m_j != nullptr; };
     operator json_t() { return m_j; }
     operator const json_t() const { return m_j; }
 };
