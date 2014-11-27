@@ -313,7 +313,7 @@ public:
     T value(uint key) const
     {
         hashtable_item *item = hashtable_fixed_find(&m_table, key);
-        if (item != NULL)
+        if (item != nullptr)
             return (T)(item->value);
         else
             return (T)(Invalid);
@@ -332,7 +332,7 @@ public:
     void remove(uint key)
     {
         hashtable_item *item = hashtable_fixed_find(&m_table, key);
-        if (item != NULL)
+        if (item != nullptr)
             hashtable_fixed_remove(&m_table, item);
     }
 
@@ -387,7 +387,7 @@ public:
     T value(uint key) const
     {
         hashtable_item *item = hashtable_open_find(&m_table, key);
-        if (item != NULL)
+        if (item != nullptr)
             return (T)(item->value);
         else
             return (T)(Invalid);
@@ -406,7 +406,7 @@ public:
     void remove(uint key)
     {
         hashtable_item *item = hashtable_open_find(&m_table, key);
-        if (item != NULL)
+        if (item != nullptr)
             hashtable_open_remove(&m_table, item);
     }
 
@@ -472,14 +472,14 @@ public:
     void remove(uint key)
     {
         hashtable_item_chained *item = hashtable_chained_find(&m_table, key);
-        if (item != NULL)
+        if (item != nullptr)
             hashtable_chained_remove(&m_table, item);
     }
 
     T value(uint key) const
     {
         hashtable_item_chained *item = hashtable_chained_find(&m_table, key);
-        if (item != NULL)
+        if (item != nullptr)
             return (T)(item->value);
         else
             return (T)(Invalid);
