@@ -1298,6 +1298,111 @@ INLINE struct vec4i* vec4i_or(struct vec4i* r, const struct vec4i* a, const stru
 
 namespace dh {
 
+/* Vec4 */
+class ALIGN16 Vec4
+{
+private:
+    vec4f m_vec;
+
+public:
+    Vec4()
+    {
+    }
+
+    Vec4(float x, float y, float z, float w)
+    {
+        vec4_setf(&m_vec, x, y, z, w);
+    }
+
+    Vec4& set(float x, float y, float z, float w)
+    {
+        vec4_setf(&m_vec, x, y, z, w);
+        return *this;
+    }
+
+    bool operator==(const Vec4 &v) const
+    {
+        return vec4_isequal(&m_vec, &v.m_vec);
+    }
+
+    bool operator!=(const Vec4 &v) const
+    {
+        return !vec4_isequal(&m_vec, &v.m_vec);
+    }
+
+    Vec4 operator*(float k) const
+    {
+        Vec4 r;
+        vec4_muls(&r.m_vec, &m_vec, k);
+        return r;
+    }
+
+    Vec4& operator*=(float k)
+    {
+        vec4_muls(&m_vec, &m_vec, k);
+        return *this;
+    }
+
+    Vec4 operator/(float k) const
+    {
+        Vec4 r;
+        vec4_muls(&r.m_vec, &m_vec, 1.0f/k);
+        return r;
+    }
+
+    Vec4& operator/=(float k)
+    {
+        vec4_muls(&m_vec, &m_vec, 1.0f/k);
+        return *this;
+    }
+
+    Vec4 operator+(const Vec4& v) const
+    {
+        Vec4 r;
+        vec4_add(&r.m_vec, &m_vec, &v.m_vec);
+        return r;
+    }
+
+    Vec4& operator+=(const Vec4& v)
+    {
+        vec4_add(&m_vec, &m_vec, &v.m_vec);
+        return *this;
+    }
+
+    Vec4 operator-(const Vec4& v) const
+    {
+        Vec4 r;
+        vec4_sub(&r.m_vec, &m_vec, &v.m_vec);
+        return r;
+    }
+
+    Vec4& operator-=(const Vec4& v)
+    {
+        vec4_sub(&m_vec, &m_vec, &v.m_vec);
+        return *this;
+    }
+
+    static Vec4 lerp(const Vec4& v0, const Vec4& v1, float t)
+    {
+        Vec4 r;
+        vec3_lerp(&r.m_vec, &v0.m_vec, &v1.m_vec, t);
+        return r;
+    }
+
+    float& operator [](int idx)   {   return m_vec.f[idx];    }
+    float operator [](int idx) const {   return m_vec.f[idx];    }
+
+    float x() const { return m_vec.x;   }
+    float y() const { return m_vec.y;   }
+    float z() const { return m_vec.z;   }
+    float w() const { return m_vec.w;   }
+
+    operator vec4f*()   {   return &m_vec;  }
+    operator const vec4f*() const   {   return &m_vec;  }
+    operator float*()   {   return m_vec.f; }
+    operator const float*() const {   return m_vec.f; }
+};
+
 /* Vec3 */
 class CORE_CPP_API ALIGN16 Vec3
 {
@@ -1433,7 +1538,7 @@ public:
     static Vec3 lerp(const Vec4& v0, const Vec4& v1, float t)
     {
         Vec3 r;
-        vec3_lerp(&r.m_vec, &v0.m_vec, &v1.m_vec, t);
+        vec3_lerp(&r.m_vec, v0, v1, t);
         return r;
     }
 
@@ -1464,111 +1569,6 @@ public:
 
     float& operator [](int idx)   {   return m_vec.f[idx];    }
     float operator [](int idx) const {   return m_vec.f[idx];    }
-
-    operator vec4f*()   {   return &m_vec;  }
-    operator const vec4f*() const   {   return &m_vec;  }
-    operator float*()   {   return m_vec.f; }
-    operator const float*() const {   return m_vec.f; }
-};
-
-/* Vec4 */
-class ALIGN16 Vec4
-{
-private:
-    vec4f m_vec;
-
-public:
-    Vec4()
-    {
-    }
-
-    Vec4(float x, float y, float z, float w)
-    {
-        vec4_setf(&m_vec, x, y, z, w);
-    }
-
-    Vec4& set(float x, float y, float z, float w)
-    {
-        vec4_setf(&m_vec, x, y, z, w);
-        return *this;
-    }
-
-    bool operator==(const Vec4 &v) const
-    {
-        return vec4_isequal(&m_vec, &v.m_vec);
-    }
-
-    bool operator!=(const Vec4 &v) const
-    {
-        return !vec4_isequal(&m_vec, &v.m_vec);
-    }
-
-    Vec4 operator*(float k) const
-    {
-        Vec4 r;
-        vec4_muls(&r.m_vec, &m_vec, k);
-        return r;
-    }
-
-    Vec4& operator*=(float k)
-    {
-        vec4_muls(&m_vec, &m_vec, k);
-        return *this;
-    }
-
-    Vec4 operator/(float k) const
-    {
-        Vec4 r;
-        vec4_muls(&r.m_vec, &m_vec, 1.0f/k);
-        return r;
-    }
-
-    Vec4& operator/=(float k)
-    {
-        vec4_muls(&m_vec, &m_vec, 1.0f/k);
-        return *this;
-    }
-
-    Vec4 operator+(const Vec4& v) const
-    {
-        Vec4 r;
-        vec4_add(&r.m_vec, &m_vec, &v.m_vec);
-        return r;
-    }
-
-    Vec4& operator+=(const Vec4& v)
-    {
-        vec4_add(&m_vec, &m_vec, &v.m_vec);
-        return *this;
-    }
-
-    Vec4 operator-(const Vec4& v) const
-    {
-        Vec4 r;
-        vec4_sub(&r.m_vec, &m_vec, &v.m_vec);
-        return r;
-    }
-
-    Vec4& operator-=(const Vec4& v)
-    {
-        vec4_sub(&m_vec, &m_vec, &v.m_vec);
-        return *this;
-    }
-
-    static Vec4 lerp(const Vec4& v0, const Vec4& v1, float t)
-    {
-        Vec4 r;
-        vec3_lerp(&r.m_vec, &v0.m_vec, &v1.m_vec, t);
-        return r;
-    }
-
-    float& operator [](int idx)   {   return m_vec.f[idx];    }
-    float operator [](int idx) const {   return m_vec.f[idx];    }
-
-    float x() const { return m_vec.x;   }
-    float y() const { return m_vec.y;   }
-    float z() const { return m_vec.z;   }
-    float w() const { return m_vec.w;   }
 
     operator vec4f*()   {   return &m_vec;  }
     operator const vec4f*() const   {   return &m_vec;  }
