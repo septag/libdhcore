@@ -1430,6 +1430,13 @@ public:
         return r;
     }
 
+    static Vec3 lerp(const Vec4& v0, const Vec4& v1, float t)
+    {
+        Vec3 r;
+        vec3_lerp(&r.m_vec, &v0.m_vec, &v1.m_vec, t);
+        return r;
+    }
+
     static Vec3 cubic(const Vec3& v0, const Vec3& v1, const Vec3& v2, const Vec3& v3, float t)
     {
         Vec3 r;
@@ -1546,6 +1553,13 @@ public:
     {
         vec4_sub(&m_vec, &m_vec, &v.m_vec);
         return *this;
+    }
+
+    static Vec4 lerp(const Vec4& v0, const Vec4& v1, float t)
+    {
+        Vec4 r;
+        vec3_lerp(&r.m_vec, &v0.m_vec, &v1.m_vec, t);
+        return r;
     }
 
     float& operator [](int idx)   {   return m_vec.f[idx];    }
