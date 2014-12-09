@@ -1430,13 +1430,6 @@ public:
         return r;
     }
 
-    static Vec3 lerp(const Vec4& v0, const Vec4& v1, float t)
-    {
-        Vec3 r;
-        vec3_lerp(&r.m_vec, &v0.m_vec, &v1.m_vec, t);
-        return r;
-    }
-
     static Vec3 cubic(const Vec3& v0, const Vec3& v1, const Vec3& v2, const Vec3& v3, float t)
     {
         Vec3 r;
@@ -1687,6 +1680,7 @@ private:
 
 public:
     static const Mat3 Ident;
+    static const Mat3 Zero;
 
 public:
     Mat3()
@@ -1932,6 +1926,7 @@ private:
 
 public:
     static const Mat4 Ident;
+    static const Mat4 Zero;
 
 public:
     Mat4()
