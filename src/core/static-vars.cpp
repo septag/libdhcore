@@ -35,12 +35,20 @@ const Mat3 Mat3::Ident(1.0f, 0.0f, 0.0f,
                        0.0f, 1.0f, 0.0f,
                        0.0f, 0.0f, 1.0f,
                        0.0f, 0.0f, 0.0f);
+const Mat3 Mat3::Ident(0.0f, 0.0f, 0.0f,
+                       0.0f, 0.0f, 0.0f,
+                       0.0f, 0.0f, 0.0f,
+                       0.0f, 0.0f, 0.0f);
 
 // Mat4
 const Mat4 Mat4::Ident(1.0f, 0.0f, 0.0f, 0.0f,
                        0.0f, 1.0f, 0.0f, 0.0f,
                        0.0f, 0.0f, 1.0f, 0.0f,
                        0.0f, 0.0f, 0.0f, 1.0f);
+const Mat4 Mat4::Zero(0.0f, 0.0f, 0.0f, 0.0f,
+                      0.0f, 0.0f, 0.0f, 0.0f,
+                      0.0f, 0.0f, 0.0f, 0.0f,
+                      0.0f, 0.0f, 0.0f, 0.0f);
 
 // Vec2
 const Vec2 Vec2::Zero(0.0f, 0.0f);

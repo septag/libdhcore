@@ -221,9 +221,9 @@ void fio_releasemgr()
     if (g_fio != NULL)  {
 #if defined(_FILEMON_)
         /* search for remaining registered monitor items and delete them */
-        uint cnt = 0;
-        for (uint i = 0; i < g_fio->mon_table.slots_cnt; i++) {
-            struct hashtable_item* item = &g_fio->mon_table.slots[i];
+        int cnt = 0;
+        for (int i = 0; i < g_fio->mon_table.items_cnt; i++) {
+            struct hashtable_item* item = &g_fio->mon_table.items[i];
             if (item->hash != 0)    {
                 struct mon_item* mitem = (struct mon_item*)item->value;
                 FREE(mitem);
@@ -297,7 +297,7 @@ int fio_addvdir(const char* directory, int monitor)
 void fio_clearvdirs()
 {
 #if defined(_FILEMON_)
-    for (uint i = 0; i < g_fio->vdirs.item_cnt; i++)  {
+    for (int i = 0; i < g_fio->vdirs.item_cnt; i++)  {
         struct vdir* vd = &((struct vdir*)g_fio->vdirs.buffer)[i];
         if (vd->monitor)
             fio_vdir_releasemon(vd);
@@ -817,7 +817,7 @@ static void fio_vdir_releasemon(struct vdir* vd)
 
 int fio_find_file(const struct array* files, const char* filepath)
 {
-    for (uint i = 0; i < files->item_cnt; i++)    {
+    for (int i = 0; i < files->item_cnt; i++)    {
         const char* f = ((char*)files->buffer) + i*DH_PATH_MAX;
         if (str_isequal(f, filepath))
             return TRUE;
@@ -828,7 +828,7 @@ int fio_find_file(const struct array* files, const char* filepath)
 void fio_mon_update()
 {
     /* move through vdirs and look for changes within their file-system */
-    for (uint i = 0; i < g_fio->vdirs.item_cnt; i++)  {
+    for (int i = 0; i < g_fio->vdirs.item_cnt; i++)  {
         struct vdir* vd = &((struct vdir*)g_fio->vdirs.buffer)[i];
         if (!vd->monitor)
             continue;
@@ -841,7 +841,7 @@ void fio_mon_update()
 
         /* check with registered file items and see we have a match */
         struct array* arr = (struct array*)vd->frontbuff;
-        for (uint c = 0; c < arr->item_cnt; c++)  {
+        for (int c = 0; c < arr->item_cnt; c++)  {
             const char* filepath = ((char*)arr->buffer) + c*DH_PATH_MAX;
 
             struct hashtable_item* item = hashtable_open_find(&g_fio->mon_table,
