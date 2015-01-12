@@ -143,16 +143,20 @@
 /* common data-type defs */
 typedef int int32;
 typedef long long int int64;
-typedef short int16;
-typedef char int8;
+typedef unsigned long long int uint64;
 typedef unsigned int uint;
+
+#ifndef DHCORE_IGNORE_BASIC_TYPEDEFS
+typedef char int8;
+typedef short int16;
 typedef unsigned int uint32;
 typedef unsigned short uint16;
 typedef unsigned char uint8;
-typedef unsigned long long int uint64;
+#endif
+
+typedef wchar_t wchar;
 typedef float fl32;
 typedef double fl64;
-typedef wchar_t wchar;
 typedef int result_t;
 typedef uint64 reshandle_t;
 
