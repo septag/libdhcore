@@ -20,7 +20,9 @@ INCLUDEPATH = \
     ../../include \
     deps
 
-DEFINES += _CORE_EXPORT_ _SIMD_SSE_
+DEFINES += _CORE_EXPORT_
+
+CONFIG(x86_64): DEFINES += _SIMD_SSE_
 
 linux-g++|linux-clang|macx-clang   {
     QMAKE_CFLAGS += \
