@@ -226,6 +226,12 @@ public:
     {
         m_clr = c;
     }
+    
+    Color& operator=(const Color &c)
+    {
+        color_setc(&m_clr, &c.m_clr);
+        return *this;
+    }
 
     float r() const
     {

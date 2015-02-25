@@ -7,14 +7,8 @@ VERSION = "1.0.0"
 
 DEFINES += _VERSION_=\\\"$$VERSION\\\"
 
-CONFIG(release, debug|release) {
-    TARGET = dhcore
-}
-
-CONFIG(debug, debug|release) {
-    TARGET = dhcore-dbg
-    DEFINES += _ENABLEASSERT_ _DEBUG_
-}
+CONFIG(release, debug|release):TARGET = dhcore
+CONFIG(debug, debug|release):TARGET = dhcore-dbg
 
 INCLUDEPATH = \
     ../../include \
@@ -37,10 +31,6 @@ linux-g++|linux-clang|macx-clang   {
 
 win32-msvc2013 | win32-msvc2012 | win32-msvc2010 {
     QMAKE_CFLAGS += /TP
-
-    CONFIG(debug, debug|release)    {
-        DEFINES += _DEBUG
-    }
 
     DEFINES += _CRT_SECURE_NO_WARNINGS _WINDOWS _WINDLL _MBCS
     DEFINES -= UNICODE
@@ -81,6 +71,7 @@ SOURCES += \
     path.c \
     static-vars.cpp
 
+# posix
 unix    {
     SOURCES += \
         platform/posix/crash-posix.c \
@@ -88,6 +79,7 @@ unix    {
         platform/posix/util-posix.c
 }
 
+# windows
 win32   {
     SOURCES += \
         platform/win/hwinfo-win.c \
@@ -95,26 +87,27 @@ win32   {
         platform/win/timer-win.c \
         platform/win/util-win.c \
         platform/win/crash-win.cpp
-    DEFINES += _WIN_
 }
 
+# mac
 macx {
     SOURCES += \
         platform/osx/hwinfo-osx.c \
         platform/osx/timer-osx.c \
         platform/osx/util-osx.c
-    DEFINES += _OSX_
 }
 
-# linux (very likely)
+# linux
 unix:!macx  {
     SOURCES += \
         platform/linux/hwinfo-lnx.c \
         platform/linux/timer-lnx.c \
         platform/linux/util-lnx.c
-    DEFINES += _LINUX_
     DEFINES += HAVE_MALLOC_H
 }
+
+# debug
+CONFIG(debug, debug|release): DEFINES += _DEBUG_
 
 HEADERS = \
     ../../include/dhcore/allocator.h \
@@ -157,3 +150,4 @@ HEADERS = \
     ../../include/dhcore/win.h \
     ../../include/dhcore/zip.h \
     ../../include/dhcore/path.h
+

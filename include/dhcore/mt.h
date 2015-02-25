@@ -48,13 +48,13 @@
  * @ingroup mt
  */
  
-#if defined(_X86_) || defined(_ARM_)
+#ifdef _ARCH32_
 typedef long volatile atom_t;
-#elif defined(_X64_)
+#elif defined(_ARCH64_)
 typedef int64 volatile atom_t;
 #endif
 
-#if defined(_WIN_)
+#ifdef _WIN_
 /* windows specific */
 #include "win.h"
 #define MT_ATOMIC_CAS(dest, cmp_value, swap_value)     \

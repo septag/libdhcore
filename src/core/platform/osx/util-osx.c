@@ -15,7 +15,7 @@
 
 #include "dhcore/util.h"
 
-#if defined(_OSX_)
+#if defined(_APPLE_)
 
 #include <sys/socket.h>
 #include <sys/uio.h>

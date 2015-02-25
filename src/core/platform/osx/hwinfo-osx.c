@@ -19,7 +19,7 @@
 
 #include "dhcore/hwinfo.h"
 
-#if defined(_OSX_)
+#if defined(_APPLE_)
 
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -53,7 +53,7 @@ void query_meminfo(struct hwinfo* info)
         perror("ERROR: sysctl");
     }
 
-    info->sys_mem = mem_size;
+    info->sys_mem = (size_t)mem_size;
     info->sys_memfree = 0;      ///< \todo implement free memory count on OSX
 }
 

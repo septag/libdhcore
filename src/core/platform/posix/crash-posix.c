@@ -13,6 +13,9 @@
  *
  ***********************************************************************************/
 
+#include "dhcore/crash.h"
+
+#ifndef _MOBILE_
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -23,7 +26,6 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include "dhcore/crash.h"
 #include "dhcore/log.h"
 
 /* */
@@ -137,3 +139,14 @@ void crash_set_handler(pfn_crash_handler crash_fn)
 {
     g_crash_fn = crash_fn;
 }
+#else
+result_t crash_init()
+{
+    return RET_OK;
+}
+
+void crash_set_handler(pfn_crash_handler crash_fn)
+{
+}
+
+#endif

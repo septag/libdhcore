@@ -28,7 +28,7 @@
 /* terminal ANSI colors for UNIX console only 
    In case of windows, we will translate these to API calls internally
  */
-#if defined(_POSIXLIB_)
+#if defined(_POSIXLIB_) && !defined(_MOBILE_)
 #define TERM_RESET   "\033[0m"
 #define TERM_DIM     "\033[2m"
 #define TERM_BLACK   "\033[30m"      /* Black */
@@ -57,7 +57,7 @@
 #define TERM_DIMMAGENTA "\033[2;35m"      /* Dim Magenta */
 #define TERM_DIMCYAN    "\033[2;36m"      /* Dim Cyan */
 #define TERM_DIMWHITE   "\033[2;37m"      /* Dim White */
-#elif defined(_WIN_)
+#else
 #define TERM_RESET ""
 #define TERM_DIM ""
 #define TERM_BLACK ""

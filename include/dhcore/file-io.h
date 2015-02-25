@@ -97,6 +97,12 @@ CORE_API void fio_clearvdirs();
  */
 CORE_API void fio_addpak(struct pak_file* pak);
 
+/*!
+ * \brief fio_addbundle
+ * \ingroup fileio
+ */
+CORE_API void fio_addbundle(const char *bundle_name);
+
 /**
  * Clear pak files list in the virtual filesystem
  * @ingroup fileio

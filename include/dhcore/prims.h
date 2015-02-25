@@ -197,6 +197,15 @@ INLINE struct rect2df* rect2df_shrink(struct rect2df* rr, const struct rect2df* 
     return rect2df_setf(rr, r->x + shrink, r->y + shrink, r->w - 2.0f*shrink, r->h - 2.0f*shrink);
 }
 
+INLINE struct rect2df* rect2df_setr(struct rect2df *rr, const struct rect2df *r)
+{
+    rr->x = r->x;
+    rr->y = r->y;
+    rr->w = r->w;
+    rr->h = r->h;
+    return rr;
+}
+
 INLINE struct rect2df* rect2df_grow(struct rect2df* rr, const struct rect2df* r, float grow)
 {
     return rect2df_setf(rr, r->x - grow, r->y - grow, r->w + 2.0f*grow, r->h + 2.0f*grow);
@@ -444,6 +453,12 @@ public:
         m_sphere = s;
     }
 
+    Sphere& operator=(const Sphere &s)
+    {
+        sphere_sets(&m_sphere, &s.m_sphere);
+        return *this;
+    }
+
     Sphere& set(float x, float y, float z, float r)
     {
         sphere_setf(&m_sphere, x, y, z, r);
@@ -545,6 +560,12 @@ public:
     AABB& set(const Vec3 &minpt, const Vec3 &maxpt)
     {
         aabb_setv(&m_aabb, minpt, maxpt);
+        return *this;
+    }
+
+    AABB& operator=(const AABB &box)
+    {
+        aabb_setb(&m_aabb, &box.m_aabb);
         return *this;
     }
 
@@ -678,9 +699,16 @@ public:
     {
         plane_setf(&m_plane, nx, ny, nz, d);
     }
+
     Plane(const plane &pl)
     {
         m_plane = pl;
+    }
+
+    Plane& operator=(const Plane &p)
+    {
+        plane_setf(&m_plane, p.m_plane.nx, p.m_plane.ny, p.m_plane.nz, p.m_plane.d);
+        return *this;
     }
 
     Plane& set(const plane &pl)
@@ -793,9 +821,16 @@ public:
     {
         rect2di_seti(&m_rc, x, y, width, height);
     }
+
     Rect(const rect2di rc)
     {
         m_rc = rc;
+    }
+
+    Rect& operator=(const Rect &r)
+    {
+        rect2di_setr(&m_rc, &r.m_rc);
+        return *this;
     }
 
     Rect& set(int x, int y, int width, int height)
@@ -868,9 +903,16 @@ public:
     {
         rect2df_setf(&m_rc, x, y, width, height);
     }
+
     Rectf(const rect2df rc)
     {
         m_rc = rc;
+    }
+
+    Rectf& operator=(const Rectf &rc)
+    {
+        rect2df_setr(&m_rc, &rc.m_rc);
+        return *this;
     }
 
     Rectf& set(float x, float y, float width, float height)

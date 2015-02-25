@@ -36,36 +36,40 @@
   #define _GNUC_
 #endif
 
-#if defined(_DEBUG) && !defined(_DEBUG_)
-  #define _DEBUG_
+// Debug
+#ifndef _DEBUG_
+  #if defined(_DEBUG) || defined(DEBUG) || defined(__Debug__)
+    #define _DEBUG_
+  #endif
 #endif
 
-#if defined(DEBUG) && !defined(_DEBUG_)
-#define _DEBUG_
+// Windows
+#ifndef _WIN_
+  #if defined(WIN32) || defined(_WINDLL)
+    #define _WIN_
+  #endif
+
+  #if defined(SWIG) && defined(SWIGWIN)
+    #define _WIN_
+  #endif
 #endif
 
-#if defined(WIN32) && !defined(_WIN_)
-  #define _WIN_
+// Apple iOS/MacOS
+#ifdef __APPLE__
+  #define _APPLE_
+  #include <TargetConditionals.h>
+  #if TARGET_OS_MAC == 1 && TARGET_OS_IPHONE == 0 && !defined(_OSX_)
+    #define _OSX_
+  #elif TARGET_OS_IPHONE == 1 && !defined(_IOS_)
+    #define _IOS_
+  #endif
 #endif
 
-#if defined(_WINDLL) && !defined(_WIN_)
-  #define _WIN_
-#endif
-
-#if defined(SWIG) && defined(SWIGWIN) && !defined(_WIN_)
-  #define _WIN_
-#endif
-
-#if (defined(__APPLE__) || defined(DARWIN)) && !defined(_OSX_)
-  #define _OSX_
-#endif
-
-#if (defined(linux) || defined(__linux__)) && !defined(_LINUX_)
-  #define _LINUX_
-#endif
-
-#if (!defined(_OSX_) && !defined(_WIN_) && !defined(_LINUX_)) && !defined(SWIG)
-  #error "Platform is not defined, use macros _WIN_, _LINUX_ or _OSX_"
+// Linux
+#ifndef _LINUX_
+  #if defined(linux) || defined(__linux__)
+    #define _LINUX_
+  #endif
 #endif
 
 // Can override default alignment for allocation macros
@@ -73,45 +77,59 @@
   #define _ALIGN_DEFAULT_ 16
 #endif
 
-/* check for unsupported compilers */
+// Error on unsupported compilers
 #if !defined(_MSVC_) && !defined(_GNUC_) && !defined(SWIG)
   #error "Compile Error: Unsupported compiler."
 #endif
 
-/* Platform macros
- * _x86_: 32bit intel architecture
- * _x64_: 64bit AMD architecture
- */
-#if (defined(_M_IX86) || defined(__i386__)) && !defined(_X86_)
-  #define _X86_
+// Error on unsupported platforms
+#if !defined(_WIN_) && !defined(_LINUX_) && !defined(_OSX_) && !defined(_IOS_)
+  #error "Compiler error: Unsupported software platform."
 #endif
 
-#if (defined(_M_X64) || defined(__X86_64__) || defined(__LP64__) || defined(_LP64)) && !defined(_X64_)
-  #define _X64_
+// Group Mobile OSes together
+#ifndef _MOBILE_
+  #if defined(_IOS_) || defined(_ANDROID_) || defined(_WINPHONE_)
+    #define _MOBILE_
+  #endif
 #endif
 
-#if defined(__arm__)
-  #define _ARM_
-    #if defined(__ARM_ARCH) && __ARM_ARCH == 6
-      #define _ARM6_
-    #else
-      #error "Unsupported ARM architecture"
+// CPU: Intel x86_64 family
+#ifndef _X86_64
+  #if defined(_M_IX86) || defined(__i386__) || defined(__X86_64__) || defined(_M_X64) || defined(__x86_64__)
+    #define _X86_64_
+  #endif
+#endif
+
+// CPU: ARM
+#ifndef _ARM_
+  #if defined(__arm__) || defined(__arm64__)
+    #define _ARM_
+    #if defined(__ARM_ARCH) && __ARM_ARCH==6
+      #define _ARMv6_
     #endif
+  #endif
 #endif
 
-#if (!defined(_X86_) && !defined(_X64_) && !defined(_ARM_)) && !defined(SWIG)
+// 32bit/64bit
+#if !defined(_ARCH64_) || !defined(_ARCH32_)
+  #if defined(_M_X64) || defined(__X86_64__) || defined(__LP64__) || defined(_LP64) || defined(__amd64__)
+    #define _ARCH64_
+  #else
+    #define _ARCH32_
+  #endif
+#endif
+
+#if (!defined(_X86_64_) && !defined(_ARM_)) && !defined(SWIG)
   #error "CPU architecture is unknown"
 #endif
 
-/* assume that linux, osx, bsd have posix libraries */
-#if (defined(_LINUX_) || defined(_OSX_)) && !defined(_POSIXLIB_)
-  #define _POSIXLIB_
+// POSIX
+#ifndef _POSIXLIB_
+  #if defined(__linux__) || defined(__APPLE__)
+    #define _POSIXLIB_
+  #endif
 #endif
-
-#if (defined(_DEBUG) || defined(__Debug__)) && !defined(_DEBUG_)
-  #define _DEBUG_
-#endif
-
 
 /* On the default msvc compiler, I use /TP flag which compiles all files as CPP
  * But under ICC we use the common C99 feature (compile in C)
@@ -161,7 +179,7 @@ typedef int result_t;
 typedef uint64 reshandle_t;
 
 /* pointer type (64/32 platforms are different) */
-#if defined(_X64_)
+#if defined(_ARCH64_)
 typedef uint64 uptr_t;
 typedef int64 iptr_t;
 #else
@@ -262,12 +280,6 @@ typedef int iptr_t;
 #define FL32_MAX                (3.402823466e+38f)
 #define FL32_MIN                (1.175494351e-38f)
 
-#if defined(_GNUC_)
-  #define _GCCPACKED_ __attribute__((packed))
-#else
-  #define _GCCPACKED_
-#endif
-
 /* Version info structure, mostly used in file formats */
 /* useful macros */
 #define INVALID_HANDLE      0xffffffffffffffff
@@ -289,21 +301,17 @@ typedef int iptr_t;
 #define BIT_REMOVE(v, b)    ((v) &= ~(b))
 
 /* out/in/INOUT for readability */
-#if defined(OUT)
-  #undef OUT
+#ifndef OUT
+  #define OUT
 #endif
 
-#if defined(OPTIONAL)
-  #undef OPTIONAL
+#ifndef OPTIONAL
+  #define OPTIONAL
 #endif
 
-#if defined(INOUT)
-  #undef INOUT
+#ifndef INOUT
+  #define INOUT
 #endif
-
-#define OUT
-#define INOUT
-#define OPTIONAL
 
 #if defined(_GNUC_)
   #define DEF_ALLOC inline

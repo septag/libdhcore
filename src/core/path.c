@@ -108,11 +108,11 @@ char* path_getfilename(char* outpath, const char* inpath)
 {
     char* r;
     char tmp[DH_PATH_MAX];
-    strcpy(tmp, inpath);
 
-    r = strrchr(tmp, '/');
-    if (r == NULL)     r = strrchr(tmp, '\\');
+    r = strrchr(inpath, '/');
+    if (r == NULL)     r = strrchr(inpath, '\\');
     if (r != NULL)     strcpy(tmp, r + 1);
+    else               strcpy(tmp, inpath);
 
     /* Name only */
     r = strrchr(tmp, '.');
@@ -126,8 +126,7 @@ char* path_getfileext(char* outpath, const char* inpath)
 {
     char tmp[DH_PATH_MAX];     /* Prevent Aliasing */
 
-    strcpy(tmp, inpath);
-    char* r = strrchr(tmp, '.');
+    char* r = strrchr(inpath, '.');
     if (r != NULL)     strcpy(tmp, r + 1);
     else               tmp[0] = 0;
 
@@ -141,7 +140,7 @@ char* path_getfullfilename(char* outpath, const char* inpath)
 {
     const char* r;
     char tmp[DH_PATH_MAX];     /* Prevent Aliasing */
-    strcpy(tmp, inpath);
+
     r = strrchr(inpath, '/');
     if (r == NULL)     r = strrchr(inpath, '\\');
     if (r != NULL)     strcpy(tmp, r + 1);

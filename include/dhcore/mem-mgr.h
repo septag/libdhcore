@@ -131,10 +131,10 @@ CORE_API struct allocator* mem_heap();
  * Binds default heap allocator to specified allocator object
  * @ingroup alloc
  */
-CORE_API void mem_heap_bindalloc(struct allocator* alloc);
+CORE_API void mem_heap_bindalloc(struct allocator *alloc);
 
 /**
- * @brief mem_align_ptr
+ * @brief Applies padding to pointer and returns aligned pointer
  * @param ptr
  * @param alignment
  * @return
@@ -149,15 +149,29 @@ CORE_API void* mem_align_ptr(void *ptr, uint8 alignment);
  * @ingroup mem
  */
 #define ALLOC(size, id) mem_alloc((size), __FILE__, __LINE__, (id))
+
+/**
+ * Heap reallocate macro
+ * @param ptr current allocated pointer, can be NULL
+ * @param size requested memory size in bytes
+ * @param id ID of the memory block
+ * @ingroup mem
+ */
 #define REALLOC(ptr, size, id) mem_realloc((ptr), (size), __FILE__, __LINE__, (id))
 
 /**
- * Aligned Heap allocate macro (16-byte)
+ * Aligned Heap allocate macro
  * @see ALLOC
  * @ingroup mem
  */
 #define ALIGNED_ALLOC(size, id)	mem_alignedalloc((size), _ALIGN_DEFAULT_, __FILE__, __LINE__, (id))
-#define ALIGNED_REALLOC(size, id) mem_alignedrealloc((size), _ALIGN_DEFAULT_, __FILE__, __LINE__, (id))
+
+/**
+ * Aligned Heap allocate macro
+ * @see REALLOC
+ * @ingroup mem
+ */
+#define ALIGNED_REALLOC(ptr, size, id) mem_alignedrealloc((ptr), (size), _ALIGN_DEFAULT_, __FILE__, __LINE__, (id))
 
 /**
  * Free heap memory

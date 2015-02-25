@@ -31,7 +31,7 @@
  * @defgroup hash Hashing functions
  */
 
-#if defined(_X64_)
+#ifdef _ARCH64_
 typedef struct hash_s
 {
     uint64  h[2];
@@ -61,7 +61,7 @@ struct hash_incr
  */
 INLINE int hash_isequal(hash_t h1, hash_t h2);
 
-#if defined(_X64_)
+#ifdef _ARCH64_
 INLINE int hash_isequal(hash_t h1, hash_t h2)
 {
     return (h1.h[0] == h2.h[0] && h1.h[1] == h2.h[1]);

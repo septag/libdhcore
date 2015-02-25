@@ -40,13 +40,12 @@
 #pragma warning(disable: 662)
 #endif
 
-/* check for SSE validity */
-#if !(defined(_X86_) || defined(_X64_)) && defined(_SIMD_SSE_)
-#error "SSE SIMD instructions not available in any platform except x86/x86-64"
-#endif
+// SSE is only valid on x86_64 architectures
+#ifdef _SIMD_SSE_
+  #ifndef _X86_64_
+    #error "SSE SIMD instructions not available in any platform except x86/x86-64"
+  #endif
 
-/* SIMD - SSE */
-#if defined(_SIMD_SSE_)
 #include <xmmintrin.h>
 #include <emmintrin.h>
 typedef __m128  simd_t;
@@ -58,6 +57,7 @@ typedef __m128i simd4i_t;
 #define _mm_all_w(v)    _mm_shuffle_ps((v), (v), _MM_SHUFFLE(3, 3, 3, 3))
 /* madd (mul+add): r = v1*v2 + v3 */
 #define _mm_madd(v1, v2, v3) _mm_add_ps(_mm_mul_ps((v1), (v2)), (v3))
+
 #endif
 
 /**
@@ -1320,6 +1320,12 @@ public:
         return *this;
     }
 
+    Vec4& operator=(const Vec4 &v)
+    {
+        vec4_setv(&m_vec, &v.m_vec);
+        return *this;
+    }
+
     bool operator==(const Vec4 &v) const
     {
         return vec4_isequal(&m_vec, &v.m_vec);
@@ -1436,6 +1442,12 @@ public:
     float x() const     {   return m_vec.x; }
     float y() const     {   return m_vec.y; }
     float z() const     {   return m_vec.z; }
+    
+    Vec3& operator=(const Vec3 &v)
+    {
+        vec3_setv(&m_vec, &v.m_vec);
+        return *this;
+    }
 
     Vec3& set(const vec3f &v)
     {
@@ -1592,6 +1604,12 @@ public:
     {
         m_quat = q;
     }
+    
+    Quat& operator=(const Quat &q)
+    {
+        quat_setq(&m_quat, &q.m_quat);
+        return *this;
+    }
 
     Quat& set(float x, float y, float z, float w)
     {
@@ -1713,6 +1731,12 @@ public:
                   m21, m22, m23,
                   m31, m32, m33,
                   m41, m42, m43);
+        return *this;
+    }
+
+    Mat3& operator=(const Mat3 &m)
+    {
+        mat3_setm(&m_mat, &m.m_mat);
         return *this;
     }
 
@@ -1967,6 +1991,12 @@ public:
         m_mat = m;
         return *this;
     }
+    
+    Mat4& operator=(const Mat4 &m)
+    {
+        mat4_setm(&m_mat, &m.m_mat);
+        return *this;
+    }
 
     Mat4 operator+(const Mat4 &m) const
     {
@@ -2086,9 +2116,16 @@ public:
     {
         vec2f_setf(&m_vec, x, y);
     }
+
     Vec2(const vec2f v)
     {
         m_vec = v;
+    }
+
+    Vec2& operator=(const Vec2 &v)
+    {
+        vec2f_setv(&m_vec, &v.m_vec);
+        return *this;
     }
 
     Vec2& set(float x, float y)
@@ -2205,6 +2242,12 @@ public:
         return *this;
     }
 
+    Vec2i& operator=(const Vec2i &v)
+    {
+        vec2i_setv(&m_vec, &v.m_vec);
+        return *this;
+    }
+
     bool operator==(const Vec2i& v) const
     {
         return m_vec.x == v.m_vec.x && m_vec.y == v.m_vec.y;
@@ -2296,6 +2339,12 @@ public:
                   m11, m12,
                   m21, m22,
                   m31, m32);
+        return *this;
+    }
+
+    Mat2& operator=(const Mat2 &m)
+    {
+        mat2_setm(&m_mat, &m.m_mat);
         return *this;
     }
 

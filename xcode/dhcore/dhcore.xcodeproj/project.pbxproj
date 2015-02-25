@@ -7,6 +7,45 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		148EC7D51A87CB76000EBBDB /* fileio-ios.m in Sources */ = {isa = PBXBuildFile; fileRef = 148EC7D41A87CB76000EBBDB /* fileio-ios.m */; };
+		14BB3CC91A86910700D39646 /* libdhcore_ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14BB3CBE1A86910700D39646 /* libdhcore_ios.a */; };
+		14BB3CD51A86918600D39646 /* freelist-alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDC9FE19FBE49400F6DE96 /* freelist-alloc.c */; };
+		14BB3CD61A86918600D39646 /* hash-table.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDC9FF19FBE49400F6DE96 /* hash-table.c */; };
+		14BB3CD71A86918600D39646 /* hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0019FBE49400F6DE96 /* hash.c */; };
+		14BB3CD81A86918600D39646 /* hwinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0119FBE49400F6DE96 /* hwinfo.c */; };
+		14BB3CD91A86918600D39646 /* json.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0219FBE49400F6DE96 /* json.c */; };
+		14BB3CDA1A86918600D39646 /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0319FBE49400F6DE96 /* log.c */; };
+		14BB3CDB1A86918600D39646 /* mem-mgr.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0419FBE49400F6DE96 /* mem-mgr.c */; };
+		14BB3CDC1A86918600D39646 /* net-socket.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0519FBE49400F6DE96 /* net-socket.c */; };
+		14BB3CDD1A86918600D39646 /* numeric.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0619FBE49400F6DE96 /* numeric.c */; };
+		14BB3CDE1A86918600D39646 /* pak-file.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0719FBE49400F6DE96 /* pak-file.c */; };
+		14BB3CDF1A86918600D39646 /* path.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0819FBE49400F6DE96 /* path.c */; };
+		14BB3CE01A86918600D39646 /* pool-alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0919FBE49400F6DE96 /* pool-alloc.c */; };
+		14BB3CE11A86918600D39646 /* prims.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0A19FBE49400F6DE96 /* prims.c */; };
+		14BB3CE21A86918600D39646 /* rpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0B19FBE49400F6DE96 /* rpc.c */; };
+		14BB3CE31A86918600D39646 /* stack-alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0C19FBE49400F6DE96 /* stack-alloc.c */; };
+		14BB3CE41A86918600D39646 /* static-vars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0D19FBE49400F6DE96 /* static-vars.cpp */; };
+		14BB3CE51A86918600D39646 /* std-math.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0E19FBE49400F6DE96 /* std-math.c */; };
+		14BB3CE61A86918600D39646 /* str.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA0F19FBE49400F6DE96 /* str.c */; };
+		14BB3CE71A86918600D39646 /* task-mgr.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA1019FBE49400F6DE96 /* task-mgr.c */; };
+		14BB3CE81A86918600D39646 /* timer.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA1119FBE49400F6DE96 /* timer.c */; };
+		14BB3CE91A86918600D39646 /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA1219FBE49400F6DE96 /* util.c */; };
+		14BB3CEA1A86918600D39646 /* variant.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA1319FBE49400F6DE96 /* variant.c */; };
+		14BB3CEB1A86918600D39646 /* vec-math.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA1419FBE49400F6DE96 /* vec-math.c */; };
+		14BB3CEC1A86918600D39646 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA1519FBE49400F6DE96 /* zip.c */; };
+		14BB3CED1A86918600D39646 /* file-io.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDC9BC19FBE43400F6DE96 /* file-io.c */; };
+		14BB3CEE1A86918600D39646 /* errors.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDC9B219FBE34D00F6DE96 /* errors.c */; };
+		14BB3CEF1A86918600D39646 /* core.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDC9B019FBE32400F6DE96 /* core.c */; };
+		14BB3CF01A86918600D39646 /* array.c in Sources */ = {isa = PBXBuildFile; fileRef = 14BEA56F19FBD7AC0077ADE2 /* array.c */; };
+		14BB3CF11A86918C00D39646 /* crash-posix.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA3519FBEAF100F6DE96 /* crash-posix.c */; };
+		14BB3CF21A86918C00D39646 /* mt-posix.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA3619FBEAF100F6DE96 /* mt-posix.c */; };
+		14BB3CF31A86918C00D39646 /* util-posix.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA3719FBEAF100F6DE96 /* util-posix.c */; };
+		14BB3CF41A86918C00D39646 /* hwinfo-osx.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA2F19FBEAE300F6DE96 /* hwinfo-osx.c */; };
+		14BB3CF51A86918C00D39646 /* timer-osx.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA3019FBEAE300F6DE96 /* timer-osx.c */; };
+		14BB3CF61A86918C00D39646 /* util-osx.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA3119FBEAE300F6DE96 /* util-osx.c */; };
+		14BB3CF71A86919300D39646 /* commander.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA4619FBEB8300F6DE96 /* commander.c */; };
+		14BB3CF81A8691A300D39646 /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA3C19FBEB5B00F6DE96 /* cJSON.c */; };
+		14BB3CF91A8691AA00D39646 /* miniz.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA4119FBEB6F00F6DE96 /* miniz.c */; };
 		14BEA57019FBD7AC0077ADE2 /* array.c in Sources */ = {isa = PBXBuildFile; fileRef = 14BEA56F19FBD7AC0077ADE2 /* array.c */; };
 		14BEA57419FBD8260077ADE2 /* array.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BEA57319FBD8260077ADE2 /* array.h */; };
 		14BEA57619FBDB510077ADE2 /* core-api.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BEA57519FBDB510077ADE2 /* core-api.h */; };
@@ -88,7 +127,33 @@
 		14FDCA4719FBEB8300F6DE96 /* commander.c in Sources */ = {isa = PBXBuildFile; fileRef = 14FDCA4619FBEB8300F6DE96 /* commander.c */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		14BB3CCA1A86910700D39646 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 14BEA55A19FBD76C0077ADE2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14BB3CBD1A86910700D39646;
+			remoteInfo = dhcore_ios;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		14BB3CBC1A86910700D39646 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		148EC7D41A87CB76000EBBDB /* fileio-ios.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "fileio-ios.m"; path = "../../src/core/platform/ios/fileio-ios.m"; sourceTree = "<group>"; };
+		14BB3CBE1A86910700D39646 /* libdhcore_ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdhcore_ios.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		14BB3CC81A86910700D39646 /* dhcore_iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dhcore_iosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		14BB3CCE1A86910700D39646 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		14BEA56219FBD76C0077ADE2 /* libdhcore.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libdhcore.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		14BEA56F19FBD7AC0077ADE2 /* array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = array.c; path = ../../src/core/array.c; sourceTree = "<group>"; };
 		14BEA57319FBD8260077ADE2 /* array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = array.h; path = ../../include/dhcore/array.h; sourceTree = "<group>"; };
@@ -172,6 +237,21 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		14BB3CBB1A86910700D39646 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		14BB3CC51A86910700D39646 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14BB3CC91A86910700D39646 /* libdhcore_ios.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		14BEA55F19FBD76C0077ADE2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -182,11 +262,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		14BB3CCC1A86910700D39646 /* dhcore_iosTests */ = {
+			isa = PBXGroup;
+			children = (
+				14BB3CCD1A86910700D39646 /* Supporting Files */,
+			);
+			path = dhcore_iosTests;
+			sourceTree = "<group>";
+		};
+		14BB3CCD1A86910700D39646 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				14BB3CCE1A86910700D39646 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		14BEA55919FBD76C0077ADE2 = {
 			isa = PBXGroup;
 			children = (
 				14BEA57219FBD80F0077ADE2 /* include */,
 				14BEA57119FBD8060077ADE2 /* src */,
+				14BB3CCC1A86910700D39646 /* dhcore_iosTests */,
 				14BEA56319FBD76C0077ADE2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -195,6 +292,8 @@
 			isa = PBXGroup;
 			children = (
 				14BEA56219FBD76C0077ADE2 /* libdhcore.dylib */,
+				14BB3CBE1A86910700D39646 /* libdhcore_ios.a */,
+				14BB3CC81A86910700D39646 /* dhcore_iosTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -286,6 +385,7 @@
 		14FDCA2E19FBEAC300F6DE96 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				148EC7D41A87CB76000EBBDB /* fileio-ios.m */,
 				14FDCA3519FBEAF100F6DE96 /* crash-posix.c */,
 				14FDCA3619FBEAF100F6DE96 /* mt-posix.c */,
 				14FDCA3719FBEAF100F6DE96 /* util-posix.c */,
@@ -387,6 +487,41 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		14BB3CBD1A86910700D39646 /* dhcore_ios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 14BB3CD31A86910700D39646 /* Build configuration list for PBXNativeTarget "dhcore_ios" */;
+			buildPhases = (
+				14BB3CBA1A86910700D39646 /* Sources */,
+				14BB3CBB1A86910700D39646 /* Frameworks */,
+				14BB3CBC1A86910700D39646 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = dhcore_ios;
+			productName = dhcore_ios;
+			productReference = 14BB3CBE1A86910700D39646 /* libdhcore_ios.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		14BB3CC71A86910700D39646 /* dhcore_iosTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 14BB3CD41A86910700D39646 /* Build configuration list for PBXNativeTarget "dhcore_iosTests" */;
+			buildPhases = (
+				14BB3CC41A86910700D39646 /* Sources */,
+				14BB3CC51A86910700D39646 /* Frameworks */,
+				14BB3CC61A86910700D39646 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				14BB3CCB1A86910700D39646 /* PBXTargetDependency */,
+			);
+			name = dhcore_iosTests;
+			productName = dhcore_iosTests;
+			productReference = 14BB3CC81A86910700D39646 /* dhcore_iosTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		14BEA56119FBD76C0077ADE2 /* dhcore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 14BEA56619FBD76C0077ADE2 /* Build configuration list for PBXNativeTarget "dhcore" */;
@@ -413,6 +548,12 @@
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Sepehr Taghdissian";
 				TargetAttributes = {
+					14BB3CBD1A86910700D39646 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+					14BB3CC71A86910700D39646 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
 					14BEA56119FBD76C0077ADE2 = {
 						CreatedOnToolsVersion = 6.1;
 					};
@@ -431,11 +572,75 @@
 			projectRoot = "";
 			targets = (
 				14BEA56119FBD76C0077ADE2 /* dhcore */,
+				14BB3CBD1A86910700D39646 /* dhcore_ios */,
+				14BB3CC71A86910700D39646 /* dhcore_iosTests */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		14BB3CC61A86910700D39646 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		14BB3CBA1A86910700D39646 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				14BB3CF51A86918C00D39646 /* timer-osx.c in Sources */,
+				14BB3CE61A86918600D39646 /* str.c in Sources */,
+				14BB3CED1A86918600D39646 /* file-io.c in Sources */,
+				14BB3CF61A86918C00D39646 /* util-osx.c in Sources */,
+				14BB3CF41A86918C00D39646 /* hwinfo-osx.c in Sources */,
+				14BB3CD81A86918600D39646 /* hwinfo.c in Sources */,
+				14BB3CDD1A86918600D39646 /* numeric.c in Sources */,
+				14BB3CDC1A86918600D39646 /* net-socket.c in Sources */,
+				14BB3CF11A86918C00D39646 /* crash-posix.c in Sources */,
+				14BB3CF01A86918600D39646 /* array.c in Sources */,
+				14BB3CE41A86918600D39646 /* static-vars.cpp in Sources */,
+				14BB3CD61A86918600D39646 /* hash-table.c in Sources */,
+				14BB3CDF1A86918600D39646 /* path.c in Sources */,
+				14BB3CEB1A86918600D39646 /* vec-math.c in Sources */,
+				14BB3CE21A86918600D39646 /* rpc.c in Sources */,
+				148EC7D51A87CB76000EBBDB /* fileio-ios.m in Sources */,
+				14BB3CE81A86918600D39646 /* timer.c in Sources */,
+				14BB3CE71A86918600D39646 /* task-mgr.c in Sources */,
+				14BB3CD51A86918600D39646 /* freelist-alloc.c in Sources */,
+				14BB3CE11A86918600D39646 /* prims.c in Sources */,
+				14BB3CDB1A86918600D39646 /* mem-mgr.c in Sources */,
+				14BB3CDE1A86918600D39646 /* pak-file.c in Sources */,
+				14BB3CF21A86918C00D39646 /* mt-posix.c in Sources */,
+				14BB3CEA1A86918600D39646 /* variant.c in Sources */,
+				14BB3CDA1A86918600D39646 /* log.c in Sources */,
+				14BB3CEE1A86918600D39646 /* errors.c in Sources */,
+				14BB3CEC1A86918600D39646 /* zip.c in Sources */,
+				14BB3CE31A86918600D39646 /* stack-alloc.c in Sources */,
+				14BB3CE01A86918600D39646 /* pool-alloc.c in Sources */,
+				14BB3CE51A86918600D39646 /* std-math.c in Sources */,
+				14BB3CF31A86918C00D39646 /* util-posix.c in Sources */,
+				14BB3CEF1A86918600D39646 /* core.c in Sources */,
+				14BB3CE91A86918600D39646 /* util.c in Sources */,
+				14BB3CD71A86918600D39646 /* hash.c in Sources */,
+				14BB3CF71A86919300D39646 /* commander.c in Sources */,
+				14BB3CD91A86918600D39646 /* json.c in Sources */,
+				14BB3CF81A8691A300D39646 /* cJSON.c in Sources */,
+				14BB3CF91A8691AA00D39646 /* miniz.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		14BB3CC41A86910700D39646 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		14BEA55E19FBD76C0077ADE2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -482,7 +687,98 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		14BB3CCB1A86910700D39646 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14BB3CBD1A86910700D39646 /* dhcore_ios */;
+			targetProxy = 14BB3CCA1A86910700D39646 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		14BB3CCF1A86910700D39646 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../include",
+					"$(SRCROOT)/../../src/core/deps",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		14BB3CD01A86910700D39646 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../include",
+					"$(SRCROOT)/../../src/core/deps",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		14BB3CD11A86910700D39646 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = dhcore_iosTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		14BB3CD21A86910700D39646 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = dhcore_iosTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		14BEA56419FBD76C0077ADE2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -575,11 +871,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					_OSX_,
-					"_VERSION_=\\\\\\\"1.0.1\\\\\\\"",
-				);
-				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
-					_OSX_,
-					"_VERSION_=\"1.0.1\"",
+					_ENABLEASSERT_,
 					"DEBUG=1",
 				);
 				HEADER_SEARCH_PATHS = (
@@ -598,10 +890,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					_OSX_,
-					"_VERSION_=\"1.0.1\"",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = _OSX_;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -615,6 +904,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		14BB3CD31A86910700D39646 /* Build configuration list for PBXNativeTarget "dhcore_ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14BB3CCF1A86910700D39646 /* Debug */,
+				14BB3CD01A86910700D39646 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		14BB3CD41A86910700D39646 /* Build configuration list for PBXNativeTarget "dhcore_iosTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				14BB3CD11A86910700D39646 /* Debug */,
+				14BB3CD21A86910700D39646 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		14BEA55D19FBD76C0077ADE2 /* Build configuration list for PBXProject "dhcore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -15,7 +15,7 @@
 
 #include "dhcore/timer.h"
 
-#if defined(_OSX_)
+#if defined(_APPLE_)
 
 #include <mach/mach_time.h>
 

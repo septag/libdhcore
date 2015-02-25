@@ -23,7 +23,7 @@
 #define PAK_SIGN    "HPAK"
 
 #pragma pack(push, 1)
-struct _GCCPACKED_ pak_header
+struct pak_header
 {
     char sig[5];
     uint version;
@@ -33,7 +33,7 @@ struct _GCCPACKED_ pak_header
 };
 
 /* pak file item, for each file in the pak I store one of these */
-struct _GCCPACKED_ pak_item
+struct pak_item
 {
     char filepath[DH_PATH_MAX];   /* filepath (alias) of the file for referencing */
     uint64 offset;               /* offset in the pak (in bytes) */

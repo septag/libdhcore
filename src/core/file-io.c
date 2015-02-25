@@ -37,6 +37,12 @@
 #define MON_BUFFER_SIZE (256*1024)
 #define MON_ITEM_SIZE 200
 
+// Fwd declare: IOS
+#ifdef _IOS_
+int fio_ios_add_bundle(const char *bundle_name);
+const char* fio_ios_resolve_path(char *outstr, int outstr_sz, int bundle_id, const char *filepath);
+#endif
+
 /*************************************************************************************************
  * types
  */
@@ -83,6 +89,9 @@ struct file_mgr
     struct array vdirs;   /* item: vdir */
     struct array paks;    /* item: pak_file */
     struct hashtable_open mon_table;    /* key: filepath(hashed), value: pointer to mon_item */
+#ifdef _MOBILE_
+    struct array bundles;
+#endif
 #if defined(_FILEMON_)
     efsw_watcher watcher;
 #endif
@@ -205,6 +214,14 @@ result_t fio_initmgr()
         return r;
     }
 
+#ifdef _MOBILE_
+    r = arr_create(mem_heap(), &g_fio->bundles, sizeof(int), 5, 5, 0);
+    if (IS_FAIL(r)) {
+        err_printn(__FILE__, __LINE__, r);
+        return r;
+    }
+#endif
+
 #if defined(_FILEMON_)
     r = hashtable_open_create(mem_heap(), &g_fio->mon_table, MON_ITEM_SIZE, MON_ITEM_SIZE, 0);
     if (IS_FAIL(r)) {
@@ -242,6 +259,10 @@ void fio_releasemgr()
 #if defined(_FILEMON_)
         if (g_fio->watcher != NULL)
             efsw_destroy(g_fio->watcher);
+#endif
+
+#ifdef _MOBILE_
+        arr_destroy(&g_fio->bundles);
 #endif
 
         hashtable_open_destroy(&g_fio->mon_table);
@@ -292,6 +313,19 @@ int fio_addvdir(const char* directory, int monitor)
     log_printf(LOG_INFO, "  Added virtual directory: %s (Monitor %s)", dir,
         monitor ? "ON" : "OFF");
     return TRUE;
+}
+
+void fio_addbundle(const char *bundle_name)
+{
+#ifdef _IOS_
+    int id = fio_ios_add_bundle(bundle_name);
+    if (id) {
+        int *newi = (int*)arr_add(&g_fio->bundles);
+        *newi = id;
+    }
+#else
+    ASSERT(0);
+#endif
 }
 
 void fio_clearvdirs()
@@ -399,8 +433,7 @@ file_t fio_openmem(struct allocator* alloc, const char* filepath, int ignore_vfs
     struct file_header* header = (struct file_header*)file_buf;
     struct mem_file* f = (struct mem_file*)(file_buf + sizeof(struct file_header));
 
-    FILE* ff = (!ignore_vfs && !arr_isempty(&g_fio->vdirs)) ? open_resolvepath(filepath) :
-               fopen(filepath, "rb");
+    FILE* ff = !ignore_vfs ? open_resolvepath(filepath) : fopen(filepath, "rb");
     if (ff == NULL)     {
         fio_free_membuff(file_buf);
         return NULL;
@@ -525,8 +558,7 @@ file_t fio_opendisk(const char* filepath, int ignore_vfs)
     header->read_fn = fio_readdisk;
 
     /* data */
-    f->file = (!ignore_vfs && !arr_isempty(&g_fio->vdirs)) ? open_resolvepath(filepath) :
-        fopen(filepath, "rb");
+    f->file = !ignore_vfs ? open_resolvepath(filepath) : fopen(filepath, "rb");
     if (f->file == NULL)    {
         fio_free_diskbuff(file_buf);
         return NULL;
@@ -543,18 +575,28 @@ file_t fio_opendisk(const char* filepath, int ignore_vfs)
 static FILE* open_resolvepath(const char* filepath)
 {
     ASSERT(g_fio);
-    struct vdir* vds = (struct vdir*)g_fio->vdirs.buffer;
     char testpath[DH_PATH_MAX];
-    FILE* f = NULL;
 
+#ifdef _IOS_
+    int bundle_cnt = g_fio->bundles.item_cnt;
+    int* bundles = (int*)g_fio->bundles.buffer;
+    for (int i = 0; i < bundle_cnt; i++)    {
+        if (bundles[i])  {
+            fio_ios_resolve_path(testpath, sizeof(testpath), bundles[i], filepath);
+            if (!util_pathisdir(testpath))  {
+                return fopen(testpath, "rb");
+            }
+        }
+    }
+#endif
+
+    struct vdir* vds = (struct vdir*)g_fio->vdirs.buffer;
     uint item_cnt = g_fio->vdirs.item_cnt;
     for (uint i = 0; i < item_cnt; i++)   {
         struct vdir* vd = &vds[i];
         path_join(testpath, vd->path, filepath, NULL);
         if (!util_pathisdir(testpath))  {
-            f = fopen(testpath, "rb");
-            if (f != NULL)
-                return f;
+            return fopen(testpath, "rb");
         }
     }
 

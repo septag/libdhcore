@@ -106,8 +106,6 @@ INLINE struct tsk_job* tsk_job_get(uint job_id)
 result_t tsk_initmgr(int thread_cnt, size_t localmem_perthread_sz, size_t tmpmem_perthread_sz,
                      uint flags)
 {
-    ASSERT(thread_cnt != 0);
-
     if (g_tsk != NULL)
         return RET_FAIL;
     g_tsk = (struct tsk_mgr*)ALLOC(sizeof(struct tsk_mgr), 0);
@@ -123,19 +121,23 @@ result_t tsk_initmgr(int thread_cnt, size_t localmem_perthread_sz, size_t tmpmem
         localmem_perthread_sz = LOCAL_MEM_SIZE;
     if (tmpmem_perthread_sz == 0)
         tmpmem_perthread_sz = TEMP_MEM_SIZE;
-
-    g_tsk->threads = (struct tsk_thread*)ALLOC(sizeof(struct tsk_thread)*thread_cnt, 0);
-    if (g_tsk->threads == NULL)  {
-        err_printn(__FILE__, __LINE__, RET_OUTOFMEMORY);
-        return RET_FAIL;
-    }
-
-    for (int i = 0; i < thread_cnt; i++) {
-        if (IS_FAIL(tsk_thread_init(&g_tsk->threads[i], localmem_perthread_sz, tmpmem_perthread_sz)))
-        {
-            err_print(__FILE__, __LINE__, "task-mgr init failed: could not initialize threads");
+    
+    if (thread_cnt) {
+        g_tsk->threads = (struct tsk_thread*)ALLOC(sizeof(struct tsk_thread)*thread_cnt, 0);
+        if (g_tsk->threads == NULL)  {
+            err_printn(__FILE__, __LINE__, RET_OUTOFMEMORY);
             return RET_FAIL;
         }
+
+        for (int i = 0; i < thread_cnt; i++) {
+            if (IS_FAIL(tsk_thread_init(&g_tsk->threads[i], localmem_perthread_sz, tmpmem_perthread_sz)))
+            {
+                err_print(__FILE__, __LINE__, "task-mgr init failed: could not initialize threads");
+                return RET_FAIL;
+            }
+        }
+
+        g_tsk->thread_cnt = thread_cnt;
     }
 
     g_tsk->thread_idxs = (int*)ALLOC(sizeof(int)*(thread_cnt+1), 0);
@@ -143,7 +145,6 @@ result_t tsk_initmgr(int thread_cnt, size_t localmem_perthread_sz, size_t tmpmem
         err_printn(__FILE__, __LINE__, RET_OUTOFMEMORY);
         return RET_FAIL;
     }
-    g_tsk->thread_cnt = thread_cnt;
 
     /* local/temp memory for main thread */
     r = mem_stack_create(mem_heap(), &g_tsk->tmp_mem, tmpmem_perthread_sz, 0);
@@ -262,10 +263,10 @@ uint tsk_dispatch(pfn_tsk_run run_fn, enum tsk_run_context ctx, int thread_cnt, 
                   void* result)
 {
     /* look for available threads based on specified context mode */
-    int tsk_thread_cnt = g_tsk->thread_cnt;
-    thread_cnt = maxui(minui(thread_cnt, tsk_thread_cnt+1), 1);
-    int cnt = 0;
     int* thread_idxs = g_tsk->thread_idxs;
+    int tsk_thread_cnt = g_tsk->thread_cnt;
+    thread_cnt = maxi(mini(thread_cnt, tsk_thread_cnt+1), 1);
+    int cnt = 0;
 
     switch (ctx)    {
     case TSK_CONTEXT_ALL:
@@ -301,7 +302,7 @@ uint tsk_dispatch(pfn_tsk_run run_fn, enum tsk_run_context ctx, int thread_cnt, 
 uint tsk_dispatch_exclusive(pfn_tsk_run run_fn, const int* thread_idxs, int thread_cnt,
                             void* params, void* result)
 {
-    thread_cnt = minui(thread_cnt, g_tsk->thread_cnt);
+    thread_cnt = mini(thread_cnt, g_tsk->thread_cnt);
     uint job_id = tsk_job_create(run_fn, params, result, thread_idxs, thread_cnt);
     if (job_id == 0)
         return 0;

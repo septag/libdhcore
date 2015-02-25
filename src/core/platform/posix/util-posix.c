@@ -30,7 +30,7 @@
 
 #if defined(_LINUX_)
 #include <sys/sendfile.h>
-#elif defined(_OSX_)
+#elif defined(_APPLE_)
 #include <sys/socket.h>
   #include <sys/uio.h>
   #include <mach-o/dyld.h>
@@ -90,6 +90,18 @@ void util_ttyecho()
     tcsetattr(STDIN_FILENO, TCSANOW, &t);
 }
 
+#if defined(_IOS_)
+char* util_getuserdir(char* outdir)
+{
+    outdir[0] = 0;
+    return outdir;
+}
+
+char* util_gettempdir(char* outdir)
+{
+    return strcpy(outdir, "tmp");
+}
+#else
 char* util_getuserdir(char* outdir)
 {
     struct passwd* pw = getpwuid(getuid());
@@ -100,6 +112,7 @@ char* util_gettempdir(char* outdir)
 {
     return strcpy(outdir, "/tmp");
 }
+#endif
 
 int util_makedir(const char* dir)
 {
@@ -120,7 +133,7 @@ int util_copyfile(const char* dest, const char* src)
 
 #ifdef _LINUX_
     int result = sendfile(output, input, NULL, 0) != -1;
-#else // __APPLE__
+#elif defined(_APPLE_)
     off_t bytesCopied;
     int result = sendfile(output, input, 0, &bytesCopied, 0, 0) != -1;
 #endif

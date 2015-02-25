@@ -130,7 +130,7 @@ uint hash_murmur32(const void* key, size_t size_bytes, uint seed)
 }
 
 /* 128bits murmur hash is different in 64/32bit platforms */
-#if defined(_X64_)
+#ifdef _ARCH64_
 hash_t hash_murmur128(const void* key, size_t size_bytes, uint seed)
 {
     const uint8* data = (const uint8*)key;
