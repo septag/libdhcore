@@ -147,6 +147,13 @@ public:
         TIMER_PAUSE(m_tm);
     }
 
+    void reset()
+    {
+        ASSERT(m_tm);
+        m_tm->t = 0.0f;
+        m_tm->dt = 0.0f;
+    }
+
     void stop()
     {
         ASSERT(m_tm);

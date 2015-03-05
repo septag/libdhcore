@@ -99,4 +99,40 @@ INLINE struct stack* stack_pop(struct stack** pstack)
     return item;
 }
 
+#ifdef __cplusplus
+namespace dh    {
+template <typename _T>
+class Stack
+{
+private:
+    Stack<_T> *m_prev = nullptr;
+    _T *m_obj = nullptr;
+
+public:
+    Stack() = default;
+
+    _T* obj() const     {   return m_obj;   }
+    Stack<_T>* prev() const {   return m_prev;  }
+
+    static void push(Stack<_T> **pstack, Stack<_T> *new_item, _T *obj)
+    {
+        new_item->m_prev = *pstack;
+        *pstack = new_item;
+        new_item->m_obj = obj;
+    }
+
+    static Stack<_T>* pop(Stack<_T> **pstack)
+    {
+        Stack<_T> *item = *pstack;
+        if (*pstack)    {
+            *pstack = (*pstack)->m_prev;
+            item->m_prev = nullptr;
+        }
+        return item;
+    }
+};
+
+}
+#endif
+
 #endif /* __STACK_H__ */

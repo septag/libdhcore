@@ -119,4 +119,63 @@ INLINE void list_remove(struct linked_list** plist, struct linked_list* item)
     item->next = item->prev = NULL;
 }
 
+#ifdef __cplusplus
+namespace dh {
+template <typename _T>
+class LinkedList
+{
+private:
+    LinkedList<_T> *m_next = nullptr;
+    LinkedList<_T> *m_prev = nullptr;
+    _T *m_obj = nullptr;
+
+public:
+    LinkedList() = default;
+    _T* obj() const     {   return m_obj;   }
+    LinkedList<_T>* next() const    {   return m_next;  }
+    LinkedList<_T>* prev() const    {   return m_prev;  }
+
+public:
+
+    static void add(LinkedList<_T> **plist, LinkedList<_T> *new_item, _T *obj)
+    {
+        new_item->m_next = (*plist);
+        new_item->m_prev = nullptr;
+        if (*plist)
+            (*plist)->m_prev = new_item;
+        *plist = new_item;
+        new_item->m_obj = obj;
+    }
+
+    static void add_last(LinkedList<_T> **plist, LinkedList<_T> *new_item, _T *obj)
+    {
+        if (*plist)     {
+            LinkedList<_T> *last = *plist;
+            while (last->m_next)
+                last = last->m_next;
+            last->m_next = new_item;
+            new_item->m_prev = last;
+            new_item->m_next = nullptr;
+        }    else    {
+            *plist = new_item;
+            new_item->m_prev = new_item->m_next = nullptr;
+        }
+
+        new_item->m_obj = obj;
+    }
+
+    static void remove(LinkedList<_T> **plist, LinkedList<_T> *item)
+    {
+       if (item->m_next)
+           item->m_next->m_prev = item->m_prev;
+       if (item->m_prev)
+           item->m_prev->m_next = item->m_next;
+       if (*plist == item)
+           *plist = item->m_next;
+       item->m_next = item->m_prev = nullptr;
+    }
+};
+}
+#endif
+
 #endif /* __LINKEDLIST_H__ */

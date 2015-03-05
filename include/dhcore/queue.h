@@ -104,4 +104,47 @@ INLINE struct queue* queue_pop(struct queue** pqueue)
     return item;
 }
 
+#ifdef __cplusplus
+namespace dh {
+template <typename _T>
+class Queue
+{
+private:
+    Queue<_T> *m_next = nullptr;
+    _T *m_obj = nullptr;
+
+public:
+    Queue() = default;
+    _T* obj() const     {   return m_obj;   }
+    Queue<_T>* next() const {   return m_next;  }
+
+public:
+    static void push(Queue<_T> **pqueue, Queue<_T> *new_item, _T *obj)
+    {
+        if (*pqueue)    {
+            Queue<_T> *last = *pqueue;
+            while (last->m_next != NULL)
+                last = last->m_next;
+            last->m_next = new_item;
+        }    else    {
+            *pqueue = new_item;
+        }
+        new_item->m_next = nullptr;
+        new_item->m_obj = obj;
+    }
+
+    static Queue<_T>* pop(Queue<_T> **pqueue)
+    {
+        Queue<_T> *item = *pqueue;
+        if (*pqueue)    {
+            *pqueue = (*pqueue)->m_next;
+            item->m_next = nullptr;
+        }
+        return item;
+    }
+};
+
+}
+#endif
+
 #endif /* __QUEUE_H__ */
