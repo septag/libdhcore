@@ -106,16 +106,15 @@ char* path_getdir(char* outpath, const char* inpath)
 
 char* path_getfilename(char* outpath, const char* inpath)
 {
-    char* r;
     char tmp[DH_PATH_MAX];
 
-    r = strrchr(inpath, '/');
-    if (r == NULL)     r = strrchr(inpath, '\\');
-    if (r != NULL)     strcpy(tmp, r + 1);
-    else               strcpy(tmp, inpath);
+    const char *ri = strrchr(inpath, '/');
+    if (ri == NULL)     ri = strrchr(inpath, '\\');
+    if (ri != NULL)     strcpy(tmp, ri + 1);
+    else                strcpy(tmp, inpath);
 
     /* Name only */
-    r = strrchr(tmp, '.');
+    char *r = strrchr(tmp, '.');
     if (r != NULL)     *r = 0;
 
     strcpy(outpath, tmp);
@@ -126,7 +125,7 @@ char* path_getfileext(char* outpath, const char* inpath)
 {
     char tmp[DH_PATH_MAX];     /* Prevent Aliasing */
 
-    char* r = strrchr(inpath, '.');
+    const char *r = strrchr(inpath, '.');
     if (r != NULL)     strcpy(tmp, r + 1);
     else               tmp[0] = 0;
 
@@ -138,10 +137,9 @@ char* path_getfileext(char* outpath, const char* inpath)
 
 char* path_getfullfilename(char* outpath, const char* inpath)
 {
-    const char* r;
     char tmp[DH_PATH_MAX];     /* Prevent Aliasing */
 
-    r = strrchr(inpath, '/');
+    const char *r = strrchr(inpath, '/');
     if (r == NULL)     r = strrchr(inpath, '\\');
     if (r != NULL)     strcpy(tmp, r + 1);
     else               strcpy(tmp, inpath);
@@ -192,7 +190,7 @@ int path_exists(const char* inpath)
     }   else    {
         return FALSE;
     }
-#elif _WIN_
+#elif defined(_WIN_)
     if (PathIsDirectory(inpath))
         return 2;
     else if (PathFileExists(inpath))
