@@ -187,6 +187,75 @@ INLINE struct color* color_lerp(struct color* r, const struct color* c1, const s
         c1->a*t + c2->a*tinv);
 }
 
+// Hue is between 0-360 (degrees)
+// Reference: http://www.cs.rit.edu/~ncs/color/t_convert.html
+INLINE void color_to_hsv(const struct color *c, OUT float *hue, OUT float *saturation, OUT float *value)
+{
+    float fmin, fmax, delta;
+
+    fmin = minf(minf(c->r, c->g), c->b);
+    fmax = maxf(maxf(c->r, c->g), c->b);
+    *value = fmax;
+
+    delta = fmax - fmin;
+    if (fmax != 0)  {
+        *saturation = delta/fmax;
+    }   else    {
+        *saturation = 0;
+        *hue = 0.0f;
+        return;
+    }
+
+    if (delta > 0.0f)   {
+        if (c->r == fmax)
+            *hue = (c->g - c->b)/delta;
+        else if (c->g == fmax)
+            *hue = 2.0f + (c->b - c->r)/delta;
+        else
+            *hue = 4.0f + (c->r - c->g)/delta;
+
+        *hue *= 60.0f;
+        if (*hue < 0)
+            *hue += 360.0f;
+    }   else    {
+        *hue = 0.0f;
+    }
+}
+
+// Hue is between 0-360 (degrees)
+// Reference: http://www.cs.rit.edu/~ncs/color/t_convert.html
+INLINE struct color* color_from_hsv(struct color *cr, float hue, float saturation, float value)
+{
+    float i;
+    float f, p, q, t;
+
+    if (saturation == 0) {
+        cr->r = cr->g = cr->b = value;
+        return cr;
+    }
+
+    hue /= 60.0f;
+
+    f = modff(hue, &i);
+    p = value*(1.0f - saturation);
+    q = value*(1.0f - saturation*f);
+    t = value*(1.0f - saturation*(1-f));
+
+    if (i == 0)
+        return color_setf(cr, value, t, p, cr->a);
+    else if (i == 1.0f)
+        return color_setf(cr, q, value, p, cr->a);
+    else if (i == 2.0f)
+        return color_setf(cr, p, value, t, cr->a);
+    else if (i == 3.0f)
+        return color_setf(cr, p, q, value, cr->a);
+    else if (i == 4.0f)
+        return color_setf(cr, t, p, value, cr->a);
+    else
+        return color_setf(cr, value, p, q, cr->a);
+
+}
+
 #ifdef __cplusplus
 #include "err.h"
 
@@ -357,6 +426,19 @@ public:
     {
         m_clr.a *= alpha;
         return *this;
+    }
+
+    void to_hsv(OUT float *hue, OUT float *saturation, OUT float *value) const
+    {
+        color_to_hsv(&m_clr, hue, saturation, value);
+    }
+
+    static Color from_hsv(float hue, float saturation, float value, float alpha = 1.0f)
+    {
+        Color c;
+        c.m_clr.a = alpha;
+        color_from_hsv(&c.m_clr, hue, saturation, value);
+        return c;
     }
 
     operator color*()   {   return &m_clr;  }

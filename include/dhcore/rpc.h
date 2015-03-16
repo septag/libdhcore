@@ -83,17 +83,13 @@
 #define RPC_OFFSET_AUTO 0xFFFFFFFF
 
 /**
- * Common RPC error codes 
+ * Common built-in RPC error codes
  * @ingroup rpc
  */
 enum rpc_error_code
 {
-    RPC_ERROR_METHODNOTFOUND = 1,
-    RPC_ERROR_INVALIDARGS,
-    RPC_ERROR_COMMANDFAIL,
-    RPC_ERROR_AUTHFAIL,
-    RPC_ERROR_DBFAIL,
-    RPC_ERROR_ACCESSDENIED
+    RPC_ERROR_METHODNOTFOUND = -1,
+    RPC_ERROR_INVALIDARGS = -2
 };
 
 /**
@@ -306,5 +302,9 @@ CORE_API void rpc_freeresult(struct rpc_result* r);
 CORE_API result_t rpc_registercmd(const char* name, pfn_rpc_cmd run_fn, const struct rpc_value* params, 
     uint param_cnt, const struct rpc_value* results, uint result_cnt, const char* desc, 
     void* user_param);
+
+#ifdef __cplusplus
+
+#endif
    
 #endif /* __JRPC_H__ */

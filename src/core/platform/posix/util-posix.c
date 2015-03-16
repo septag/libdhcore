@@ -38,6 +38,7 @@
 
 #include "dhcore/mem-mgr.h"
 #include "dhcore/str.h"
+#include "dhcore/path.h"
 
 char* util_runcmd(const char* cmd)
 {
@@ -91,6 +92,11 @@ void util_ttyecho()
 }
 
 #if defined(_IOS_)
+char* util_getconfdir(char* outdir)
+{
+    return path_join(outdir, "Library", "Application Support", nullptr);
+}
+
 char* util_getuserdir(char* outdir)
 {
     outdir[0] = 0;
@@ -102,6 +108,11 @@ char* util_gettempdir(char* outdir)
     return strcpy(outdir, "tmp");
 }
 #else
+char* util_getconfdir(char* outdir)
+{
+    return path_join(outdir, util_getuserdir(outdir), ".config", NULL);
+}
+
 char* util_getuserdir(char* outdir)
 {
     struct passwd* pw = getpwuid(getuid());

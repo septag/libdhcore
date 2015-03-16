@@ -15,6 +15,7 @@
 
 #include "dhcore/vec-math.h"
 #include "dhcore/color.h"
+#include "dhcore/prims.h"
 
 using namespace dh;
 
@@ -71,4 +72,8 @@ const Color Color::Yellow(1.0f, 1.0f, 0.0f);
 const Color Color::Purple(0.0f, 1.0f, 1.0f);
 const Color Color::Grey(0.3f, 0.3f, 0.3f);
 
+// Rect
+const Rect Rect::Zero(0, 0, 0, 0);
 
+// Rectf
+const Rectf Rectf::Zero(0, 0, 0, 0);

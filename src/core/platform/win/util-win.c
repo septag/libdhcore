@@ -25,6 +25,11 @@
 #include "dhcore/str.h"
 #include "dhcore/path.h"
 
+char* util_getconfdir(char *outdir)
+{
+    return path_join(outdir, util_getuserdir(outdir), "AppData", "Local", NULL);
+}
+
 char* util_getexedir(char* outpath)
 {
     GetModuleFileName(NULL, outpath, DH_PATH_MAX);

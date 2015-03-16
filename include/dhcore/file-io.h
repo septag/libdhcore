@@ -361,6 +361,12 @@ public:
         return fio_getsize(m_file);
     }
 
+    size_t pos() const
+    {
+        ASSERT(m_file);
+        return fio_getpos(m_file);
+    }
+
     file_type type() const
     {
         ASSERT(m_file);

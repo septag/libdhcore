@@ -812,6 +812,9 @@ private:
     rect2di m_rc;
 
 public:
+    static const Rect Zero;
+
+public:
     Rect()
     {
         rect2di_seti(&m_rc, 0, 0, 0, 0);
@@ -831,6 +834,14 @@ public:
     {
         rect2di_setr(&m_rc, &r.m_rc);
         return *this;
+    }
+
+    bool operator==(const Rect &r) const
+    {
+        return  m_rc.x == r.m_rc.x &&
+                m_rc.y == r.m_rc.y &&
+                m_rc.w == r.m_rc.w &&
+                m_rc.h == r.m_rc.h;
     }
 
     Rect& set(int x, int y, int width, int height)
@@ -894,6 +905,9 @@ private:
     rect2df m_rc;
 
 public:
+    static const Rectf Zero;
+
+public:
     Rectf()
     {
         rect2df_setf(&m_rc, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -913,6 +927,14 @@ public:
     {
         rect2df_setr(&m_rc, &rc.m_rc);
         return *this;
+    }
+
+    bool operator==(const Rectf &r) const
+    {
+        return  m_rc.x == r.m_rc.x &&
+                m_rc.y == r.m_rc.y &&
+                m_rc.w == r.m_rc.w &&
+                m_rc.h == r.m_rc.h;
     }
 
     Rectf& set(float x, float y, float width, float height)
@@ -942,12 +964,12 @@ public:
     float width() const { return m_rc.w; }
     float height() const { return m_rc.h; }
 
-    bool point_in(const Vec2& pt)
+    bool point_in(const Vec2& pt) const
     {
         return rect2df_testpt(&m_rc, pt);
     }
 
-    bool point_in(float x, float y)
+    bool point_in(float x, float y) const
     {
         return rect2df_testptf(&m_rc, x, y);
     }

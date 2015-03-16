@@ -126,6 +126,12 @@ CORE_API char* util_getuserdir(char* outdir);
 CORE_API char* util_gettempdir(char* outdir);
 
 /**
+ * Returns config directory
+ * @ingroup util
+ */
+CORE_API char* util_getconfdir(char* outdir);
+
+/**
  * creates a directory
  * @return TRUE if successful
  * @ingroup util

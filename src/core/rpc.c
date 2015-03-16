@@ -89,7 +89,7 @@ static struct rpc_result* rpc_method_help(struct rpc_vblock* results, struct rpc
     const char* name = rpc_vblock_gets(params, RPC_VALUE(Name));
     uint cmd_id = rpc_cmd_find(name);
     if (cmd_id == 0)    {
-        return rpc_return_error(id, RPC_ERROR_COMMANDFAIL, "method '%s' not found", name);
+        return rpc_return_error(id, RPC_ERROR_METHODNOTFOUND, "method '%s' not found", name);
     }   else    {
         struct rpc_cmd* cmd = rpc_cmd_get(cmd_id);
 
