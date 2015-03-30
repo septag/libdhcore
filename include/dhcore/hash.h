@@ -123,11 +123,19 @@ CORE_API hash_t hash_murmur128(const void* key, size_t size_bytes, uint seed);
 
 /**
  * hash 64bit value to 32bit
- * @param n 32bit value to be hashed
+ * @param n 64bit value to be hashed
  * @return 32bit hash value
  * @ingroup hash
  */
 CORE_API uint hash_u64(uint64 n);
+
+/**
+ * hash 32bit value to 16bit
+ * @param n 32bit value to be hashed
+ * @return 16bit hash value
+ * @ingroup hash
+ */
+CORE_API uint16 hash_u32(uint n);
 
 /**
  * incremental hashing, based on murmur2A\n

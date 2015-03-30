@@ -2303,6 +2303,43 @@ public:
     int operator[](int idx) const {   return m_vec.n[idx];    }
 };
 
+class CORE_CPP_API ALIGN16 Transform2D
+{
+private:
+    Vec2 m_pos;
+    float m_sincos[2];
+
+public:
+    Transform2D(const Vec2 &pos, float angle)
+    {
+        m_sincos[0] = sinf(angle);
+        m_sincos[1] = cosf(angle);
+        m_pos = pos;
+    }
+
+    Vec2 pos() const
+    {
+        return m_pos;
+    }
+
+    void sincos(OUT float *psin, OUT float *pcos) const
+    {
+        *psin = m_sincos[0];
+        *pcos = m_sincos[1];
+    }
+
+    void set_pos(const Vec2 &pos)
+    {
+        m_pos = pos;
+    }
+
+    void set_angle(float angle)
+    {
+        m_sincos[0] = sinf(angle);
+        m_sincos[1] = cosf(angle);
+    }
+};
+
 class CORE_CPP_API ALIGN16 Mat2
 {
 private:
@@ -2439,6 +2476,17 @@ public:
     {
         mat2_transpose(&m_mat, &m_mat);
         return *this;
+    }
+
+    static Mat2 set_transform(const Transform2D &transform)
+    {
+        float fsin, fcos;
+        Vec2 pos = transform.pos();
+        transform.sincos(&fsin, &fcos);
+
+        return Mat2(fcos, -fsin,
+                    fsin, fcos,
+                    pos.x(), pos.y());
     }
 
     operator const mat2f*() const   {   return &m_mat;  }

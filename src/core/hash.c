@@ -296,6 +296,14 @@ uint hash_u64(uint64 n)
     return (uint)n;
 }
 
+uint16 hash_u32(uint n)
+{
+    uint l = n & 0xffff;
+    uint r = n & 0xffff0000;
+    l >>= 16;
+    return (uint16)(l ^ r);
+}
+
 void hash_murmurincr_begin(struct hash_incr* h, uint seed)
 {
 	h->hash = seed;

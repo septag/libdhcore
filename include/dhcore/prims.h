@@ -78,6 +78,12 @@ struct ALIGN16 aabb
     struct vec4f maxpt;
 };
 
+struct ALIGN16 aabb2d
+{
+    struct vec2f minpt;
+    struct vec2f maxpt;
+};
+
 /* eq: N(dot)P + d = 0 */
 struct ALIGN16 plane
 {
@@ -390,6 +396,43 @@ INLINE struct aabb* aabb_from_sphere(struct aabb* rb, const struct sphere* s)
     return rb;
 }
 
+// AABB-2d
+INLINE struct aabb2d* aabb2d_setf(struct aabb2d* r,
+                                  float min_x, float min_y,
+                                  float max_x, float max_y)
+{
+    vec2f_setf(&r->minpt, min_x, min_y);
+    vec2f_setf(&r->maxpt, max_x, max_y);
+    return r;
+}
+
+INLINE struct aabb2d* aabb2d_setb(struct aabb2d* r, const struct aabb2d* b)
+{
+    vec2f_setv(&r->minpt, &b->minpt);
+    vec2f_setv(&r->maxpt, &b->maxpt);
+    return r;
+}
+
+INLINE struct aabb2d* aabb2d_setv(struct aabb2d* r, const struct vec2f* minpt, const struct vec2f* maxpt)
+{
+    vec2f_setv(&r->minpt, minpt);
+    vec2f_setv(&r->maxpt, maxpt);
+    return r;
+}
+
+INLINE struct aabb2d* aabb2d_setzero(struct aabb2d* r)
+{
+    vec2f_setf(&r->minpt, FL32_MAX, FL32_MAX);
+    vec2f_setf(&r->maxpt, -FL32_MAX, -FL32_MAX);
+    return r;
+}
+
+INLINE int aabb2d_iszero(const struct aabb2d* b)
+{
+    return (b->minpt.x == FL32_MAX && b->minpt.y == FL32_MAX) &&
+           (b->maxpt.x == -FL32_MAX && b->maxpt.y == -FL32_MAX);
+}
+
 INLINE int sphere_ptinv(const struct sphere* s, const struct vec4f* pt)
 {
     struct vec4f d;
@@ -674,6 +717,56 @@ public:
 
     operator aabb*() {  return &m_aabb; }
     operator const aabb*() const  { return &m_aabb; }
+};
+
+class ALIGN16 AABB2
+{
+private:
+    aabb2d m_aabb;
+
+public:
+    AABB2()
+    {
+        aabb2d_setzero(&m_aabb);
+    }
+
+    AABB2(const Vec2& minpt, const Vec2& maxpt)
+    {
+        aabb2d_setv(&m_aabb, minpt, maxpt);
+    }
+
+    AABB2(const aabb2d &box)
+    {
+        m_aabb = box;
+    }
+
+    AABB2& set(const Vec2 &minpt, const Vec2 &maxpt)
+    {
+        aabb2d_setv(&m_aabb, minpt, maxpt);
+        return *this;
+    }
+
+    AABB2& operator=(const AABB2 &box)
+    {
+        aabb2d_setb(&m_aabb, &box.m_aabb);
+        return *this;
+    }
+
+    AABB2& set(const aabb2d &box)
+    {
+        m_aabb = box;
+        return *this;
+    }
+
+    Vec2 min() const
+    {
+        return Vec2(m_aabb.minpt);
+    }
+
+    Vec2 max() const
+    {
+        return Vec2(m_aabb.maxpt);
+    }
 };
 
 

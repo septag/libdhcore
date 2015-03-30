@@ -115,7 +115,7 @@ public:
     {
     }
 
-    result_t create(int block_sz, allocator *alloc = mem_heap(), uint mem_id = 0)
+    result_t create(int block_sz, uint mem_id = 0, allocator *alloc = mem_heap())
     {
         return mem_pool_create(alloc, &m_pool, sizeof(T), block_sz, mem_id);
     }

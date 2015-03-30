@@ -101,24 +101,26 @@ INLINE struct stack* stack_pop(struct stack** pstack)
 
 #ifdef __cplusplus
 namespace dh    {
+
+// _T: container type for stack's data
 template <typename _T>
 class Stack
 {
 private:
     Stack<_T> *m_prev = nullptr;
-    _T *m_obj = nullptr;
+    _T m_data;
 
 public:
     Stack() = default;
 
-    _T* obj() const     {   return m_obj;   }
+    _T data() const     {   return m_data;   }
     Stack<_T>* prev() const {   return m_prev;  }
 
-    static void push(Stack<_T> **pstack, Stack<_T> *new_item, _T *obj)
+    static void push(Stack<_T> **pstack, Stack<_T> *new_item, _T data)
     {
         new_item->m_prev = *pstack;
         *pstack = new_item;
-        new_item->m_obj = obj;
+        new_item->m_data = data;
     }
 
     static Stack<_T>* pop(Stack<_T> **pstack)

@@ -106,31 +106,33 @@ INLINE struct queue* queue_pop(struct queue** pqueue)
 
 #ifdef __cplusplus
 namespace dh {
+
+// _T: container type for queue's data
 template <typename _T>
 class Queue
 {
 private:
     Queue<_T> *m_next = nullptr;
-    _T *m_obj = nullptr;
+    _T m_data;
 
 public:
     Queue() = default;
-    _T* obj() const     {   return m_obj;   }
+    _T data() const     {   return m_data;   }
     Queue<_T>* next() const {   return m_next;  }
 
 public:
-    static void push(Queue<_T> **pqueue, Queue<_T> *new_item, _T *obj)
+    static void push(Queue<_T> **pqueue, Queue<_T> *new_item, _T data)
     {
         if (*pqueue)    {
             Queue<_T> *last = *pqueue;
-            while (last->m_next != NULL)
+            while (last->m_next)
                 last = last->m_next;
             last->m_next = new_item;
         }    else    {
             *pqueue = new_item;
         }
         new_item->m_next = nullptr;
-        new_item->m_obj = obj;
+        new_item->m_data = data;
     }
 
     static Queue<_T>* pop(Queue<_T> **pqueue)

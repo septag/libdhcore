@@ -163,9 +163,20 @@ INLINE void arr_clear(struct array* arr)
 #ifdef __cplusplus
 #include "err.h"
 #include "mem-mgr.h"
+#include "stack.h"
+
+// Must define this for any class/struct that needs to a MutableArray type
+#define MUTABLE_ARRAY_ITEM() \
+    public: \
+    dh::MutableArrayItem m_array_item;  \
+    int array_index() const   {   return m_array_item.index;  }
+
 
 namespace dh {
 
+// Imutable array: objects can be removed from array
+// Limitations: Container type must not do anything in constructor/destructor. All operations are
+// in memory (memcpy, malloc), so no c++ stuff will happen on add/remove
 template <typename T>
 class Array
 {
@@ -177,7 +188,7 @@ public:
     {
     }
 
-    result_t create(int item_cnt, int expand_cnt, allocator *alloc = mem_heap(), uint mem_id = 0)
+    result_t create(int item_cnt, int expand_cnt, uint mem_id = 0, Allocator *alloc = mem_heap())
     {
         return arr_create(alloc, &m_arr, sizeof(T), item_cnt, expand_cnt, mem_id);
     }
@@ -243,6 +254,109 @@ public:
     operator array*()   {   return &m_arr;  }
     operator const T*() const   {   reinterpret_cast<T*>(m_arr.buffer); }
     operator T*() { return reinterpret_cast<T*>(m_arr.buffer);  }
+};
+
+struct MutableArrayItem
+{
+    int index;
+    Stack<int> snode;
+};
+
+// Mutable array: objects can be removed from array
+// Limitations: Container type must not do anything in constructor/destructor. All operations are
+// in memory (memcpy, malloc), so no c++ stuff will happen on add/remove
+template <typename _T>
+class MutableArray
+{
+private:
+    Array<_T> m_array;
+    Stack<int> *m_freeitems = nullptr;
+    int m_count = 0;
+
+public:
+    MutableArray() = default;
+
+    result_t create(int item_cnt, int expand_cnt, uint mem_id = 0, allocator *alloc = mem_heap())
+    {
+        return m_array.create(item_cnt, expand_cnt, mem_id, alloc);
+    }
+
+    void destroy()
+    {
+        m_array.destroy();
+    }
+
+    _T* add()
+    {
+        Stack<int> *freeitem = Stack<int>::pop(&m_freeitems);
+        m_count ++;
+        _T *item;
+        if (freeitem)   {
+            item = m_array.item(freeitem->data());
+        }   else    {
+            int index = m_array.count();
+            item = m_array.add();
+            item->m_array_item.index = index;
+        }
+
+        return item;
+    }
+
+    void remove(int index)
+    {
+        // Don't delete it/rearrange from memory, just add the item to freelist
+        // This keeps the other indexes intact
+        _T *item = m_array.item(index);
+        Stack<int>::push(&m_freeitems, &item->m_array_item.snode, index);
+        item->m_array_item.index = -1;      // Invalidate
+
+        m_count --;
+    }
+
+    bool empty() const
+    {
+        return m_count == 0;
+    }
+
+    void clear()
+    {
+        m_array.clear();
+        m_freeitems = nullptr;
+    }
+
+    int count() const
+    {
+        return m_count;
+    }
+
+    int find(const _T& item) const
+    {
+        int idx = m_array.find(item);
+        if (idx != -1)  {
+            // Array item must not be invalid
+            if (m_array.item(idx)->m_array_item.index == -1)
+                idx = -1;
+        }
+        return idx;
+    }
+
+    _T* item(int index)
+    {
+        ASSERT(m_array[index].m_array_item.index != -1);
+        return m_array.item(index);
+    }
+
+    _T& operator[](int index)
+    {
+        return m_array.item(index);
+    }
+
+    const _T& operator[](int index) const
+    {
+        return m_array.item(index);
+    }
+
+    operator const _T*() const   {   return (const _T*)m_array; }
 };
 
 }   /* dh */

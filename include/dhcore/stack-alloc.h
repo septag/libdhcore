@@ -153,7 +153,7 @@ public:
     {
     }
 
-    result_t create(size_t size, allocator *alloc = mem_heap(), uint mem_id = 0)
+    result_t create(size_t size, uint mem_id = 0, allocator *alloc = mem_heap())
     {
         return mem_stack_create(alloc, &m_stack, size, mem_id);
     }

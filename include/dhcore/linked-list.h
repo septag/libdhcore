@@ -121,33 +121,34 @@ INLINE void list_remove(struct linked_list** plist, struct linked_list* item)
 
 #ifdef __cplusplus
 namespace dh {
+// _T: container type for LinkedList's data
 template <typename _T>
 class LinkedList
 {
 private:
     LinkedList<_T> *m_next = nullptr;
     LinkedList<_T> *m_prev = nullptr;
-    _T *m_obj = nullptr;
+    _T m_data;
 
 public:
     LinkedList() = default;
-    _T* obj() const     {   return m_obj;   }
+    _T data() const     {   return m_data;   }
     LinkedList<_T>* next() const    {   return m_next;  }
     LinkedList<_T>* prev() const    {   return m_prev;  }
 
 public:
 
-    static void add(LinkedList<_T> **plist, LinkedList<_T> *new_item, _T *obj)
+    static void add(LinkedList<_T> **plist, LinkedList<_T> *new_item, _T data)
     {
         new_item->m_next = (*plist);
         new_item->m_prev = nullptr;
         if (*plist)
             (*plist)->m_prev = new_item;
         *plist = new_item;
-        new_item->m_obj = obj;
+        new_item->m_data = data;
     }
 
-    static void add_last(LinkedList<_T> **plist, LinkedList<_T> *new_item, _T *obj)
+    static void add_last(LinkedList<_T> **plist, LinkedList<_T> *new_item, _T data)
     {
         if (*plist)     {
             LinkedList<_T> *last = *plist;
@@ -161,7 +162,7 @@ public:
             new_item->m_prev = new_item->m_next = nullptr;
         }
 
-        new_item->m_obj = obj;
+        new_item->m_data = data;
     }
 
     static void remove(LinkedList<_T> **plist, LinkedList<_T> *item)

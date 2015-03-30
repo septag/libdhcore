@@ -290,7 +290,7 @@ public:
     {
     }
 
-    result_t create(int slot_cnt, allocator *alloc = mem_heap(), uint mem_id = 0)
+    result_t create(int slot_cnt, uint mem_id = 0, allocator *alloc = mem_heap())
     {
         return hashtable_fixed_create(alloc, &m_table, slot_cnt, mem_id);
     }
@@ -364,7 +364,7 @@ public:
     {
     }
 
-    result_t create(int slot_cnt, allocator *alloc = mem_heap(), uint mem_id = 0)
+    result_t create(int slot_cnt, uint mem_id = 0, allocator *alloc = mem_heap())
     {
         return hashtable_open_create(alloc, &m_table, slot_cnt, slot_cnt, mem_id);
     }
@@ -433,8 +433,8 @@ public:
     {
     }
 
-    result_t create(int slot_cnt, allocator *alloc = mem_heap(), allocator *item_alloc = mem_heap(),
-                    uint mem_id = 0)
+    result_t create(int slot_cnt, uint mem_id = 0,
+                    allocator *item_alloc = mem_heap(), allocator *alloc = mem_heap())
     {
         return hashtable_chained_create(alloc, item_alloc, &m_table, slot_cnt, mem_id);
     }
@@ -490,6 +490,9 @@ public:
         return value(hash_str(key));
     }
 };
+
+typedef hashtable_item_chained HashtableItemChained;
+typedef hashtable_item HashtableItem;
 
 } /* dh */
 #endif
