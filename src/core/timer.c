@@ -20,7 +20,6 @@
  /* types */
 struct timer_mgr
 {
-    uint64 freq;
     uint64 prev_tick;
     float scale;
     struct pool_alloc timer_pool;
@@ -31,6 +30,9 @@ struct timer_mgr
  * globals
  */
 static struct timer_mgr* g_tm = NULL;
+
+// Fwd
+void timer_queryfreq();
 
 /*************************************************************************************************/
 result_t timer_initmgr()
@@ -43,7 +45,7 @@ result_t timer_initmgr()
     memset(g_tm, 0x00, sizeof(struct timer_mgr));
 
     g_tm->scale = 1.0f;
-    g_tm->freq = timer_queryfreq();
+    timer_queryfreq();
 
     /* memory pool for timers */
     return mem_pool_create(mem_heap(), &g_tm->timer_pool, sizeof(struct timer), 20, 0);
@@ -82,8 +84,8 @@ void timer_update(uint64 tick)
 {
     if (g_tm->prev_tick == 0)
         g_tm->prev_tick = tick;
-
-    fl64 dt = ((fl64)(tick - g_tm->prev_tick)) / ((fl64)g_tm->freq);
+    
+    double dt = timer_calctm(g_tm->prev_tick, tick);
     dt *= g_tm->scale;
     g_tm->prev_tick = tick;
     float dtf = (float)dt;
@@ -96,13 +98,6 @@ void timer_update(uint64 tick)
         tm->t += tm->dt;
         tm_node = tm_node->next;
     }
-}
-
-fl64 timer_calctm(uint64 tick1, uint64 tick2)
-{
-    fl64 freq = (fl64)g_tm->freq;
-    fl64 dt = (fl64)((int64)(tick2 - tick1));
-    return dt / freq;
 }
 
 void timer_pauseall()

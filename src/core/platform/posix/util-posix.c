@@ -94,7 +94,7 @@ void util_ttyecho()
 #if defined(_IOS_)
 char* util_getconfdir(char* outdir)
 {
-    return path_join(outdir, "Library", "Application Support", nullptr);
+    return path_join(outdir, "Library", "Application Support", NULL);
 }
 
 char* util_getuserdir(char* outdir)

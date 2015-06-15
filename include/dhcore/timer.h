@@ -85,12 +85,6 @@ CORE_API void timer_update(uint64 tick);
 CORE_API uint64 timer_querytick();
 
 /**
- * Update frequency value of timer_mgr
- * @ingroup timer
- */
-CORE_API uint64 timer_queryfreq();
-
-/**
  * Calculates the time (in seconds) between two ticks
  * @see timer_querytick
  * @ingroup timer
@@ -135,10 +129,11 @@ public:
             timer_destroyinstance(m_tm);
     }
 
-    void start()
+    void start(float rate = 1.0f)
     {
         ASSERT(m_tm);
         TIMER_START(m_tm);
+        m_tm->rate = rate;
     }
 
     void pause()
@@ -147,11 +142,12 @@ public:
         TIMER_PAUSE(m_tm);
     }
 
-    void reset()
+    void restart(float rate = 1.0f)
     {
         ASSERT(m_tm);
         m_tm->t = 0.0f;
         m_tm->dt = 0.0f;
+        m_tm->rate = rate;
     }
 
     void stop()

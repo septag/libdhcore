@@ -19,18 +19,24 @@
 
 #include "dhcore/win.h"
 
-uint64 timer_queryfreq()
+static LONG_INTEGER g_freq;
+
+void timer_queryfreq()
 {
-    LARGE_INTEGER freq;
-    QueryPerformanceFrequency(&freq);
-    return (uint64)freq.QuadPart;
+    QueryPerformanceFrequency(&g_freq);
 }
 
 uint64 timer_querytick()
 {
     LARGE_INTEGER tick;
     QueryPerformanceCounter(&tick);
-    return (uint64)(tick.QuadPart);
+    return (uint64)tick.QuadPart;
+}
+
+fl64 timer_calctm(uint64 tick1, uint64 tick2)
+{
+    uint64 delta_tick = tick2 - tick1;
+    return (double)delta_tick/(double)g_freq.QuadPart;
 }
 
 #endif /* _WIN_ */

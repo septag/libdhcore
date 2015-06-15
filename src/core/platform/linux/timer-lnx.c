@@ -21,11 +21,11 @@
 
 #define BILLION 1000000000L
 
-uint64 timer_queryfreq()
+static struct timespec g_freq;
+
+void timer_queryfreq()
 {
-    struct timespec t;
-    clock_getres(CLOCK_MONOTONIC, &t);
-    return (uint64)t.tv_nsec*BILLION;
+    clock_getres(CLOCK_MONOTONIC, &g_freq);
 }
 
 uint64 timer_querytick()
@@ -33,6 +33,13 @@ uint64 timer_querytick()
     struct timespec t;
     clock_gettime(CLOCK_MONOTONIC, &t);
     return (uint64)t.tv_sec*BILLION + (uint64)t.tv_nsec;
+}
+
+fl64 timer_calctm(uint64 tick1, uint64 tick2)
+{
+    uint64 delta_tick = tick2 - tick1;
+    uint64 utm = delta_tick/g_freq.tv_nsec;
+    return (double)utm/1e9;
 }
 
 #endif /* _LINUX_ */

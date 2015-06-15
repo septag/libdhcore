@@ -19,11 +19,11 @@
 
 #include <mach/mach_time.h>
 
-uint64 timer_queryfreq()
+static struct mach_timebase_info g_freq;
+
+void timer_queryfreq()
 {
-    mach_timebase_info_data_t info;
-    mach_timebase_info( &info );
-    return 1e9*(double)info.numer/(double)info.denom;
+    mach_timebase_info(&g_freq);
 }
 
 uint64 timer_querytick()
@@ -31,5 +31,11 @@ uint64 timer_querytick()
     return mach_absolute_time();
 }
 
+fl64 timer_calctm(uint64 tick1, uint64 tick2)
+{
+    uint64 delta_tick = tick2 - tick1;
+    uint64 utm = delta_tick*g_freq.numer/g_freq.denom;
+    return (double)utm/1e9;
+}
 
 #endif /* _OSX_ */
