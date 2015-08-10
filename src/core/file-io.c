@@ -595,7 +595,7 @@ static FILE* open_resolvepath(const char* filepath)
     for (uint i = 0; i < item_cnt; i++)   {
         struct vdir* vd = &vds[i];
         path_join(testpath, vd->path, filepath, NULL);
-        if (!util_pathisdir(testpath))  {
+        if (path_exists(testpath) == 1)  {
             return fopen(testpath, "rb");
         }
     }

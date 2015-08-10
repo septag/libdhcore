@@ -19,7 +19,7 @@
 
 #include "dhcore/win.h"
 
-static LONG_INTEGER g_freq;
+static LARGE_INTEGER g_freq;
 
 void timer_queryfreq()
 {
